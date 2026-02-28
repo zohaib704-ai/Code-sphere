@@ -2158,6 +2158,18 @@ main().catch(console.error);`
         window.runCode = runCode;
         window.clearCode = clearCode;
         window.loadSample = loadSample;
+        // Instead of simulation, call actual API
+fetch('https://emkc.org/api/v2/piston/execute', {
+    method: 'POST',
+    body: JSON.stringify({
+        language: 'python',
+        version: '3.11',
+        files: [{ content: code }],
+        stdin: stdin
+    })
+})
+.then(res => res.json())
+.then(data => output.innerHTML = data.output);
     </script>
 </body>
 </html>
