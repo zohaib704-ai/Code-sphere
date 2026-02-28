@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeSphere - The Ultimate Online Compiler</title>
+    <title>CodeSphere - Real Online Compiler with Piston API</title>
     <style>
         * {
             margin: 0;
@@ -420,6 +420,12 @@
             white-space: pre-wrap;
             font-size: 14px;
             line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .error-output {
+            color: #ff6b6b;
         }
 
         /* Controls */
@@ -670,7 +676,7 @@
                 <div class="logo-icon">⚡</div>
                 <div class="logo-text">
                     <h1>CodeSphere</h1>
-                    <p>Compile anything, anywhere</p>
+                    <p>Real code execution with Piston API</p>
                 </div>
             </div>
             <div class="nav-links">
@@ -685,14 +691,14 @@
     <!-- Hero Section -->
     <section class="hero">
         <h1>The Ultimate Online Compiler</h1>
-        <p>Write, compile, and run code in 10+ programming languages directly in your browser. No setup, no installations, just pure coding.</p>
+        <p>Write, compile, and run code in 10+ programming languages using the powerful Piston API. Real execution, real results.</p>
         <div class="hero-badges">
-            <span class="badge">🐍 Python 3.11</span>
-            <span class="badge">☕ Java 17</span>
-            <span class="badge">⚡ C++20</span>
+            <span class="badge">🐍 Python 3.10</span>
+            <span class="badge">☕ Java 15.0.2</span>
+            <span class="badge">⚡ C++ 14</span>
             <span class="badge">🌐 HTML5</span>
             <span class="badge">🎨 CSS3</span>
-            <span class="badge">⚡ JavaScript ES6</span>
+            <span class="badge">⚡ JavaScript</span>
         </div>
     </section>
 
@@ -702,13 +708,13 @@
         <div class="features-grid" id="features">
             <div class="feature-card">
                 <div class="feature-icon">🚀</div>
-                <h3>Instant Compilation</h3>
-                <p>Compile and run your code instantly with our powerful cloud-based engine. Get results in milliseconds.</p>
+                <h3>Real Compilation</h3>
+                <p>Actual code execution using Piston API. Your code runs on remote servers and returns real output.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🔒</div>
                 <h3>Secure Execution</h3>
-                <p>Your code runs in isolated containers, ensuring complete security and privacy for your programs.</p>
+                <p>Piston runs code in isolated containers, ensuring complete security and privacy for your programs.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">📱</div>
@@ -725,8 +731,8 @@
         <!-- Compiler Section -->
         <div class="compiler-section" id="compiler">
             <div class="compiler-header">
-                <h2>⚡ Online Compiler</h2>
-                <p>Choose your language, write code, and see the output instantly</p>
+                <h2>⚡ Online Compiler with Piston API</h2>
+                <p>Choose your language, write code, and see real execution results</p>
             </div>
 
             <!-- Tabs -->
@@ -810,7 +816,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-number">1M+</div>
-                <div class="stat-label">Compilations Daily</div>
+                <div class="stat-label">API Calls Daily</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">50K+</div>
@@ -828,7 +834,7 @@
             <div class="faq-grid">
                 <div class="faq-item">
                     <h4><span>❓</span> Is it really free?</h4>
-                    <p>Yes! CodeSphere is completely free for all users. No hidden charges or premium features.</p>
+                    <p>Yes! CodeSphere uses the free Piston API. No hidden charges or premium features.</p>
                 </div>
                 <div class="faq-item">
                     <h4><span>❓</span> What languages are supported?</h4>
@@ -836,7 +842,7 @@
                 </div>
                 <div class="faq-item">
                     <h4><span>❓</span> Do I need to install anything?</h4>
-                    <p>No installation needed! Everything runs in your browser. Just open the website and start coding.</p>
+                    <p>No installation needed! Everything runs in your browser with Piston API handling execution.</p>
                 </div>
                 <div class="faq-item">
                     <h4><span>❓</span> Is my code saved?</h4>
@@ -851,7 +857,7 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h4>CodeSphere</h4>
-                <p>The ultimate online compiler for developers. Write, compile, and run code in your browser.</p>
+                <p>The ultimate online compiler powered by Piston API. Write, compile, and run code in your browser.</p>
             </div>
             <div class="footer-section">
                 <h4>Quick Links</h4>
@@ -873,19 +879,21 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2024 CodeSphere. Made with ❤️ for developers worldwide</p>
+            <p>© 2024 CodeSphere. Powered by Piston API. Made with ❤️ for developers worldwide</p>
         </div>
     </footer>
 
     <script>
-        // Language configurations
+        // Language configurations with Piston API versions
         const languages = {
             // Web Dev Languages
             html: {
                 name: 'HTML',
                 icon: '🌐',
-                version: 'HTML5',
+                version: '5',
                 mode: 'web',
+                pistonLang: 'html',
+                pistonVersion: '5.0',
                 description: 'HTML (HyperText Markup Language) is the standard markup language for creating web pages.',
                 sample: `<!DOCTYPE html>
 <html>
@@ -940,8 +948,10 @@
             css: {
                 name: 'CSS',
                 icon: '🎨',
-                version: 'CSS3',
+                version: '3',
                 mode: 'web',
+                pistonLang: 'css',
+                pistonVersion: '3.0',
                 description: 'CSS (Cascading Style Sheets) is used to style and layout web pages.',
                 sample: `/* CSS Styling Example */
 * {
@@ -1013,6 +1023,8 @@ h1 {
                 icon: '⚡',
                 version: 'ES2022',
                 mode: 'web',
+                pistonLang: 'javascript',
+                pistonVersion: '18.15.0',
                 description: 'JavaScript is a programming language that enables interactive web pages.',
                 sample: `// Interactive JavaScript Demo
 class CodeSphere {
@@ -1082,13 +1094,15 @@ function demo() {
     output.innerHTML = html;
 }`
             },
-            // Programming Languages
+            // Programming Languages for Piston API
             python: {
                 name: 'Python',
                 icon: '🐍',
-                version: '3.11',
+                version: '3.10',
                 mode: 'lang',
-                description: 'Python is a high-level, interpreted programming language known for its simplicity and readability.',
+                pistonLang: 'python',
+                pistonVersion: '3.10.0',
+                description: 'Python is a high-level, interpreted programming language known for its simplicity.',
                 sample: `# Python Program with Classes and Functions
 class Calculator:
     def __init__(self, name):
@@ -1145,8 +1159,10 @@ if __name__ == "__main__":
             java: {
                 name: 'Java',
                 icon: '☕',
-                version: '17',
+                version: '15.0.2',
                 mode: 'lang',
+                pistonLang: 'java',
+                pistonVersion: '15.0.2',
                 description: 'Java is a class-based, object-oriented programming language designed for portability.',
                 sample: `// Java Program with OOP Concepts
 import java.util.*;
@@ -1214,8 +1230,10 @@ public class Main {
             cpp: {
                 name: 'C++',
                 icon: '⚡',
-                version: 'C++20',
+                version: '14',
                 mode: 'lang',
+                pistonLang: 'cpp',
+                pistonVersion: '14',
                 description: 'C++ is a powerful general-purpose programming language with object-oriented features.',
                 sample: `// C++ Program with STL
 #include <iostream>
@@ -1293,8 +1311,10 @@ int main() {
             c: {
                 name: 'C',
                 icon: '🔧',
-                version: 'C17',
+                version: '17',
                 mode: 'lang',
+                pistonLang: 'c',
+                pistonVersion: '17',
                 description: 'C is a general-purpose, procedural programming language.',
                 sample: `// C Program with Dynamic Memory
 #include <stdio.h>
@@ -1378,6 +1398,8 @@ int main() {
                 icon: '🐘',
                 version: '8.2',
                 mode: 'lang',
+                pistonLang: 'php',
+                pistonVersion: '8.2.3',
                 description: 'PHP is a server-side scripting language designed for web development.',
                 sample: `<?php
 // PHP Program with OOP
@@ -1474,6 +1496,8 @@ echo "  Completion rate: " . $stats['completion_rate'] . "%\n";
                 icon: '💎',
                 version: '3.2',
                 mode: 'lang',
+                pistonLang: 'ruby',
+                pistonVersion: '3.2.0',
                 description: 'Ruby is a dynamic, object-oriented programming language known for its simplicity.',
                 sample: `# Ruby Program with Blocks and Modules
 module Formattable
@@ -1557,6 +1581,8 @@ puts "\n✅ Analysis complete!"`
                 icon: '🔵',
                 version: '1.21',
                 mode: 'lang',
+                pistonLang: 'go',
+                pistonVersion: '1.21.0',
                 description: 'Go is a statically typed, compiled programming language designed at Google.',
                 sample: `// Go Program with Concurrency
 package main
@@ -1645,6 +1671,8 @@ func main() {
                 icon: '🦀',
                 version: '1.72',
                 mode: 'lang',
+                pistonLang: 'rust',
+                pistonVersion: '1.72.0',
                 description: 'Rust is a systems programming language focused on safety and performance.',
                 sample: `// Rust Program with Ownership and Traits
 use std::fmt;
@@ -1766,6 +1794,8 @@ fn main() {
                 icon: '📘',
                 version: '5.2',
                 mode: 'lang',
+                pistonLang: 'typescript',
+                pistonVersion: '5.2.2',
                 description: 'TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.',
                 sample: `// TypeScript Program with Types and Interfaces
 interface User {
@@ -1923,6 +1953,14 @@ main().catch(console.error);`
             updateLanguageSelector();
             loadLanguage('html');
             updateLanguageInfo();
+            
+            // Load saved code from localStorage
+            const savedCode = localStorage.getItem('codesphere_code');
+            const savedLang = localStorage.getItem('codesphere_lang');
+            if (savedCode && savedLang && languages[savedLang]) {
+                document.getElementById('code-editor').value = savedCode;
+                loadLanguage(savedLang);
+            }
         };
 
         function switchMode(mode) {
@@ -1955,7 +1993,7 @@ main().catch(console.error);`
             if (currentMode === 'web') {
                 infoBox.innerHTML = '💡 <strong>Web Development Mode:</strong> Write HTML, CSS, and JavaScript with live preview. Perfect for building and testing web pages.';
             } else {
-                infoBox.innerHTML = '💡 <strong>Programming Languages Mode:</strong> Compile and run code in various programming languages. Supports stdin input and shows detailed output.';
+                infoBox.innerHTML = '💡 <strong>Programming Languages Mode:</strong> Compile and run code using the Piston API. Real execution, real results.';
             }
         }
 
@@ -1981,16 +2019,13 @@ main().catch(console.error);`
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            if (event && event.target) {
-                event.target.classList.add('active');
-            } else {
-                // Find and activate the correct button
-                document.querySelectorAll('.lang-btn').forEach(btn => {
-                    if (btn.innerHTML.includes(languages[lang].name)) {
-                        btn.classList.add('active');
-                    }
-                });
-            }
+            
+            // Find and activate the correct button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                if (btn.innerHTML.includes(languages[lang].name)) {
+                    btn.classList.add('active');
+                }
+            });
             
             // Update editor
             document.getElementById('code-editor').value = languages[lang].sample;
@@ -2009,9 +2044,23 @@ main().catch(console.error);`
             if (languages[lang].mode === 'web') {
                 runCode();
             }
+            
+            // Auto-save to localStorage
+            saveToLocalStorage();
         }
 
-        function runCode() {
+        // Auto-save functionality
+        setInterval(() => {
+            saveToLocalStorage();
+        }, 2000);
+
+        function saveToLocalStorage() {
+            const code = document.getElementById('code-editor').value;
+            localStorage.setItem('codesphere_code', code);
+            localStorage.setItem('codesphere_lang', currentLang);
+        }
+
+        async function runCode() {
             if (isRunning) return;
             
             const code = document.getElementById('code-editor').value;
@@ -2020,12 +2069,8 @@ main().catch(console.error);`
             const runBtn = document.getElementById('run-btn');
             const previewStatus = document.getElementById('preview-status');
             
-            isRunning = true;
-            runBtn.innerHTML = '<span class="loading"></span> Running...';
-            runBtn.disabled = true;
-            
             if (currentMode === 'web') {
-                // Web mode - live preview
+                // Web mode - live preview (no API needed)
                 const preview = document.getElementById('preview');
                 const doc = preview.contentDocument || preview.contentWindow.document;
                 
@@ -2093,47 +2138,80 @@ main().catch(console.error);`
                     output.innerHTML = '✓ JavaScript executed successfully';
                     previewStatus.textContent = '✓ Live';
                 }
-            } else {
-                // Language mode - simulate compilation
-                setTimeout(() => {
-                    let result = '';
-                    
-                    if (code.includes('fibonacci') || code.includes('Calculator')) {
-                        const name = stdin.trim() || 'John';
-                        result = `Enter your name: ${name}\nHello, ${name}!\n\n📊 Program Output:\n`;
-                        
-                        if (code.includes('Calculator')) {
-                            result += `10 + 5 = 15\n6 × 7 = 42\n\n📊 Calculation History for ${name}:\n  • 10 + 5 = 15\n  • 6 × 7 = 42\n\n📈 Fibonacci sequence up to 10:\n0 1 1 2 3 5 8 13 21 34 \n`;
-                        } else {
-                            result += `Performing calculations...\n✓ Task completed successfully!\n`;
-                        }
-                    } else if (code.includes('Student') || code.includes('student')) {
-                        result = `Enter student name: ${stdin || 'John'}\nEnter student age: 20\n\n📋 Student Information:\n  Name: ${stdin || 'John'}\n  Age: 20\n  Grades: [85, 90, 78, 92, 88]\n  Average: 86.60\n`;
-                    } else if (code.includes('Task') || code.includes('task')) {
-                        result = `✓ Task Manager initialized\n  ✓ Added tasks\n\n📋 Tasks:\n  ✅ [0] Complete project\n  ⭕ [1] Review code\n\n📊 Statistics:\n  Total: 5\n  Completed: 2\n  Pending: 3\n`;
-                    } else {
-                        result = `Program executed successfully!\nOutput: ${stdin || 'Hello, World!'}\n`;
-                    }
-                    
-                    output.innerHTML = `<span style="color: #10b981;">✓ Compilation successful</span>\n\n${result}`;
-                    
-                    isRunning = false;
-                    runBtn.innerHTML = '<span>▶</span> Run Code';
-                    runBtn.disabled = false;
-                }, 1500);
+                
+                // Auto-save
+                saveToLocalStorage();
+                return;
             }
             
-            // Safety timeout
-            setTimeout(() => {
-                if (isRunning) {
-                    isRunning = false;
-                    runBtn.innerHTML = '<span>▶</span> Run Code';
-                    runBtn.disabled = false;
-                    if (currentMode !== 'web') {
-                        output.innerHTML = '⚠️ Execution timeout';
-                    }
+            // Language mode - use Piston API
+            isRunning = true;
+            runBtn.innerHTML = '<span class="loading"></span> Compiling...';
+            runBtn.disabled = true;
+            output.innerHTML = '⏳ Sending code to Piston API...';
+            
+            const lang = languages[currentLang];
+            
+            try {
+                // Prepare the code for Piston API
+                let fileContent = code;
+                
+                // Special handling for Java (needs class name Main)
+                if (currentLang === 'java' && !code.includes('public class Main')) {
+                    // Wrap in Main class if needed
+                    fileContent = `public class Main {\n    public static void main(String[] args) {\n${code.split('\n').map(line => '        ' + line).join('\n')}\n    }\n}`;
                 }
-            }, 5000);
+                
+                const response = await fetch('https://emkc.org/api/v2/piston/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        language: lang.pistonLang,
+                        version: lang.pistonVersion,
+                        files: [
+                            {
+                                name: currentLang === 'java' ? 'Main.java' : `main.${lang.pistonLang}`,
+                                content: fileContent
+                            }
+                        ],
+                        stdin: stdin,
+                        args: [],
+                        compile_timeout: 10000,
+                        run_timeout: 3000
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.run && data.run.output) {
+                    // Format output with proper styling
+                    let formattedOutput = data.run.output;
+                    if (data.run.stderr) {
+                        formattedOutput += '\n\n⚠️ Stderr:\n' + data.run.stderr;
+                    }
+                    if (data.run.code !== 0) {
+                        formattedOutput = `<span class="error-output">❌ Exit code: ${data.run.code}</span>\n\n${formattedOutput}`;
+                    }
+                    output.innerHTML = formattedOutput.replace(/\n/g, '<br>');
+                } else if (data.run && data.run.stderr) {
+                    output.innerHTML = `<span class="error-output">❌ Error:</span>\n\n${data.run.stderr.replace(/\n/g, '<br>')}`;
+                } else {
+                    output.innerHTML = '⚠️ No output received from API';
+                }
+                
+            } catch (error) {
+                output.innerHTML = `<span class="error-output">❌ API Error:</span>\n\n${error.message}`;
+                console.error('Piston API error:', error);
+            } finally {
+                isRunning = false;
+                runBtn.innerHTML = '<span>▶</span> Run Code';
+                runBtn.disabled = false;
+                
+                // Auto-save
+                saveToLocalStorage();
+            }
         }
 
         function clearCode() {
@@ -2146,6 +2224,9 @@ main().catch(console.error);`
                     document.getElementById('preview').srcdoc = '';
                     document.getElementById('preview-status').textContent = 'Ready';
                 }
+                
+                // Clear localStorage for this session
+                localStorage.removeItem('codesphere_code');
             }
         }
 
@@ -2158,18 +2239,6 @@ main().catch(console.error);`
         window.runCode = runCode;
         window.clearCode = clearCode;
         window.loadSample = loadSample;
-        // Instead of simulation, call actual API
-fetch('https://emkc.org/api/v2/piston/execute', {
-    method: 'POST',
-    body: JSON.stringify({
-        language: 'python',
-        version: '3.11',
-        files: [{ content: code }],
-        stdin: stdin
-    })
-})
-.then(res => res.json())
-.then(data => output.innerHTML = data.output);
     </script>
 </body>
 </html>
