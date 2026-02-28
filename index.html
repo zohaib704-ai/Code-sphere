@@ -282,6 +282,24 @@
             padding: 1.5rem 2rem;
             flex-wrap: wrap;
             background: white;
+            max-height: 200px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #667eea #e2e8f0;
+        }
+
+        .language-selector::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .language-selector::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .language-selector::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
         }
 
         .lang-btn {
@@ -309,9 +327,42 @@
             color: white;
         }
 
+        /* Editor Toolbar */
+        .editor-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0 2rem;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .toolbar-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: none;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .toolbar-btn:hover {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .toolbar-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
         /* Editor */
         .editor-wrapper {
-            padding: 0 2rem 2rem;
+            padding: 2rem;
         }
 
         .editor-container {
@@ -352,7 +403,7 @@
 
         #code-editor {
             width: 100%;
-            height: 300px;
+            height: 400px;
             background: #1e1e1e;
             border: none;
             color: #d4d4d4;
@@ -387,7 +438,28 @@
             color: #475569;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 0.5rem;
+        }
+
+        .io-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .io-action-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .io-action-btn:hover {
+            background: #e2e8f0;
+            color: #667eea;
         }
 
         .io-content {
@@ -396,7 +468,7 @@
 
         #stdin-input {
             width: 100%;
-            height: 150px;
+            height: 200px;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             padding: 1rem;
@@ -414,12 +486,26 @@
             background: #1e1e1e;
             border-radius: 8px;
             padding: 1rem;
-            min-height: 150px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
             color: #d4d4d4;
             font-family: monospace;
             white-space: pre-wrap;
             font-size: 14px;
             line-height: 1.6;
+        }
+
+        .output-success {
+            color: #10b981;
+        }
+
+        .output-error {
+            color: #ef4444;
+        }
+
+        .output-warning {
+            color: #f59e0b;
         }
 
         /* Controls */
@@ -429,6 +515,7 @@
             padding: 2rem;
             justify-content: center;
             background: white;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -470,7 +557,7 @@
             cursor: not-allowed;
         }
 
-        /* Preview */
+        /* Preview Section */
         .preview-section {
             padding: 2rem;
             background: #f8fafc;
@@ -482,6 +569,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .preview-header h3 {
@@ -491,16 +580,116 @@
             gap: 0.5rem;
         }
 
-        #preview {
-            width: 100%;
-            height: 300px;
-            border: none;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        .preview-controls {
+            display: flex;
+            gap: 0.5rem;
         }
 
-        /* Stats */
+        .preview-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .preview-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .preview-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .preview-container.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1000;
+            border-radius: 0;
+        }
+
+        #preview {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* Tabs Container */
+        .tabs-container {
+            display: flex;
+            background: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .editor-tab {
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-right: 1px solid #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .editor-tab:hover {
+            background: #e2e8f0;
+        }
+
+        .editor-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .editor-tab-close {
+            margin-left: 0.5rem;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .editor-tab-close:hover {
+            opacity: 1;
+        }
+
+        .new-tab-btn {
+            padding: 0.8rem 1rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .new-tab-btn:hover {
+            color: #667eea;
+        }
+
+        /* Stats Section */
         .stats-section {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -632,6 +821,40 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1000;
+            border-left: 4px solid #667eea;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: #10b981;
+        }
+
+        .toast.error {
+            border-left-color: #ef4444;
+        }
+
+        .toast.warning {
+            border-left-color: #f59e0b;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .io-section {
@@ -659,6 +882,11 @@
                 grid-template-columns: 1fr;
                 text-align: center;
             }
+            
+            .preview-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
@@ -685,14 +913,23 @@
     <!-- Hero Section -->
     <section class="hero">
         <h1>The Ultimate Online Compiler</h1>
-        <p>Write, compile, and run code in 10+ programming languages directly in your browser. No setup, no installations, just pure coding.</p>
+        <p>Write, compile, and run code in 15+ programming languages directly in your browser. No setup, no installations, just pure coding.</p>
         <div class="hero-badges">
-            <span class="badge">🐍 Python 3.11</span>
-            <span class="badge">☕ Java 17</span>
-            <span class="badge">⚡ C++20</span>
+            <span class="badge">🐍 Python 3.10</span>
+            <span class="badge">☕ Java 15.0.2</span>
+            <span class="badge">⚡ C++ 14</span>
+            <span class="badge">⚡ C 11</span>
             <span class="badge">🌐 HTML5</span>
             <span class="badge">🎨 CSS3</span>
             <span class="badge">⚡ JavaScript ES6</span>
+            <span class="badge">💎 Ruby 3.0.1</span>
+            <span class="badge">🔵 Go 1.16.4</span>
+            <span class="badge">🦀 Rust 1.68.2</span>
+            <span class="badge">🐘 PHP 8.2.3</span>
+            <span class="badge">📘 TypeScript 5.0.3</span>
+            <span class="badge">#️⃣ C# 10.0</span>
+            <span class="badge">⚡ Swift 5.3.3</span>
+            <span class="badge">🔷 R 4.1.2</span>
         </div>
     </section>
 
@@ -731,8 +968,8 @@
 
             <!-- Tabs -->
             <div class="tabs">
-                <button class="tab-btn active" onclick="switchMode('web')">🌐 Web Development</button>
-                <button class="tab-btn" onclick="switchMode('lang')">⚙️ Programming Languages</button>
+                <button class="tab-btn active" onclick="switchMode('web', event)">🌐 Web Development</button>
+                <button class="tab-btn" onclick="switchMode('lang', event)">⚙️ Programming Languages</button>
             </div>
 
             <!-- Language Info -->
@@ -745,8 +982,26 @@
             <!-- Language Selector -->
             <div class="language-selector" id="lang-selector"></div>
 
+            <!-- Editor Tabs -->
+            <div class="tabs-container" id="editor-tabs-container">
+                <button class="editor-tab active" data-tab="main">
+                    <span id="editor-tab-icon">🌐</span>
+                    <span id="editor-tab-name">main.html</span>
+                </button>
+                <button class="new-tab-btn" onclick="createNewTab()">
+                    <span>➕</span> New Tab
+                </button>
+            </div>
+
+            <!-- Editor Toolbar -->
+            <div class="editor-toolbar">
+                <button class="toolbar-btn active" onclick="switchEditorView('editor')">📝 Editor</button>
+                <button class="toolbar-btn" onclick="switchEditorView('both')">🔄 Split View</button>
+                <button class="toolbar-btn" onclick="switchEditorView('preview')">👁️ Preview Only</button>
+            </div>
+
             <!-- Editor -->
-            <div class="editor-wrapper">
+            <div class="editor-wrapper" id="editor-wrapper">
                 <div class="editor-container">
                     <div class="editor-header">
                         <div class="editor-title">
@@ -764,6 +1019,10 @@
                 <div class="io-box">
                     <div class="io-header">
                         <span>📥</span> Standard Input (stdin)
+                        <div class="io-actions">
+                            <button class="io-action-btn" onclick="clearStdin()" title="Clear Input">🗑️</button>
+                            <button class="io-action-btn" onclick="pasteStdin()" title="Paste">📋</button>
+                        </div>
                     </div>
                     <div class="io-content">
                         <textarea id="stdin-input" placeholder="Enter input for your program here..."></textarea>
@@ -772,6 +1031,10 @@
                 <div class="io-box">
                     <div class="io-header">
                         <span>📤</span> Program Output
+                        <div class="io-actions">
+                            <button class="io-action-btn" onclick="copyOutput()" title="Copy Output">📋</button>
+                            <button class="io-action-btn" onclick="clearOutput()" title="Clear Output">🗑️</button>
+                        </div>
                     </div>
                     <div class="io-content">
                         <div class="output-area" id="output">// Ready to compile. Click Run to execute your code.</div>
@@ -787,8 +1050,14 @@
                 <button class="btn btn-secondary" onclick="clearCode()">
                     <span>🗑️</span> Clear
                 </button>
+                <button class="btn btn-secondary" onclick="loadHelloWorld()">
+                    <span>👋</span> Hello World
+                </button>
                 <button class="btn btn-secondary" onclick="loadSample()">
-                    <span>📋</span> Load Sample
+                    <span>📋</span> Load Example
+                </button>
+                <button class="btn btn-secondary" onclick="formatCode()">
+                    <span>✨</span> Format
                 </button>
             </div>
 
@@ -796,24 +1065,37 @@
             <div class="preview-section" id="preview-section">
                 <div class="preview-header">
                     <h3><span>🌐</span> Live Preview</h3>
-                    <span class="version-badge" id="preview-status">Ready</span>
+                    <div class="preview-controls">
+                        <span class="version-badge" id="preview-status">Ready</span>
+                        <button class="preview-btn" onclick="refreshPreview()" title="Refresh Preview">
+                            <span>🔄</span> Refresh
+                        </button>
+                        <button class="preview-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">
+                            <span>⛶</span> Fullscreen
+                        </button>
+                        <button class="preview-btn" onclick="openPreviewInNewTab()" title="Open in New Tab">
+                            <span>🔗</span> New Tab
+                        </button>
+                    </div>
                 </div>
-                <iframe id="preview" title="Live Preview"></iframe>
+                <div class="preview-container" id="preview-container">
+                    <iframe id="preview" title="Live Preview" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
+                </div>
             </div>
         </div>
 
         <!-- Stats Section -->
         <div class="stats-section">
             <div class="stat-card">
-                <div class="stat-number">12+</div>
+                <div class="stat-number">15+</div>
                 <div class="stat-label">Programming Languages</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">1M+</div>
+                <div class="stat-number">2M+</div>
                 <div class="stat-label">Compilations Daily</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">50K+</div>
+                <div class="stat-number">100K+</div>
                 <div class="stat-label">Active Users</div>
             </div>
             <div class="stat-card">
@@ -832,7 +1114,7 @@
                 </div>
                 <div class="faq-item">
                     <h4><span>❓</span> What languages are supported?</h4>
-                    <p>We support Python, Java, C++, C, PHP, Ruby, Go, Rust, TypeScript, plus HTML, CSS, and JavaScript.</p>
+                    <p>We support Python, Java, C++, C, PHP, Ruby, Go, Rust, TypeScript, C#, Swift, R, plus HTML, CSS, and JavaScript.</p>
                 </div>
                 <div class="faq-item">
                     <h4><span>❓</span> Do I need to install anything?</h4>
@@ -877,8 +1159,14 @@
         </div>
     </footer>
 
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toast-icon">ℹ️</span>
+        <span id="toast-message"></span>
+    </div>
+
     <script>
-        // Language configurations
+        // Language configurations with Piston API support
         const languages = {
             // Web Dev Languages
             html: {
@@ -886,11 +1174,16 @@
                 icon: '🌐',
                 version: 'HTML5',
                 mode: 'web',
+                language: 'html',
+                extension: 'html',
                 description: 'HTML (HyperText Markup Language) is the standard markup language for creating web pages.',
+                commonUse: 'Building web pages structure, creating forms, embedding media, semantic markup.',
                 sample: `<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Awesome Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My First Web Page</title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -935,6 +1228,16 @@
         <button onclick="alert('Hello from CodeSphere!')">Click Me</button>
     </div>
 </body>
+</html>`,
+                helloWorld: `<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World</title>
+</head>
+<body>
+    <h1>Hello, World!</h1>
+    <p>Welcome to HTML programming!</p>
+</body>
 </html>`
             },
             css: {
@@ -942,7 +1245,10 @@
                 icon: '🎨',
                 version: 'CSS3',
                 mode: 'web',
+                language: 'css',
+                extension: 'css',
                 description: 'CSS (Cascading Style Sheets) is used to style and layout web pages.',
+                commonUse: 'Styling websites, animations, responsive design, layouts (Flexbox/Grid).',
                 sample: `/* CSS Styling Example */
 * {
     margin: 0;
@@ -1006,6 +1312,16 @@ h1 {
 .button:hover {
     transform: scale(1.05);
     box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+}`,
+                helloWorld: `body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-top: 50px;
 }`
             },
             js: {
@@ -1013,7 +1329,10 @@ h1 {
                 icon: '⚡',
                 version: 'ES2022',
                 mode: 'web',
+                language: 'javascript',
+                extension: 'js',
                 description: 'JavaScript is a programming language that enables interactive web pages.',
+                commonUse: 'Web interactivity, frontend frameworks (React, Vue), backend (Node.js), mobile apps.',
                 sample: `// Interactive JavaScript Demo
 class CodeSphere {
     constructor(name) {
@@ -1039,14 +1358,10 @@ class CodeSphere {
     }
 }
 
-// Create instance
-const app = new CodeSphere('CodeSphere');
-
 // DOM manipulation
 document.addEventListener('DOMContentLoaded', () => {
     const app = document.getElementById('app');
     if (!app) {
-        // Create container if it doesn't exist
         const container = document.createElement('div');
         container.id = 'app';
         container.innerHTML = \`
@@ -1080,104 +1395,156 @@ function demo() {
     html += '</div>';
     
     output.innerHTML = html;
-}`
+}`,
+                helloWorld: `console.log("Hello, World!");
+
+// DOM manipulation
+document.body.innerHTML = "<h1>Hello, World!</h1><p>Welcome to JavaScript!</p>";`
             },
-            // Programming Languages
+            // Programming Languages with Piston API support
             python: {
                 name: 'Python',
                 icon: '🐍',
-                version: '3.11',
+                version: '3.10.0',
                 mode: 'lang',
+                language: 'python',
+                extension: 'py',
                 description: 'Python is a high-level, interpreted programming language known for its simplicity and readability.',
-                sample: `# Python Program with Classes and Functions
-class Calculator:
+                commonUse: 'Data Science, Machine Learning, Web Development (Django/Flask), Automation, Scripting.',
+                sample: `# Python Program - Data Analysis Example
+import statistics
+from collections import Counter
+
+class DataAnalyzer:
+    """A class for analyzing numerical data"""
+    
     def __init__(self, name):
         self.name = name
-        self.history = []
+        self.data = []
     
-    def add(self, a, b):
-        result = a + b
-        self.history.append(f"{a} + {b} = {result}")
-        return result
+    def add_data_point(self, value):
+        """Add a data point to the analysis"""
+        self.data.append(value)
+        print(f"  ✓ Added: {value}")
     
-    def multiply(self, a, b):
-        result = a * b
-        self.history.append(f"{a} × {b} = {result}")
-        return result
+    def analyze(self):
+        """Perform statistical analysis on the data"""
+        if not self.data:
+            return "No data to analyze"
+        
+        return {
+            'count': len(self.data),
+            'sum': sum(self.data),
+            'mean': statistics.mean(self.data),
+            'median': statistics.median(self.data),
+            'mode': statistics.mode(self.data) if len(self.data) > 1 else self.data[0],
+            'stdev': statistics.stdev(self.data) if len(self.data) > 1 else 0,
+            'min': min(self.data),
+            'max': max(self.data),
+            'range': max(self.data) - min(self.data)
+        }
     
-    def show_history(self):
-        print(f"\\n📊 Calculation History for {self.name}:")
-        for entry in self.history:
-            print(f"  • {entry}")
-
-def fibonacci(n):
-    """Generate Fibonacci sequence"""
-    if n <= 1:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)
+    def frequency_distribution(self):
+        """Get frequency distribution of data"""
+        return Counter(self.data)
 
 def main():
+    print("=== Python Data Analysis ===\\n")
+    
     # Get user input
     name = input("Enter your name: ")
-    print(f"\\nHello, {name}! Welcome to Python Calculator\\n")
+    print(f"Hello, {name}! Let's analyze some data.\\n")
     
-    # Create calculator instance
-    calc = Calculator(name)
+    # Create analyzer
+    analyzer = DataAnalyzer(name)
     
-    # Perform calculations
-    print("Performing calculations...")
-    print(f"10 + 5 = {calc.add(10, 5)}")
-    print(f"6 × 7 = {calc.multiply(6, 7)}")
+    # Sample data
+    sample_data = [23, 45, 67, 89, 12, 45, 67, 89, 45, 34, 
+                   56, 78, 90, 23, 45, 67, 89, 12, 34, 56]
     
-    # Show history
-    calc.show_history()
+    print("Adding sample data points:")
+    for value in sample_data:
+        analyzer.add_data_point(value)
     
-    # Fibonacci sequence
-    n = 10
-    print(f"\\n📈 Fibonacci sequence up to {n}:")
-    for i in range(n):
-        print(fibonacci(i), end=" ")
-    print()
+    # Perform analysis
+    print("\\n📊 Statistical Analysis:")
+    results = analyzer.analyze()
+    for key, value in results.items():
+        print(f"  {key}: {value}")
+    
+    # Frequency distribution
+    print("\\n📈 Frequency Distribution:")
+    freq = analyzer.frequency_distribution()
+    for value, count in sorted(freq.items()):
+        print(f"  {value}: {'★' * count} ({count})")
+    
+    print("\\n✅ Analysis complete!")
 
 if __name__ == "__main__":
-    main()`
+    main()`,
+                helloWorld: `# Hello World Program
+print("Hello, World!")
+
+# Simple input example
+name = input("What's your name? ")
+print(f"Hello, {name}! Welcome to Python!")`
             },
             java: {
                 name: 'Java',
                 icon: '☕',
-                version: '17',
+                version: '15.0.2',
                 mode: 'lang',
+                language: 'java',
+                extension: 'java',
                 description: 'Java is a class-based, object-oriented programming language designed for portability.',
-                sample: `// Java Program with OOP Concepts
+                commonUse: 'Enterprise applications, Android development, Web applications, Big Data (Hadoop).',
+                sample: `// Java Program - Student Management System
 import java.util.*;
 
 class Student {
     private String name;
     private int age;
     private List<Integer> grades;
+    private String studentId;
     
-    public Student(String name, int age) {
+    public Student(String name, int age, String studentId) {
         this.name = name;
         this.age = age;
+        this.studentId = studentId;
         this.grades = new ArrayList<>();
     }
     
     public void addGrade(int grade) {
-        grades.add(grade);
-        System.out.println("  ✓ Added grade: " + grade);
+        if (grade >= 0 && grade <= 100) {
+            grades.add(grade);
+            System.out.println("  ✓ Added grade: " + grade);
+        } else {
+            System.out.println("  ✗ Invalid grade: " + grade);
+        }
     }
     
-    public double getAverageGrade() {
-        if (grades.isEmpty()) return 0;
-        return grades.stream().mapToInt(Integer::intValue).average().orElse(0);
+    public double calculateGPA() {
+        if (grades.isEmpty()) return 0.0;
+        return grades.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+    }
+    
+    public String getLetterGrade(double gpa) {
+        if (gpa >= 90) return "A";
+        else if (gpa >= 80) return "B";
+        else if (gpa >= 70) return "C";
+        else if (gpa >= 60) return "D";
+        else return "F";
     }
     
     public void displayInfo() {
         System.out.println("\\n📋 Student Information:");
+        System.out.println("  ID: " + studentId);
         System.out.println("  Name: " + name);
         System.out.println("  Age: " + age);
         System.out.println("  Grades: " + grades);
-        System.out.printf("  Average: %.2f\\n", getAverageGrade());
+        double gpa = calculateGPA();
+        System.out.printf("  GPA: %.2f (%s)%n", gpa, getLetterGrade(gpa));
+        System.out.println("  Status: " + (gpa >= 60 ? "✅ Promoted" : "❌ Needs Improvement"));
     }
 }
 
@@ -1187,20 +1554,26 @@ public class Main {
         
         System.out.println("=== Student Management System ===\\n");
         
+        // Get student information
         System.out.print("Enter student name: ");
         String name = scanner.nextLine();
         
         System.out.print("Enter student age: ");
         int age = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+        
+        System.out.print("Enter student ID: ");
+        String studentId = scanner.nextLine();
         
         // Create student
-        Student student = new Student(name, age);
+        Student student = new Student(name, age, studentId);
         
         // Add grades
-        System.out.println("\\nEnter 5 grades:");
-        for (int i = 1; i <= 5; i++) {
-            System.out.print("  Grade " + i + ": ");
+        System.out.println("\\nEnter grades (enter -1 to stop):");
+        while (true) {
+            System.out.print("Grade: ");
             int grade = scanner.nextInt();
+            if (grade == -1) break;
             student.addGrade(grade);
         }
         
@@ -1209,132 +1582,205 @@ public class Main {
         
         scanner.close();
     }
+}`,
+                helloWorld: `public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
 }`
             },
             cpp: {
                 name: 'C++',
                 icon: '⚡',
-                version: 'C++20',
+                version: '14',
                 mode: 'lang',
+                language: 'cpp',
+                extension: 'cpp',
                 description: 'C++ is a powerful general-purpose programming language with object-oriented features.',
-                sample: `// C++ Program with STL
+                commonUse: 'Game development, System programming, Embedded systems, High-performance applications.',
+                sample: `// C++ Program - Bank Account Management
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <string>
+#include <iomanip>
+#include <memory>
+
 using namespace std;
 
-template<typename T>
-class DataProcessor {
+class BankAccount {
 private:
-    vector<T> data;
+    string accountNumber;
+    string accountHolder;
+    double balance;
+    vector<string> transactionHistory;
     
 public:
-    void addItem(T item) {
-        data.push_back(item);
-        cout << "  ✓ Added: " << item << endl;
+    BankAccount(string accNum, string holder, double initialBalance = 0) 
+        : accountNumber(accNum), accountHolder(holder), balance(initialBalance) {
+        addTransaction("Account created with balance: $" + to_string(initialBalance));
     }
     
-    void displaySorted() {
-        vector<T> sorted = data;
-        sort(sorted.begin(), sorted.end());
-        
-        cout << "\\n📊 Sorted Data:" << endl;
-        for (const auto& item : sorted) {
-            cout << "  • " << item << endl;
+    void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            addTransaction("Deposit: $" + to_string(amount));
+            cout << "  ✓ Deposited $" << fixed << setprecision(2) << amount << endl;
         }
     }
     
-    T getMax() {
-        if (data.empty()) return T();
-        return *max_element(data.begin(), data.end());
+    bool withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            addTransaction("Withdrawal: $" + to_string(amount));
+            cout << "  ✓ Withdrawn $" << fixed << setprecision(2) << amount << endl;
+            return true;
+        } else {
+            cout << "  ✗ Insufficient funds or invalid amount!" << endl;
+            return false;
+        }
     }
     
-    size_t size() const {
-        return data.size();
+    void displayBalance() const {
+        cout << "  Current Balance: $" << fixed << setprecision(2) << balance << endl;
+    }
+    
+    void displayInfo() const {
+        cout << "\\n📋 Account Information:" << endl;
+        cout << "  Account Number: " << accountNumber << endl;
+        cout << "  Account Holder: " << accountHolder << endl;
+        displayBalance();
+    }
+    
+    void showTransactionHistory() const {
+        cout << "\\n📊 Transaction History:" << endl;
+        if (transactionHistory.empty()) {
+            cout << "  No transactions yet." << endl;
+        } else {
+            for (const auto& transaction : transactionHistory) {
+                cout << "  • " << transaction << endl;
+            }
+        }
+    }
+    
+private:
+    void addTransaction(const string& transaction) {
+        transactionHistory.push_back(transaction);
     }
 };
 
 int main() {
-    cout << "=== C++ Data Processor ===\\n" << endl;
+    cout << "=== Bank Account Management System ===\\n" << endl;
     
     string name;
-    cout << "Enter your name: ";
+    cout << "Enter account holder name: ";
     getline(cin, name);
-    cout << "Hello, " << name << "!\\n" << endl;
     
-    // Create integer processor
-    DataProcessor<int> intProcessor;
-    cout << "Adding integers:" << endl;
-    intProcessor.addItem(42);
-    intProcessor.addItem(17);
-    intProcessor.addItem(89);
-    intProcessor.addItem(5);
+    // Generate simple account number
+    string accNum = "ACC" + to_string(time(nullptr) % 10000);
     
-    cout << "\\n📈 Maximum value: " << intProcessor.getMax() << endl;
-    intProcessor.displaySorted();
+    // Create account
+    auto account = make_unique<BankAccount>(accNum, name, 1000.00);
     
-    // Create string processor
-    DataProcessor<string> strProcessor;
-    cout << "\\nAdding strings:" << endl;
-    strProcessor.addItem("apple");
-    strProcessor.addItem("zebra");
-    strProcessor.addItem("banana");
-    strProcessor.addItem("cherry");
+    // Display account info
+    account->displayInfo();
     
-    strProcessor.displaySorted();
+    // Perform transactions
+    cout << "\\n💳 Performing transactions:" << endl;
+    account->deposit(500.00);
+    account->withdraw(200.00);
+    account->withdraw(1500.00); // This should fail
     
-    cout << "\\n✅ Total items processed: " 
-         << (intProcessor.size() + strProcessor.size()) << endl;
+    // Show final balance and history
+    cout << "\\n💰 Final ";
+    account->displayBalance();
+    account->showTransactionHistory();
     
+    cout << "\\n✅ Banking session completed!" << endl;
+    
+    return 0;
+}`,
+                helloWorld: `#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello, World!" << endl;
     return 0;
 }`
             },
             c: {
                 name: 'C',
                 icon: '🔧',
-                version: 'C17',
+                version: '11',
                 mode: 'lang',
+                language: 'c',
+                extension: 'c',
                 description: 'C is a general-purpose, procedural programming language.',
-                sample: `// C Program with Dynamic Memory
+                commonUse: 'Operating systems, Embedded systems, System software, Compilers, Hardware drivers.',
+                sample: `// C Program - Student Grade Calculator
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_STUDENTS 50
+#define MAX_NAME_LENGTH 50
+
 typedef struct {
-    char name[50];
+    char name[MAX_NAME_LENGTH];
     int age;
-    float score;
+    float grades[5];
+    float average;
+    char grade;
 } Student;
 
-void printStudent(const Student* s) {
-    printf("  Name: %s\n", s->name);
-    printf("  Age: %d\n", s->age);
-    printf("  Score: %.2f\n", s->score);
+void calculateAverage(Student* student) {
+    float sum = 0;
+    for (int i = 0; i < 5; i++) {
+        sum += student->grades[i];
+    }
+    student->average = sum / 5;
+    
+    // Determine letter grade
+    if (student->average >= 90) student->grade = 'A';
+    else if (student->average >= 80) student->grade = 'B';
+    else if (student->average >= 70) student->grade = 'C';
+    else if (student->average >= 60) student->grade = 'D';
+    else student->grade = 'F';
 }
 
-float calculateAverage(Student* students, int count) {
+void printStudent(const Student* student) {
+    printf("\n📋 Student Information:\n");
+    printf("  Name: %s\n", student->name);
+    printf("  Age: %d\n", student->age);
+    printf("  Grades: ");
+    for (int i = 0; i < 5; i++) {
+        printf("%.1f ", student->grades[i]);
+    }
+    printf("\n  Average: %.2f\n", student->average);
+    printf("  Grade: %c\n", student->grade);
+}
+
+float calculateClassAverage(Student students[], int count) {
+    if (count == 0) return 0;
+    
     float sum = 0;
     for (int i = 0; i < count; i++) {
-        sum += students[i].score;
+        sum += students[i].average;
     }
-    return count > 0 ? sum / count : 0;
+    return sum / count;
 }
 
 int main() {
-    printf("=== Student Record System ===\n\n");
+    printf("=== Student Grade Calculator ===\n\n");
     
-    char name[50];
-    printf("Enter your name: ");
-    fgets(name, sizeof(name), stdin);
-    name[strcspn(name, "\n")] = 0;
-    printf("Hello, %s!\n\n", name);
-    
-    // Allocate memory for students
     int numStudents;
-    printf("Enter number of students: ");
+    printf("Enter number of students (max %d): ", MAX_STUDENTS);
     scanf("%d", &numStudents);
     getchar(); // consume newline
+    
+    if (numStudents > MAX_STUDENTS) {
+        printf("Too many students! Maximum is %d\n", MAX_STUDENTS);
+        return 1;
+    }
     
     Student* students = (Student*)malloc(numStudents * sizeof(Student));
     if (students == NULL) {
@@ -1347,592 +1793,1763 @@ int main() {
         printf("\n📝 Student %d:\n", i + 1);
         
         printf("  Name: ");
-        fgets(students[i].name, sizeof(students[i].name), stdin);
+        fgets(students[i].name, MAX_NAME_LENGTH, stdin);
         students[i].name[strcspn(students[i].name, "\n")] = 0;
         
         printf("  Age: ");
         scanf("%d", &students[i].age);
         
-        printf("  Score: ");
-        scanf("%f", &students[i].score);
+        printf("  Enter 5 grades:\n");
+        for (int j = 0; j < 5; j++) {
+            printf("    Grade %d: ", j + 1);
+            scanf("%f", &students[i].grades[j]);
+        }
         getchar(); // consume newline
+        
+        calculateAverage(&students[i]);
     }
     
-    // Display results
+    // Display all students
     printf("\n📊 Student Records:\n");
     for (int i = 0; i < numStudents; i++) {
-        printf("\nStudent %d:\n", i + 1);
         printStudent(&students[i]);
     }
     
-    printf("\n📈 Average Score: %.2f\n", calculateAverage(students, numStudents));
+    // Class statistics
+    float classAverage = calculateClassAverage(students, numStudents);
+    printf("\n🏫 Class Statistics:\n");
+    printf("  Total Students: %d\n", numStudents);
+    printf("  Class Average: %.2f\n", classAverage);
     
-    // Free memory
+    // Find top student
+    int topIndex = 0;
+    for (int i = 1; i < numStudents; i++) {
+        if (students[i].average > students[topIndex].average) {
+            topIndex = i;
+        }
+    }
+    printf("  Top Student: %s (%.2f)\n", students[topIndex].name, students[topIndex].average);
+    
     free(students);
+    printf("\n✅ Program completed!\n");
     
+    return 0;
+}`,
+                helloWorld: `#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\\n");
     return 0;
 }`
             },
             php: {
                 name: 'PHP',
                 icon: '🐘',
-                version: '8.2',
+                version: '8.2.3',
                 mode: 'lang',
+                language: 'php',
+                extension: 'php',
                 description: 'PHP is a server-side scripting language designed for web development.',
+                commonUse: 'Web development, Content Management Systems (WordPress), E-commerce, APIs.',
                 sample: `<?php
-// PHP Program with OOP
+// PHP Program - Task Management System
+class Task {
+    private $id;
+    private $title;
+    private $description;
+    private $priority;
+    private $completed;
+    private $createdAt;
+    
+    public function __construct($title, $description = '', $priority = 'medium') {
+        $this->id = uniqid();
+        $this->title = $title;
+        $this->description = $description;
+        $this->priority = $priority;
+        $this->completed = false;
+        $this->createdAt = date('Y-m-d H:i:s');
+    }
+    
+    public function complete() {
+        $this->completed = true;
+        echo "  ✓ Task '{$this->title}' marked as completed\\n";
+    }
+    
+    public function getInfo() {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'priority' => $this->priority,
+            'completed' => $this->completed ? '✅' : '⭕',
+            'created' => $this->createdAt
+        ];
+    }
+}
+
 class TaskManager {
     private $tasks = [];
     private $userName;
     
     public function __construct($userName) {
         $this->userName = $userName;
-        echo "✓ Task Manager initialized for $userName\n";
+        echo "✓ Task Manager initialized for $userName\\n";
     }
     
-    public function addTask($task, $priority = 'medium') {
-        $this->tasks[] = [
-            'task' => $task,
-            'priority' => $priority,
-            'completed' => false,
-            'created' => date('Y-m-d H:i:s')
-        ];
-        echo "  ✓ Added task: $task (Priority: $priority)\n";
+    public function addTask($title, $description = '', $priority = 'medium') {
+        $task = new Task($title, $description, $priority);
+        $this->tasks[] = $task;
+        echo "  ✓ Added task: $title (Priority: $priority)\\n";
+        return $task;
     }
     
-    public function completeTask($index) {
-        if (isset($this->tasks[$index])) {
-            $this->tasks[$index]['completed'] = true;
-            echo "  ✓ Completed: " . $this->tasks[$index]['task'] . "\n";
+    public function findTask($title) {
+        foreach ($this->tasks as $task) {
+            $info = $task->getInfo();
+            if ($info['title'] === $title) {
+                return $task;
+            }
         }
+        return null;
     }
     
-    public function displayTasks() {
-        echo "\n📋 Tasks for " . $this->userName . ":\n";
+    public function completeTask($title) {
+        $task = $this->findTask($title);
+        if ($task) {
+            $task->complete();
+            return true;
+        }
+        echo "  ✗ Task not found: $title\\n";
+        return false;
+    }
+    
+    public function listTasks() {
+        echo "\\n📋 Tasks for " . $this->userName . ":\\n";
         if (empty($this->tasks)) {
-            echo "  No tasks found.\n";
+            echo "  No tasks found.\\n";
             return;
         }
         
         foreach ($this->tasks as $index => $task) {
-            $status = $task['completed'] ? '✅' : '⭕';
-            echo "  $status [$index] " . $task['task'];
-            echo " (Priority: " . $task['priority'] . ")\n";
+            $info = $task->getInfo();
+            echo "  {$info['completed']} [$index] {$info['title']}";
+            echo " (Priority: {$info['priority']})\\n";
         }
     }
     
-    public function getStats() {
+    public function getStatistics() {
         $total = count($this->tasks);
-        $completed = count(array_filter($this->tasks, fn($t) => $t['completed']));
-        $pending = $total - $completed;
+        $completed = 0;
+        $priorityCount = ['high' => 0, 'medium' => 0, 'low' => 0];
+        
+        foreach ($this->tasks as $task) {
+            $info = $task->getInfo();
+            if ($info['completed'] === '✅') {
+                $completed++;
+            }
+            $priorityCount[$info['priority']]++;
+        }
         
         return [
             'total' => $total,
             'completed' => $completed,
-            'pending' => $pending,
-            'completion_rate' => $total > 0 ? round(($completed/$total)*100, 2) : 0
+            'pending' => $total - $completed,
+            'completion_rate' => $total > 0 ? round(($completed / $total) * 100, 2) : 0,
+            'by_priority' => $priorityCount
         ];
     }
 }
 
 // Main program
-echo "=== Task Manager ===\n\n";
+echo "=== Task Manager ===\\n\\n";
 
-$name = readline("Enter your name: ");
-echo "Hello, $name!\n\n";
+echo "Enter your name: ";
+$name = trim(fgets(STDIN));
+echo "Hello, $name!\\n\\n";
 
 // Create task manager
 $manager = new TaskManager($name);
 
-// Add some tasks
-$manager->addTask("Complete project report", "high");
-$manager->addTask("Review pull requests", "high");
-$manager->addTask("Update documentation", "medium");
-$manager->addTask("Team meeting", "low");
+// Add tasks
+$manager->addTask("Complete project report", "Write final report", "high");
+$manager->addTask("Review pull requests", "Check code changes", "high");
+$manager->addTask("Update documentation", "Add API docs", "medium");
+$manager->addTask("Team meeting", "Weekly sync", "low");
+$manager->addTask("Fix bug #1234", "Critical bug fix", "high");
 
-// Display tasks
-$manager->displayTasks();
+// List tasks
+$manager->listTasks();
 
-// Complete a task
-echo "\nCompleting task 0...\n";
-$manager->completeTask(0);
+// Complete some tasks
+echo "\\n📝 Updating tasks:\\n";
+$manager->completeTask("Complete project report");
+$manager->completeTask("Fix bug #1234");
 
 // Show updated tasks
-$manager->displayTasks();
+$manager->listTasks();
 
 // Show statistics
-$stats = $manager->getStats();
-echo "\n📊 Statistics:\n";
-echo "  Total tasks: " . $stats['total'] . "\n";
-echo "  Completed: " . $stats['completed'] . "\n";
-echo "  Pending: " . $stats['pending'] . "\n";
-echo "  Completion rate: " . $stats['completion_rate'] . "%\n";
+$stats = $manager->getStatistics();
+echo "\\n📊 Statistics:\\n";
+echo "  Total tasks: " . $stats['total'] . "\\n";
+echo "  Completed: " . $stats['completed'] . "\\n";
+echo "  Pending: " . $stats['pending'] . "\\n";
+echo "  Completion rate: " . $stats['completion_rate'] . "%\\n";
+echo "  By priority:\\n";
+foreach ($stats['by_priority'] as $priority => $count) {
+    echo "    • $priority: $count\\n";
+}
+
+echo "\\n✅ Task management session completed!\\n";
+?>`,
+                helloWorld: `<?php
+echo "Hello, World!\\n";
+
+$name = readline("What's your name? ");
+echo "Hello, $name! Welcome to PHP!\\n";
 ?>`
             },
             ruby: {
                 name: 'Ruby',
                 icon: '💎',
-                version: '3.2',
+                version: '3.0.1',
                 mode: 'lang',
+                language: 'ruby',
+                extension: 'rb',
                 description: 'Ruby is a dynamic, object-oriented programming language known for its simplicity.',
-                sample: `# Ruby Program with Blocks and Modules
+                commonUse: 'Web development (Ruby on Rails), Automation, Scripting, Prototyping.',
+                sample: `# Ruby Program - Weather Data Analyzer
 module Formattable
-  def format_as_table(data)
-    puts "+" + "-" * 50 + "+"
-    data.each { |row| puts "| #{row}" }
-    puts "+" + "-" * 50 + "+"
+  def format_as_table(data, title)
+    puts "\\n" + "=" * 50
+    puts title.center(50)
+    puts "=" * 50
+    data.each { |key, value| puts "| \#{key.ljust(20)}: \#{value.to_s.rjust(25)} |" }
+    puts "-" * 50
   end
 end
 
-class Analytics
+class WeatherData
   include Formattable
   
-  attr_reader :name, :data
+  attr_reader :location, :readings
   
-  def initialize(name)
-    @name = name
-    @data = []
-    puts "✓ Analytics initialized for #{name}"
+  def initialize(location)
+    @location = location
+    @readings = []
+    puts "✓ Weather station initialized for #{location}"
   end
   
-  def add_record(value)
-    @data << value
-    puts "  ✓ Added: #{value}"
+  def add_reading(temperature, humidity, pressure)
+    reading = {
+      timestamp: Time.now,
+      temperature: temperature,
+      humidity: humidity,
+      pressure: pressure
+    }
+    @readings << reading
+    puts "  ✓ Added reading: #{temperature}°C, #{humidity}%, #{pressure}hPa"
   end
   
   def analyze
-    return "No data" if @data.empty?
+    return nil if @readings.empty?
+    
+    temps = @readings.map { |r| r[:temperature] }
+    humidities = @readings.map { |r| r[:humidity] }
+    pressures = @readings.map { |r| r[:pressure] }
     
     {
-      count: @data.length,
-      sum: @data.sum,
-      average: @data.sum.to_f / @data.length,
-      min: @data.min,
-      max: @data.max,
-      sorted: @data.sort
+      location: @location,
+      period: "#{@readings.first[:timestamp].strftime('%H:%M')} - #{@readings.last[:timestamp].strftime('%H:%M')}",
+      readings_count: @readings.size,
+      temperature: {
+        current: temps.last,
+        average: (temps.sum / temps.size).round(2),
+        min: temps.min,
+        max: temps.max,
+        range: (temps.max - temps.min).round(2)
+      },
+      humidity: {
+        current: humidities.last,
+        average: (humidities.sum / humidities.size).round(2),
+        min: humidities.min,
+        max: humidities.max
+      },
+      pressure: {
+        current: pressures.last,
+        average: (pressures.sum / pressures.size).round(2),
+        min: pressures.min,
+        max: pressures.max
+      }
     }
   end
   
-  def process_with_block
-    puts "\n🔄 Processing each item:"
-    @data.each_with_index do |item, index|
-      yield(item, index) if block_given?
+  def weather_condition(temp, humidity)
+    if temp > 25
+      humidity > 70 ? "☁️ Humid and warm" : "☀️ Sunny"
+    elsif temp > 15
+      humidity > 80 ? "🌧️ Rainy" : "⛅ Partly cloudy"
+    else
+      temp < 5 ? "❄️ Cold" : "🌥️ Cool"
     end
+  end
+  
+  def generate_report
+    analysis = analyze
+    return puts "No data available" unless analysis
+    
+    puts "\\n📊 Weather Analysis for #{@location}"
+    puts "-" * 40
+    
+    puts "\\n🌡️ Temperature:"
+    puts "  Current: #{analysis[:temperature][:current]}°C"
+    puts "  Average: #{analysis[:temperature][:average]}°C"
+    puts "  Range: #{analysis[:temperature][:min]}°C - #{analysis[:temperature][:max]}°C"
+    
+    puts "\\n💧 Humidity:"
+    puts "  Current: #{analysis[:humidity][:current]}%"
+    puts "  Average: #{analysis[:humidity][:average]}%"
+    
+    puts "\\n🌀 Pressure:"
+    puts "  Current: #{analysis[:pressure][:current]}hPa"
+    
+    puts "\\n🌤️ Condition: #{weather_condition(analysis[:temperature][:current], analysis[:humidity][:current])}"
+    
+    # Format as table
+    format_as_table({
+      "Location" => analysis[:location],
+      "Period" => analysis[:period],
+      "Avg Temperature" => "#{analysis[:temperature][:average]}°C",
+      "Avg Humidity" => "#{analysis[:humidity][:average]}%",
+      "Condition" => weather_condition(analysis[:temperature][:current], analysis[:humidity][:current])
+    }, "WEATHER SUMMARY")
   end
 end
 
 # Main program
-puts "=== Ruby Analytics Dashboard ===\n\n"
+puts "=== Weather Data Analyzer ===\\n\\n"
 
-print "Enter your name: "
+print "Enter location: "
+location = gets.chomp
+puts "Hello! Analyzing weather for #{location}\\n\\n"
+
+# Create weather station
+station = WeatherData.new(location)
+
+# Add sample readings
+puts "\\n📝 Adding weather readings:"
+station.add_reading(23.5, 65, 1013)
+sleep(1)
+station.add_reading(24.2, 68, 1012)
+sleep(1)
+station.add_reading(25.1, 72, 1011)
+sleep(1)
+station.add_reading(24.8, 70, 1012)
+sleep(1)
+station.add_reading(23.9, 66, 1014)
+
+# Generate report
+station.generate_report
+
+puts "\\n✅ Analysis complete!"`,
+                helloWorld: `# Hello World Program
+puts "Hello, World!"
+
+print "What's your name? "
 name = gets.chomp
-puts "Hello, #{name}!\n\n"
-
-# Create analytics instance
-analytics = Analytics.new(name)
-
-# Add some data
-[42, 17, 89, 5, 63, 28].each { |n| analytics.add_record(n) }
-
-# Analyze data
-results = analytics.analyze
-puts "\n📊 Analysis Results:"
-results.each do |key, value|
-  puts "  #{key}: #{value}"
-end
-
-# Use block for processing
-analytics.process_with_block do |item, index|
-  puts "  Item #{index}: #{item} (squared: #{item * item})"
-end
-
-# Use the module method
-puts "\n📋 Formatted Output:"
-analytics.format_as_table(results.map { |k,v| "#{k}: #{v}" })
-
-puts "\n✅ Analysis complete!"`
+puts "Hello, #{name}! Welcome to Ruby!"`
             },
             go: {
                 name: 'Go',
                 icon: '🔵',
-                version: '1.21',
+                version: '1.16.4',
                 mode: 'lang',
+                language: 'go',
+                extension: 'go',
                 description: 'Go is a statically typed, compiled programming language designed at Google.',
-                sample: `// Go Program with Concurrency
+                commonUse: 'Cloud services, Microservices, DevOps tools, Web servers, Distributed systems.',
+                sample: `// Go Program - Concurrent Web Scraper
 package main
 
 import (
     "fmt"
     "sync"
     "time"
+    "strings"
 )
 
-// Task represents a unit of work
-type Task struct {
-    ID       int
-    Name     string
-    Duration time.Duration
+// Website represents a site to scrape
+type Website struct {
+    URL      string
+    Status   string
+    Latency  time.Duration
+    Error    error
 }
 
-// Worker processes tasks
-func worker(id int, tasks <-chan Task, results chan<- string, wg *sync.WaitGroup) {
-    defer wg.Done()
+// Scraper manages concurrent scraping
+type Scraper struct {
+    websites []Website
+    results  chan Website
+    wg       sync.WaitGroup
+}
+
+func NewScraper(urls []string) *Scraper {
+    websites := make([]Website, len(urls))
+    for i, url := range urls {
+        websites[i] = Website{URL: url}
+    }
     
-    for task := range tasks {
-        fmt.Printf("Worker %d starting task: %s\n", id, task.Name)
-        time.Sleep(task.Duration * time.Millisecond)
-        result := fmt.Sprintf("Worker %d completed: %s (took %dms)", 
-            id, task.Name, task.Duration)
-        results <- result
+    return &Scraper{
+        websites: websites,
+        results:  make(chan Website, len(urls)),
     }
 }
 
+func (s *Scraper) scrapeWebsite(website Website) {
+    defer s.wg.Done()
+    
+    // Simulate scraping
+    start := time.Now()
+    
+    // Simulate different response times based on URL
+    var latency time.Duration
+    var status string
+    var err error
+    
+    switch {
+    case strings.Contains(website.URL, "google"):
+        latency = 150 * time.Millisecond
+        status = "200 OK"
+    case strings.Contains(website.URL, "github"):
+        latency = 300 * time.Millisecond
+        status = "200 OK"
+    case strings.Contains(website.URL, "stackoverflow"):
+        latency = 250 * time.Millisecond
+        status = "200 OK"
+    case strings.Contains(website.URL, "example"):
+        latency = 100 * time.Millisecond
+        status = "200 OK"
+    default:
+        latency = 500 * time.Millisecond
+        status = "404 Not Found"
+        if strings.Contains(website.URL, "error") {
+            err = fmt.Errorf("connection timeout")
+        }
+    }
+    
+    time.Sleep(latency)
+    
+    result := Website{
+        URL:     website.URL,
+        Status:  status,
+        Latency: time.Since(start),
+        Error:   err,
+    }
+    
+    s.results <- result
+}
+
+func (s *Scraper) Run(concurrency int) {
+    // Create semaphore channel for concurrency control
+    semaphore := make(chan struct{}, concurrency)
+    
+    for _, website := range s.websites {
+        s.wg.Add(1)
+        semaphore <- struct{}{} // Acquire semaphore
+        
+        go func(w Website) {
+            defer func() { <-semaphore }() // Release semaphore
+            s.scrapeWebsite(w)
+        }(website)
+    }
+    
+    // Close results channel when all scraping is done
+    go func() {
+        s.wg.Wait()
+        close(s.results)
+    }()
+}
+
+func (s *Scraper) CollectResults() []Website {
+    var results []Website
+    for result := range s.results {
+        results = append(results, result)
+    }
+    return results
+}
+
 func main() {
-    fmt.Println("=== Go Concurrent Task Processor ===\n")
+    fmt.Println("=== Concurrent Web Scraper ===\n")
     
     var name string
     fmt.Print("Enter your name: ")
     fmt.Scanln(&name)
-    fmt.Printf("Hello, %s!\n\n", name)
+    fmt.Printf("Hello, %s! Starting web scraper...\n\n", name)
     
-    // Create tasks
-    tasks := []Task{
-        {ID: 1, Name: "Process data", Duration: 100},
-        {ID: 2, Name: "Generate report", Duration: 150},
-        {ID: 3, Name: "Send email", Duration: 50},
-        {ID: 4, Name: "Backup database", Duration: 200},
-        {ID: 5, Name: "Clean cache", Duration: 75},
+    // List of websites to scrape
+    urls := []string{
+        "https://google.com",
+        "https://github.com",
+        "https://stackoverflow.com",
+        "https://example.com",
+        "https://error-site.com",
+        "https://unknown-site.com",
     }
     
-    // Create channels
-    taskChannel := make(chan Task, len(tasks))
-    resultChannel := make(chan string, len(tasks))
-    
-    // Start workers
-    var wg sync.WaitGroup
-    numWorkers := 3
-    
-    fmt.Printf("Starting %d workers...\n\n", numWorkers)
-    
-    for w := 1; w <= numWorkers; w++ {
-        wg.Add(1)
-        go worker(w, taskChannel, resultChannel, &wg)
+    fmt.Printf("📋 URLs to scrape (%d sites):\n", len(urls))
+    for i, url := range urls {
+        fmt.Printf("  %d. %s\n", i+1, url)
     }
     
-    // Send tasks
-    for _, task := range tasks {
-        taskChannel <- task
+    // Create and run scraper
+    scraper := NewScraper(urls)
+    
+    fmt.Printf("\n🚀 Starting scrape with 3 concurrent workers...\n\n")
+    startTime := time.Now()
+    
+    scraper.Run(3)
+    results := scraper.CollectResults()
+    
+    totalTime := time.Since(startTime)
+    
+    // Display results
+    fmt.Println("📊 Scraping Results:")
+    fmt.Println(strings.Repeat("-", 80))
+    fmt.Printf("%-30s %-15s %-15s %s\n", "URL", "Status", "Latency", "Error")
+    fmt.Println(strings.Repeat("-", 80))
+    
+    var successCount, errorCount int
+    var totalLatency time.Duration
+    
+    for _, r := range results {
+        status := r.Status
+        if r.Error != nil {
+            status = "ERROR"
+            errorCount++
+        } else {
+            successCount++
+        }
+        
+        latency := r.Latency.Round(time.Millisecond)
+        totalLatency += r.Latency
+        
+        errorMsg := ""
+        if r.Error != nil {
+            errorMsg = r.Error.Error()
+        }
+        
+        fmt.Printf("%-30s %-15s %-15v %s\n", 
+            r.URL, status, latency, errorMsg)
     }
-    close(taskChannel)
     
-    // Wait for workers and close results
-    go func() {
-        wg.Wait()
-        close(resultChannel)
-    }()
+    fmt.Println(strings.Repeat("-", 80))
     
-    // Collect results
-    fmt.Println("📊 Processing Results:")
-    for result := range resultChannel {
-        fmt.Println("  " + result)
-    }
+    // Statistics
+    avgLatency := time.Duration(int64(totalLatency) / int64(len(results)))
     
-    fmt.Printf("\n✅ All %d tasks processed successfully!\n", len(tasks))
+    fmt.Printf("\n📈 Statistics:\n")
+    fmt.Printf("  Total time: %v\n", totalTime.Round(time.Millisecond))
+    fmt.Printf("  Successful: %d\n", successCount)
+    fmt.Printf("  Failed: %d\n", errorCount)
+    fmt.Printf("  Average latency: %v\n", avgLatency.Round(time.Millisecond))
+    fmt.Printf("  Success rate: %.1f%%\n", float64(successCount)/float64(len(results))*100)
+    
+    fmt.Printf("\n✅ Scraping completed!\n")
+}`,
+                helloWorld: `package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, World!")
 }`
             },
             rust: {
                 name: 'Rust',
                 icon: '🦀',
-                version: '1.72',
+                version: '1.68.2',
                 mode: 'lang',
+                language: 'rust',
+                extension: 'rs',
                 description: 'Rust is a systems programming language focused on safety and performance.',
-                sample: `// Rust Program with Ownership and Traits
+                commonUse: 'System programming, WebAssembly, Game engines, Operating systems, Blockchain.',
+                sample: `// Rust Program - File System Simulator
+use std::collections::HashMap;
 use std::fmt;
 
-#[derive(Debug)]
-struct Project {
+#[derive(Debug, Clone)]
+enum FileType {
+    Text,
+    Binary,
+    Directory,
+}
+
+#[derive(Debug, Clone)]
+struct File {
     name: String,
-    lines_of_code: u32,
-    language: String,
+    file_type: FileType,
+    size: u64,
+    content: String,
+    permissions: u16,
 }
 
-trait Summary {
-    fn summarize(&self) -> String;
-}
-
-impl Summary for Project {
-    fn summarize(&self) -> String {
-        format!("{} ({}): {} lines of {}",
-            self.name, self.language, self.lines_of_code, self.language)
-    }
-}
-
-impl fmt::Display for Project {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "📁 {} [{}] - {} lines", self.name, self.language, self.lines_of_code)
-    }
-}
-
-struct Repository {
-    name: String,
-    projects: Vec<Project>,
-}
-
-impl Repository {
-    fn new(name: &str) -> Self {
-        Repository {
+impl File {
+    fn new(name: &str, file_type: FileType) -> Self {
+        File {
             name: String::from(name),
-            projects: Vec::new(),
+            file_type,
+            size: 0,
+            content: String::new(),
+            permissions: 0o644,
         }
     }
     
-    fn add_project(&mut self, project: Project) {
-        println!("  ✓ Added: {}", project.summarize());
-        self.projects.push(project);
+    fn write(&mut self, content: &str) {
+        self.content.push_str(content);
+        self.size = self.content.len() as u64;
     }
     
-    fn total_lines(&self) -> u32 {
-        self.projects.iter().map(|p| p.lines_of_code).sum()
+    fn read(&self) -> &str {
+        &self.content
+    }
+}
+
+impl fmt::Display for File {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let type_str = match self.file_type {
+            FileType::Text => "📄",
+            FileType::Binary => "⚙️",
+            FileType::Directory => "📁",
+        };
+        write!(f, "{} {} ({} bytes)", type_str, self.name, self.size)
+    }
+}
+
+struct FileSystem {
+    files: HashMap<String, File>,
+    current_directory: String,
+}
+
+impl FileSystem {
+    fn new() -> Self {
+        let mut fs = FileSystem {
+            files: HashMap::new(),
+            current_directory: String::from("/"),
+        };
+        
+        // Create some default files
+        fs.create_file("readme.txt", FileType::Text);
+        fs.create_file("config.json", FileType::Text);
+        fs.create_file("program.exe", FileType::Binary);
+        
+        fs
     }
     
-    fn find_by_language(&self, language: &str) -> Vec<&Project> {
-        self.projects
-            .iter()
-            .filter(|p| p.language == language)
-            .collect()
+    fn create_file(&mut self, name: &str, file_type: FileType) {
+        let path = self.get_full_path(name);
+        let file = File::new(name, file_type);
+        self.files.insert(path, file);
+        println!("  ✓ Created file: {}", name);
+    }
+    
+    fn get_full_path(&self, name: &str) -> String {
+        if self.current_directory == "/" {
+            format!("/{}", name)
+        } else {
+            format!("{}/{}", self.current_directory, name)
+        }
+    }
+    
+    fn write_file(&mut self, name: &str, content: &str) -> Result<(), String> {
+        let path = self.get_full_path(name);
+        
+        if let Some(file) = self.files.get_mut(&path) {
+            match file.file_type {
+                FileType::Directory => Err(format!("Cannot write to directory: {}", name)),
+                _ => {
+                    file.write(content);
+                    println!("  ✓ Wrote {} bytes to: {}", content.len(), name);
+                    Ok(())
+                }
+            }
+        } else {
+            Err(format!("File not found: {}", name))
+        }
+    }
+    
+    fn read_file(&self, name: &str) -> Result<String, String> {
+        let path = self.get_full_path(name);
+        
+        if let Some(file) = self.files.get(&path) {
+            match file.file_type {
+                FileType::Directory => Err(format!("Cannot read directory: {}", name)),
+                _ => Ok(format!("📄 Content of {}:\n{}\n", name, file.read())),
+            }
+        } else {
+            Err(format!("File not found: {}", name))
+        }
+    }
+    
+    fn list_files(&self) {
+        println!("\n📋 Files in {}:", self.current_directory);
+        println!("{}", "-".repeat(40));
+        
+        let mut found = false;
+        for (path, file) in &self.files {
+            if path.starts_with(&self.current_directory) && path != &self.current_directory {
+                let name = path.trim_start_matches(&self.current_directory).trim_start_matches('/');
+                if !name.contains('/') {  // Only show files in current directory
+                    println!("  {}", file);
+                    found = true;
+                }
+            }
+        }
+        
+        if !found {
+            println!("  (empty)");
+        }
+    }
+    
+    fn get_stats(&self) -> HashMap<String, u64> {
+        let mut stats = HashMap::new();
+        let mut total_size = 0;
+        let mut file_count = 0;
+        let mut dir_count = 0;
+        
+        for file in self.files.values() {
+            match file.file_type {
+                FileType::Directory => dir_count += 1,
+                _ => {
+                    file_count += 1;
+                    total_size += file.size;
+                }
+            }
+        }
+        
+        stats.insert("files".to_string(), file_count);
+        stats.insert("directories".to_string(), dir_count);
+        stats.insert("total_size".to_string(), total_size);
+        stats.insert("avg_size".to_string(), if file_count > 0 { total_size / file_count } else { 0 });
+        
+        stats
     }
 }
 
 fn main() {
-    println!("=== Rust Repository Manager ===\n");
+    println!("=== Rust File System Simulator ===\n");
     
-    // Get user input
     let mut input = String::new();
     println!("Enter your name:");
     std::io::stdin().read_line(&mut input).expect("Failed to read line");
     let name = input.trim();
-    println!("Hello, {}!\n", name);
+    println!("Hello, {}! Welcome to Rust FS\n", name);
     
-    // Create repository
-    let mut repo = Repository::new("CodeSphere Projects");
+    // Create file system
+    let mut fs = FileSystem::new();
     
-    // Add projects
-    let projects = vec![
-        Project {
-            name: String::from("Web App"),
-            lines_of_code: 1500,
-            language: String::from("Rust"),
-        },
-        Project {
-            name: String::from("API Service"),
-            lines_of_code: 850,
-            language: String::from("Rust"),
-        },
-        Project {
-            name: String::from("CLI Tool"),
-            lines_of_code: 420,
-            language: String::from("Python"),
-        },
-        Project {
-            name: String::from("Database Driver"),
-            lines_of_code: 2100,
-            language: String::from("Rust"),
-        },
-    ];
+    // List initial files
+    fs.list_files();
     
-    println!("Adding projects to repository:");
-    for project in projects {
-        repo.add_project(project);
+    // Perform operations
+    println!("\n📝 Performing file operations:");
+    
+    // Write to files
+    match fs.write_file("readme.txt", "Welcome to CodeSphere!\nThis is a Rust file system simulator.") {
+        Ok(_) => (),
+        Err(e) => println!("  Error: {}", e),
     }
     
-    // Display statistics
-    println!("\n📊 Repository Statistics:");
-    println!("  Repository: {}", repo.name);
-    println!("  Total projects: {}", repo.projects.len());
-    println!("  Total lines of code: {}", repo.total_lines());
-    
-    // Find Rust projects
-    let rust_projects = repo.find_by_language("Rust");
-    println!("\n🦀 Rust Projects ({}):", rust_projects.len());
-    for project in rust_projects {
-        println!("  • {}", project);
+    match fs.write_file("config.json", "{\n  \"name\": \"CodeSphere\",\n  \"version\": \"1.0.0\"\n}") {
+        Ok(_) => (),
+        Err(e) => println!("  Error: {}", e),
     }
     
-    println!("\n✅ Analysis complete!");
+    // Read files
+    println!("\n📖 Reading files:");
+    match fs.read_file("readme.txt") {
+        Ok(content) => print!("{}", content),
+        Err(e) => println!("  Error: {}", e),
+    }
+    
+    // Create new file
+    fs.create_file("notes.txt", FileType::Text);
+    match fs.write_file("notes.txt", "Remember to:\n- Learn Rust\n- Build awesome projects\n- Contribute to open source") {
+        Ok(_) => (),
+        Err(e) => println!("  Error: {}", e),
+    }
+    
+    // List files again
+    fs.list_files();
+    
+    // Show statistics
+    println!("\n📊 File System Statistics:");
+    let stats = fs.get_stats();
+    for (key, value) in stats {
+        match key.as_str() {
+            "total_size" => println!("  {}: {} bytes", key, value),
+            "avg_size" => println!("  {}: {} bytes", key, value),
+            _ => println!("  {}: {}", key, value),
+        }
+    }
+    
+    println!("\n✅ Simulation complete!");
+}`,
+                helloWorld: `fn main() {
+    println!("Hello, World!");
 }`
             },
             typescript: {
                 name: 'TypeScript',
                 icon: '📘',
-                version: '5.2',
+                version: '5.0.3',
                 mode: 'lang',
+                language: 'typescript',
+                extension: 'ts',
                 description: 'TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.',
-                sample: `// TypeScript Program with Types and Interfaces
-interface User {
+                commonUse: 'Large-scale web applications, Enterprise software, Frontend frameworks, Node.js backend.',
+                sample: `// TypeScript Program - E-Commerce Shopping Cart
+interface Product {
     id: number;
     name: string;
-    email: string;
-    role: 'admin' | 'developer' | 'viewer';
+    price: number;
+    category: string;
+    inStock: boolean;
+    quantity?: number;
 }
 
-interface Project {
-    id: number;
-    name: string;
-    techStack: string[];
-    ownerId: number;
-    stars: number;
+interface CartItem extends Product {
+    quantity: number;
+    subtotal: number;
 }
 
-class CodeSpherePlatform {
-    private users: Map<number, User> = new Map();
-    private projects: Project[] = [];
-    private currentUser?: User;
+class ShoppingCart {
+    private items: Map<number, CartItem> = new Map();
+    private taxRate: number = 0.1; // 10% tax
+    private shippingRate: number = 5; // $5 shipping
     
-    constructor(public name: string) {
-        console.log(\`🚀 Platform '\${name}' initialized\`);
+    constructor(public customerName: string) {
+        console.log(`🛒 Shopping cart created for ${customerName}`);
     }
     
-    registerUser(user: User): void {
-        this.users.set(user.id, user);
-        console.log(\`  ✓ User registered: \${user.name} (\${user.role})\`);
-    }
-    
-    login(userId: number): boolean {
-        const user = this.users.get(userId);
-        if (user) {
-            this.currentUser = user;
-            console.log(\`  ✓ Logged in as: \${user.name}\`);
-            return true;
+    addItem(product: Product, quantity: number = 1): void {
+        if (!product.inStock) {
+            console.log(`  ✗ ${product.name} is out of stock`);
+            return;
         }
-        return false;
-    }
-    
-    createProject(project: Omit<Project, 'id'>): Project {
-        const newProject: Project = {
-            ...project,
-            id: this.projects.length + 1
-        };
-        this.projects.push(newProject);
-        console.log(\`  ✓ Project created: \${newProject.name}\`);
-        return newProject;
-    }
-    
-    getTopProjects(limit: number = 3): Project[] {
-        return [...this.projects]
-            .sort((a, b) => b.stars - a.stars)
-            .slice(0, limit);
-    }
-    
-    getUserProjects(userId: number): Project[] {
-        return this.projects.filter(p => p.ownerId === userId);
-    }
-    
-    getStats(): Record<string, any> {
-        return {
-            totalUsers: this.users.size,
-            totalProjects: this.projects.length,
-            averageStars: this.projects.reduce((acc, p) => acc + p.stars, 0) / this.projects.length,
-            topTech: this.getTopTechnologies(),
-            currentUser: this.currentUser?.name
-        };
-    }
-    
-    private getTopTechnologies(): string[] {
-        const techCount = new Map<string, number>();
-        this.projects.forEach(p => {
-            p.techStack.forEach(tech => {
-                techCount.set(tech, (techCount.get(tech) || 0) + 1);
-            });
-        });
         
-        return Array.from(techCount.entries())
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 3)
-            .map(([tech]) => tech);
+        if (this.items.has(product.id)) {
+            const existing = this.items.get(product.id)!;
+            existing.quantity += quantity;
+            existing.subtotal = existing.price * existing.quantity;
+            console.log(`  ✓ Updated ${product.name} quantity to ${existing.quantity}`);
+        } else {
+            const cartItem: CartItem = {
+                ...product,
+                quantity,
+                subtotal: product.price * quantity
+            };
+            this.items.set(product.id, cartItem);
+            console.log(`  ✓ Added ${product.name} (x${quantity}) to cart`);
+        }
+    }
+    
+    removeItem(productId: number): void {
+        if (this.items.delete(productId)) {
+            console.log(`  ✓ Item removed from cart`);
+        } else {
+            console.log(`  ✗ Item not found in cart`);
+        }
+    }
+    
+    updateQuantity(productId: number, quantity: number): void {
+        const item = this.items.get(productId);
+        if (item) {
+            if (quantity <= 0) {
+                this.removeItem(productId);
+            } else {
+                item.quantity = quantity;
+                item.subtotal = item.price * quantity;
+                console.log(`  ✓ Updated quantity to ${quantity}`);
+            }
+        } else {
+            console.log(`  ✗ Item not found`);
+        }
+    }
+    
+    calculateSubtotal(): number {
+        let subtotal = 0;
+        for (const item of this.items.values()) {
+            subtotal += item.subtotal;
+        }
+        return subtotal;
+    }
+    
+    calculateTax(): number {
+        return this.calculateSubtotal() * this.taxRate;
+    }
+    
+    calculateShipping(): number {
+        // Free shipping over $50
+        return this.calculateSubtotal() > 50 ? 0 : this.shippingRate;
+    }
+    
+    calculateTotal(): number {
+        return this.calculateSubtotal() + this.calculateTax() + this.calculateShipping();
+    }
+    
+    getCartSummary(): Record<string, any> {
+        const subtotal = this.calculateSubtotal();
+        const tax = this.calculateTax();
+        const shipping = this.calculateShipping();
+        const total = this.calculateTotal();
+        
+        return {
+            customer: this.customerName,
+            itemCount: this.items.size,
+            totalItems: Array.from(this.items.values()).reduce((acc, item) => acc + item.quantity, 0),
+            subtotal: parseFloat(subtotal.toFixed(2)),
+            tax: parseFloat(tax.toFixed(2)),
+            shipping: parseFloat(shipping.toFixed(2)),
+            total: parseFloat(total.toFixed(2)),
+            items: Array.from(this.items.values()).map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+                subtotal: item.subtotal
+            }))
+        };
+    }
+    
+    displayCart(): void {
+        const summary = this.getCartSummary();
+        
+        console.log("\n" + "=".repeat(50));
+        console.log(`🛍️  Shopping Cart - ${summary.customer}`);
+        console.log("=".repeat(50));
+        
+        if (summary.items.length === 0) {
+            console.log("Your cart is empty");
+        } else {
+            console.log("\n📦 Items:");
+            summary.items.forEach((item: any, index: number) => {
+                console.log(`  ${index + 1}. ${item.name}`);
+                console.log(`     ${item.quantity} x $${item.price} = $${item.subtotal}`);
+            });
+            
+            console.log("\n" + "-".repeat(50));
+            console.log(`📊 Summary:`);
+            console.log(`  Subtotal: $${summary.subtotal}`);
+            console.log(`  Tax (10%): $${summary.tax}`);
+            console.log(`  Shipping: $${summary.shipping}`);
+            console.log(`  Total: $${summary.total}`);
+        }
+        console.log("=".repeat(50));
     }
 }
 
 // Main execution
-async function main() {
-    console.log("=== TypeScript Platform Demo ===\\n");
+function main(): void {
+    console.log("=== E-Commerce Shopping Cart ===\n");
     
-    // Create platform
-    const platform = new CodeSpherePlatform("CodeSphere");
-    
-    // Register users
-    const users: User[] = [
-        { id: 1, name: "Alice", email: "alice@example.com", role: "admin" },
-        { id: 2, name: "Bob", email: "bob@example.com", role: "developer" },
-        { id: 3, name: "Charlie", email: "charlie@example.com", role: "viewer" }
+    // Sample products
+    const products: Product[] = [
+        { id: 1, name: "Laptop", price: 999.99, category: "Electronics", inStock: true },
+        { id: 2, name: "Mouse", price: 29.99, category: "Electronics", inStock: true },
+        { id: 3, name: "Keyboard", price: 79.99, category: "Electronics", inStock: true },
+        { id: 4, name: "Monitor", price: 299.99, category: "Electronics", inStock: false },
+        { id: 5, name: "USB Cable", price: 9.99, category: "Accessories", inStock: true }
     ];
     
-    users.forEach(u => platform.registerUser(u));
-    
-    // Login
-    console.log("\\n🔐 Login attempt:");
-    platform.login(1);
-    
-    // Create projects
-    console.log("\\n📦 Creating projects:");
-    platform.createProject({
-        name: "TypeScript Compiler",
-        techStack: ["TypeScript", "Node.js"],
-        ownerId: 1,
-        stars: 1500
+    console.log("Available Products:");
+    products.forEach(p => {
+        console.log(`  ${p.id}. ${p.name} - $${p.price} ${p.inStock ? '✅' : '❌'}`);
     });
     
-    platform.createProject({
-        name: "React Dashboard",
-        techStack: ["TypeScript", "React", "Redux"],
-        ownerId: 2,
-        stars: 890
-    });
+    // Create cart
+    const cart = new ShoppingCart("John Doe");
     
-    platform.createProject({
-        name: "API Gateway",
-        techStack: ["TypeScript", "Node.js", "GraphQL"],
-        ownerId: 1,
-        stars: 2300
-    });
+    // Add items
+    console.log("\n🛒 Adding items to cart:");
+    cart.addItem(products[0]); // Laptop
+    cart.addItem(products[1], 2); // 2 Mice
+    cart.addItem(products[2]); // Keyboard
+    cart.addItem(products[3]); // Monitor (out of stock)
+    cart.addItem(products[4], 3); // 3 USB Cables
     
-    // Get statistics
-    console.log("\\n📊 Platform Statistics:");
-    const stats = platform.getStats();
-    Object.entries(stats).forEach(([key, value]) => {
-        console.log(\`  \${key}: \${JSON.stringify(value)}\`);
-    });
+    // Update quantities
+    console.log("\n🔄 Updating quantities:");
+    cart.updateQuantity(1, 1); // Keep 1 laptop
+    cart.updateQuantity(2, 3); // Increase mice to 3
     
-    // Top projects
-    console.log("\\n🏆 Top Projects:");
-    platform.getTopProjects().forEach((p, i) => {
-        console.log(\`  \${i + 1}. \${p.name} (\${p.stars} stars)\`);
-    });
+    // Display cart
+    cart.displayCart();
+    
+    // Remove item
+    console.log("\n🗑️ Removing item:");
+    cart.removeItem(4);
+    
+    // Final cart
+    cart.displayCart();
+    
+    console.log("\n✅ Shopping session completed!");
 }
 
 // Run the program
-main().catch(console.error);`
+main();`,
+                helloWorld: `console.log("Hello, World!");
+
+const name: string = "TypeScript";
+console.log(\`Welcome to \${name}!\`);`
+            },
+            csharp: {
+                name: 'C#',
+                icon: '#️⃣',
+                version: '10.0',
+                mode: 'lang',
+                language: 'csharp',
+                extension: 'cs',
+                description: 'C# is a modern, object-oriented programming language developed by Microsoft.',
+                commonUse: 'Windows applications, Game development (Unity), Enterprise software, Web services.',
+                sample: `// C# Program - Library Management System
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace LibraryManagement
+{
+    public class Book
+    {
+        public string ISBN { get; set; }
+        public string Title { get; set; }
+        public string Author { get; set; }
+        public int Year { get; set; }
+        public bool IsAvailable { get; set; }
+        
+        public Book(string isbn, string title, string author, int year)
+        {
+            ISBN = isbn;
+            Title = title;
+            Author = author;
+            Year = year;
+            IsAvailable = true;
+        }
+        
+        public override string ToString()
+        {
+            return $"📚 {Title} by {Author} ({Year}) - {(IsAvailable ? "✅ Available" : "❌ Borrowed")}";
+        }
+    }
+    
+    public class Member
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public List<Book> BorrowedBooks { get; set; }
+        
+        public Member(int id, string name, string email)
+        {
+            Id = id;
+            Name = name;
+            Email = email;
+            BorrowedBooks = new List<Book>();
+        }
+        
+        public override string ToString()
+        {
+            return $"👤 {Name} (ID: {Id}) - Books borrowed: {BorrowedBooks.Count}";
+        }
+    }
+    
+    public class Library
+    {
+        private List<Book> books;
+        private List<Member> members;
+        private Dictionary<Book, DateTime> dueDates;
+        
+        public string Name { get; set; }
+        
+        public Library(string name)
+        {
+            Name = name;
+            books = new List<Book>();
+            members = new List<Member>();
+            dueDates = new Dictionary<Book, DateTime>();
+            Console.WriteLine($"📚 Library '{name}' initialized");
+        }
+        
+        public void AddBook(Book book)
+        {
+            books.Add(book);
+            Console.WriteLine($"  ✓ Added: {book.Title}");
+        }
+        
+        public void RegisterMember(Member member)
+        {
+            members.Add(member);
+            Console.WriteLine($"  ✓ Registered: {member.Name}");
+        }
+        
+        public bool BorrowBook(int memberId, string isbn)
+        {
+            var member = members.FirstOrDefault(m => m.Id == memberId);
+            if (member == null)
+            {
+                Console.WriteLine("  ✗ Member not found");
+                return false;
+            }
+            
+            var book = books.FirstOrDefault(b => b.ISBN == isbn && b.IsAvailable);
+            if (book == null)
+            {
+                Console.WriteLine("  ✗ Book not available");
+                return false;
+            }
+            
+            book.IsAvailable = false;
+            member.BorrowedBooks.Add(book);
+            dueDates[book] = DateTime.Now.AddDays(14);
+            
+            Console.WriteLine($"  ✓ {member.Name} borrowed '{book.Title}'");
+            Console.WriteLine($"     Due date: {dueDates[book]:MMM dd, yyyy}");
+            return true;
+        }
+        
+        public bool ReturnBook(int memberId, string isbn)
+        {
+            var member = members.FirstOrDefault(m => m.Id == memberId);
+            if (member == null)
+            {
+                Console.WriteLine("  ✗ Member not found");
+                return false;
+            }
+            
+            var book = member.BorrowedBooks.FirstOrDefault(b => b.ISBN == isbn);
+            if (book == null)
+            {
+                Console.WriteLine("  ✗ Book not borrowed by this member");
+                return false;
+            }
+            
+            book.IsAvailable = true;
+            member.BorrowedBooks.Remove(book);
+            dueDates.Remove(book);
+            
+            Console.WriteLine($"  ✓ {member.Name} returned '{book.Title}'");
+            return true;
+        }
+        
+        public void DisplayBooks()
+        {
+            Console.WriteLine($"\n📖 Books in {Name}:");
+            Console.WriteLine(new string('-', 50));
+            
+            var available = books.Where(b => b.IsAvailable).ToList();
+            var borrowed = books.Where(b => !b.IsAvailable).ToList();
+            
+            Console.WriteLine($"\n✅ Available ({available.Count}):");
+            foreach (var book in available.Take(5))
+            {
+                Console.WriteLine($"  {book}");
+            }
+            if (available.Count > 5)
+                Console.WriteLine($"  ... and {available.Count - 5} more");
+            
+            Console.WriteLine($"\n❌ Borrowed ({borrowed.Count}):");
+            foreach (var book in borrowed.Take(5))
+            {
+                var dueDate = dueDates.ContainsKey(book) ? dueDates[book] : DateTime.Now;
+                var daysLeft = (dueDate - DateTime.Now).Days;
+                Console.WriteLine($"  {book.Title} (Due in {daysLeft} days)");
+            }
+        }
+        
+        public void DisplayMembers()
+        {
+            Console.WriteLine($"\n👥 Library Members ({members.Count}):");
+            Console.WriteLine(new string('-', 50));
+            foreach (var member in members)
+            {
+                Console.WriteLine($"  {member}");
+            }
+        }
+        
+        public void GenerateReport()
+        {
+            Console.WriteLine("\n" + "=".Repeat(60));
+            Console.WriteLine($"📊 LIBRARY REPORT - {Name}");
+            Console.WriteLine("=".Repeat(60));
+            
+            Console.WriteLine($"\n📊 Statistics:");
+            Console.WriteLine($"  Total Books: {books.Count}");
+            Console.WriteLine($"  Available: {books.Count(b => b.IsAvailable)}");
+            Console.WriteLine($"  Borrowed: {books.Count(b => !b.IsAvailable)}");
+            Console.WriteLine($"  Total Members: {members.Count}");
+            Console.WriteLine($"  Active Borrows: {members.Sum(m => m.BorrowedBooks.Count)}");
+            
+            Console.WriteLine("\n" + "=".Repeat(60));
+        }
+    }
+    
+    public static class StringExtensions
+    {
+        public static string Repeat(this string s, int count)
+        {
+            return string.Join("", Enumerable.Repeat(s, count));
+        }
+    }
+    
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("=== Library Management System ===\n");
+            
+            Console.Write("Enter your name: ");
+            string name = Console.ReadLine();
+            Console.WriteLine($"Hello, {name}! Welcome to the Library!\n");
+            
+            // Create library
+            var library = new Library("City Central Library");
+            
+            // Add books
+            Console.WriteLine("\n📚 Adding books:");
+            library.AddBook(new Book("978-0", "The Great Gatsby", "F. Scott Fitzgerald", 1925));
+            library.AddBook(new Book("978-1", "To Kill a Mockingbird", "Harper Lee", 1960));
+            library.AddBook(new Book("978-2", "1984", "George Orwell", 1949));
+            library.AddBook(new Book("978-3", "Pride and Prejudice", "Jane Austen", 1813));
+            library.AddBook(new Book("978-4", "The Catcher in the Rye", "J.D. Salinger", 1951));
+            
+            // Register members
+            Console.WriteLine("\n📝 Registering members:");
+            library.RegisterMember(new Member(1, "Alice Johnson", "alice@email.com"));
+            library.RegisterMember(new Member(2, "Bob Smith", "bob@email.com"));
+            
+            // Borrow books
+            Console.WriteLine("\n🔄 Processing borrows:");
+            library.BorrowBook(1, "978-0");
+            library.BorrowBook(1, "978-2");
+            library.BorrowBook(2, "978-1");
+            
+            // Display books
+            library.DisplayBooks();
+            
+            // Return a book
+            Console.WriteLine("\n🔄 Processing return:");
+            library.ReturnBook(1, "978-0");
+            
+            // Display members
+            library.DisplayMembers();
+            
+            // Generate report
+            library.GenerateReport();
+            
+            Console.WriteLine("\n✅ Library session completed!");
+        }
+    }
+}`,
+                helloWorld: `using System;
+
+class Program {
+    static void Main() {
+        Console.WriteLine("Hello, World!");
+    }
+}`
+            },
+            swift: {
+                name: 'Swift',
+                icon: '⚡',
+                version: '5.3.3',
+                mode: 'lang',
+                language: 'swift',
+                extension: 'swift',
+                description: 'Swift is a powerful and intuitive programming language for iOS, macOS, and beyond.',
+                commonUse: 'iOS/macOS app development, Server-side Swift, Cross-platform mobile apps.',
+                sample: `// Swift Program - Fitness Tracker
+import Foundation
+
+// Protocol for workout tracking
+protocol WorkoutTrackable {
+    var name: String { get }
+    var duration: TimeInterval { get set }
+    var caloriesBurned: Double { get }
+    func summary() -> String
+}
+
+// Workout types
+enum WorkoutType: String {
+    case running = "🏃 Running"
+    case cycling = "🚴 Cycling"
+    case swimming = "🏊 Swimming"
+    case weightlifting = "🏋️ Weightlifting"
+    case yoga = "🧘 Yoga"
+}
+
+// Workout class
+class Workout: WorkoutTrackable, CustomStringConvertible {
+    let name: String
+    let type: WorkoutType
+    var duration: TimeInterval
+    let date: Date
+    private let caloriesPerMinute: Double
+    
+    var caloriesBurned: Double {
+        return duration * caloriesPerMinute / 60.0
+    }
+    
+    init(name: String, type: WorkoutType, duration: TimeInterval) {
+        self.name = name
+        self.type = type
+        self.duration = duration
+        self.date = Date()
+        
+        // Set calories per minute based on workout type
+        switch type {
+        case .running:
+            self.caloriesPerMinute = 600.0 // calories per hour
+        case .cycling:
+            self.caloriesPerMinute = 500.0
+        case .swimming:
+            self.caloriesPerMinute = 550.0
+        case .weightlifting:
+            self.caloriesPerMinute = 400.0
+        case .yoga:
+            self.caloriesPerMinute = 300.0
+        }
+    }
+    
+    func summary() -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        
+        return """
+            \(type.rawValue): \(name)
+            📅 \(formatter.string(from: date))
+            ⏱️ Duration: \(String(format: "%.1f", duration / 60)) minutes
+            🔥 Calories: \(String(format: "%.0f", caloriesBurned))
+            """
+    }
+    
+    var description: String {
+        return "\(type.rawValue): \(name) - \(String(format: "%.0f", duration / 60))min"
+    }
+}
+
+// Fitness tracker class
+class FitnessTracker {
+    var userName: String
+    var workouts: [Workout]
+    var dailyGoal: Double // calories
+    
+    init(userName: String, dailyGoal: Double = 500.0) {
+        self.userName = userName
+        self.workouts = []
+        self.dailyGoal = dailyGoal
+        print("✅ Fitness tracker initialized for \(userName)")
+    }
+    
+    func addWorkout(_ workout: Workout) {
+        workouts.append(workout)
+        print("  ✓ Added: \(workout.name) (\(workout.type.rawValue))")
+    }
+    
+    func totalCaloriesBurned() -> Double {
+        return workouts.reduce(0) { $0 + $1.caloriesBurned }
+    }
+    
+    func totalWorkoutTime() -> TimeInterval {
+        return workouts.reduce(0) { $0 + $1.duration }
+    }
+    
+    func workoutsByType(_ type: WorkoutType) -> [Workout] {
+        return workouts.filter { $0.type == type }
+    }
+    
+    func todaysWorkouts() -> [Workout] {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        return workouts.filter { workout in
+            calendar.isDate(workout.date, inSameDayAs: today)
+        }
+    }
+    
+    func weeklyProgress() -> Double {
+        let calendar = Calendar.current
+        let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: Date())!
+        
+        let weeklyCalories = workouts
+            .filter { $0.date >= oneWeekAgo }
+            .reduce(0) { $0 + $1.caloriesBurned }
+        
+        let weeklyGoal = dailyGoal * 7
+        return (weeklyCalories / weeklyGoal) * 100
+    }
+    
+    func generateReport() {
+        print("\n" + "=".repeat(60))
+        print("📊 FITNESS REPORT - \(userName)")
+        print("=".repeat(60))
+        
+        let totalCal = totalCaloriesBurned()
+        let totalTime = totalWorkoutTime()
+        let todayWorkouts = todaysWorkouts()
+        
+        print("\n📈 Overall Statistics:")
+        print("  Total Workouts: \(workouts.count)")
+        print("  Total Time: \(String(format: "%.1f", totalTime / 3600)) hours")
+        print("  Total Calories: \(String(format: "%.0f", totalCal))")
+        
+        if workouts.count > 0 {
+            print("  Avg Calories/Workout: \(String(format: "%.0f", totalCal / Double(workouts.count)))")
+        }
+        
+        print("\n📅 Today's Activity:")
+        if todayWorkouts.isEmpty {
+            print("  No workouts logged today")
+        } else {
+            for workout in todayWorkouts {
+                print("  • \(workout.summary())")
+            }
+            let todayCal = todayWorkouts.reduce(0) { $0 + $1.caloriesBurned }
+            let progress = min((todayCal / dailyGoal) * 100, 100)
+            print("  🎯 Daily Goal Progress: \(String(format: "%.1f", progress))%")
+        }
+        
+        print("\n💪 Workout Breakdown:")
+        let running = workoutsByType(.running)
+        let cycling = workoutsByType(.cycling)
+        let swimming = workoutsByType(.swimming)
+        
+        if !running.isEmpty {
+            print("  🏃 Running: \(running.count) workouts - \(String(format: "%.0f", running.reduce(0) { $0 + $1.caloriesBurned })) cal")
+        }
+        if !cycling.isEmpty {
+            print("  🚴 Cycling: \(cycling.count) workouts - \(String(format: "%.0f", cycling.reduce(0) { $0 + $1.caloriesBurned })) cal")
+        }
+        if !swimming.isEmpty {
+            print("  🏊 Swimming: \(swimming.count) workouts - \(String(format: "%.0f", swimming.reduce(0) { $0 + $1.caloriesBurned })) cal")
+        }
+        
+        let weeklyProgress = weeklyProgress()
+        print("\n📊 Weekly Progress: \(String(format: "%.1f", weeklyProgress))%")
+        
+        let progressBar = String(repeating: "█", count: Int(weeklyProgress / 10)) +
+                         String(repeating: "░", count: 10 - Int(weeklyProgress / 10))
+        print("  [\(progressBar)]")
+        
+        print("\n" + "=".repeat(60))
+    }
+    
+    func listWorkouts() {
+        print("\n📋 Workout History:")
+        print("-".repeat(50))
+        
+        let sortedWorkouts = workouts.sorted { $0.date > $1.date }
+        for (index, workout) in sortedWorkouts.prefix(10).enumerated() {
+            print("\(index + 1). \(workout)")
+        }
+        
+        if workouts.count > 10 {
+            print("   ... and \(workouts.count - 10) more")
+        }
+    }
+}
+
+// String extension for repeating
+extension String {
+    static func `repeat`(_ count: Int) -> String {
+        return String(repeating: self, count: count)
+    }
+    
+    func `repeat`(_ count: Int) -> String {
+        return String(repeating: self, count: count)
+    }
+}
+
+// Main program
+print("=== Fitness Tracker ===\n")
+
+print("Enter your name: ", terminator: "")
+let name = readLine() ?? "User"
+print("Hello, \(name)! Ready to get fit?\n")
+
+// Create tracker
+let tracker = FitnessTracker(userName: name, dailyGoal: 500)
+
+// Add workouts
+print("\n💪 Logging workouts:")
+tracker.addWorkout(Workout(name: "Morning Run", type: .running, duration: 30 * 60))
+tracker.addWorkout(Workout(name: "Evening Swim", type: .swimming, duration: 45 * 60))
+tracker.addWorkout(Workout(name: "Weight Training", type: .weightlifting, duration: 60 * 60))
+tracker.addWorkout(Workout(name: "Yoga Session", type: .yoga, duration: 40 * 60))
+
+// List workouts
+tracker.listWorkouts()
+
+// Generate report
+tracker.generateReport()
+
+print("\n✅ Fitness tracking complete! Keep up the good work!")`,
+                helloWorld: `print("Hello, World!")
+
+let name = "Swift"
+print("Welcome to \(name)!")`
+            },
+            r: {
+                name: 'R',
+                icon: '📊',
+                version: '4.1.2',
+                mode: 'lang',
+                language: 'r',
+                extension: 'r',
+                description: 'R is a programming language for statistical computing and graphics.',
+                commonUse: 'Statistical analysis, Data visualization, Machine learning, Research, Data science.',
+                sample: `# R Program - Statistical Data Analysis
+# Load required libraries (simulated)
+
+# Create a data analysis class using S3 style
+create_analyzer <- function(name) {
+  analyzer <- list(
+    name = name,
+    data = numeric(0),
+    results = list()
+  )
+  class(analyzer) <- "DataAnalyzer"
+  return(analyzer)
+}
+
+# Add data method
+add_data <- function(analyzer, values) {
+  analyzer$data <- c(analyzer$data, values)
+  cat("  ✓ Added", length(values), "data points\n")
+  return(analyzer)
+}
+
+# Summary method
+summary.DataAnalyzer <- function(object, ...) {
+  data <- object$data
+  if (length(data) == 0) {
+    return("No data available")
+  }
+  
+  list(
+    count = length(data),
+    mean = mean(data),
+    median = median(data),
+    sd = sd(data),
+    var = var(data),
+    min = min(data),
+    max = max(data),
+    range = diff(range(data)),
+    q1 = quantile(data, 0.25),
+    q3 = quantile(data, 0.75),
+    iqr = IQR(data)
+  )
+}
+
+# Plot function (simulated)
+plot.DataAnalyzer <- function(x, ...) {
+  data <- x$data
+  if (length(data) == 0) {
+    cat("No data to plot\n")
+    return()
+  }
+  
+  cat("\n📊 Data Distribution:\n")
+  cat("====================\n")
+  
+  # Create a simple histogram in text
+  hist_data <- hist(data, plot = FALSE)
+  max_count <- max(hist_data$counts)
+  
+  for (i in seq_along(hist_data$breaks[-1])) {
+    bar_length <- round(hist_data$counts[i] / max_count * 30)
+    bar <- paste(rep("█", bar_length), collapse = "")
+    cat(sprintf("[%4.1f - %4.1f] %s %d\n", 
+                hist_data$breaks[i], 
+                hist_data$breaks[i+1],
+                bar,
+                hist_data$counts[i]))
+  }
+}
+
+# Analyze function
+analyze <- function(analyzer) {
+  cat("\n📈 Statistical Analysis for", analyzer$name, "\n")
+  cat("====================================\n")
+  
+  stats <- summary(analyzer)
+  
+  cat("\n📊 Descriptive Statistics:\n")
+  cat(sprintf("  Count: %d\n", stats$count))
+  cat(sprintf("  Mean: %.2f\n", stats$mean))
+  cat(sprintf("  Median: %.2f\n", stats$median))
+  cat(sprintf("  Standard Deviation: %.2f\n", stats$sd))
+  cat(sprintf("  Variance: %.2f\n", stats$var))
+  
+  cat("\n📏 Range Statistics:\n")
+  cat(sprintf("  Min: %.2f\n", stats$min))
+  cat(sprintf("  Max: %.2f\n", stats$max))
+  cat(sprintf("  Range: %.2f\n", stats$range))
+  
+  cat("\n📐 Quartiles:\n")
+  cat(sprintf("  Q1 (25%%): %.2f\n", stats$q1))
+  cat(sprintf("  Q3 (75%%): %.2f\n", stats$q3))
+  cat(sprintf("  IQR: %.2f\n", stats$iqr))
+  
+  # Check for outliers
+  lower_bound <- stats$q1 - 1.5 * stats$iqr
+  upper_bound <- stats$q3 + 1.5 * stats$iqr
+  outliers <- analyzer$data[analyzer$data < lower_bound | analyzer$data > upper_bound]
+  
+  cat("\n🔍 Outlier Analysis:\n")
+  cat(sprintf("  Outliers found: %d\n", length(outliers)))
+  if (length(outliers) > 0) {
+    cat("  Values:", paste(sprintf("%.2f", outliers), collapse = ", "), "\n")
+  }
+  
+  # Normality test (simplified)
+  skewness <- sum((analyzer$data - stats$mean)^3) / (stats$count * stats$sd^3)
+  cat("\n📈 Distribution Shape:\n")
+  cat(sprintf("  Skewness: %.2f ", skewness))
+  if (abs(skewness) < 0.5) {
+    cat("(Approximately symmetric)\n")
+  } else if (skewness > 0) {
+    cat("(Right-skewed)\n")
+  } else {
+    cat("(Left-skewed)\n")
+  }
+  
+  return(invisible(analyzer))
+}
+
+# Main program
+cat("=== R Statistical Data Analysis ===\n\n")
+
+# Get user input
+cat("Enter your name: ")
+name <- readline()
+cat("Hello,", name, "! Let's analyze some data.\n\n")
+
+# Create analyzer
+analyzer <- create_analyzer(name)
+
+# Generate sample data (normal distribution + some outliers)
+set.seed(123)  # for reproducibility
+sample_data <- c(
+  rnorm(50, mean = 100, sd = 15),  # normal data
+  rnorm(10, mean = 150, sd = 10),   # outliers on high end
+  rnorm(5, mean = 50, sd = 8)       # outliers on low end
+)
+
+# Add data
+analyzer <- add_data(analyzer, sample_data)
+
+# Perform analysis
+analyze(analyzer)
+
+# Create visualization
+plot(analyzer)
+
+# Generate summary report
+cat("\n📋 Summary Report for", analyzer$name, "\n")
+cat("====================================\n")
+
+# Calculate confidence interval for mean
+stats <- summary(analyzer)
+se <- stats$sd / sqrt(stats$count)
+margin <- 1.96 * se
+ci_lower <- stats$mean - margin
+ci_upper <- stats$mean + margin
+
+cat(sprintf("\n📊 95%% Confidence Interval for Mean:\n"))
+cat(sprintf("  [%.2f, %.2f]\n", ci_lower, ci_upper))
+
+# Correlation with index (time trend)
+index <- seq_along(analyzer$data)
+correlation <- cor(index, analyzer$data)
+cat(sprintf("\n📈 Time Trend Correlation: %.3f ", correlation))
+if (abs(correlation) < 0.1) {
+  cat("(No significant trend)\n")
+} else if (correlation > 0) {
+  cat("(Increasing trend)\n")
+} else {
+  cat("(Decreasing trend)\n")
+}
+
+cat("\n✅ Analysis complete!\n")`,
+                helloWorld: `# Hello World Program
+print("Hello, World!")
+
+name <- readline(prompt = "What's your name? ")
+cat("Hello,", name, "! Welcome to R!\n")`
             }
         };
+
+        // Piston API endpoints
+        const PISTON_API = 'https://emkc.org/api/v2/piston';
 
         let currentMode = 'web';
         let currentLang = 'html';
         let isRunning = false;
+        let editorTabs = ['main'];
+        let currentTab = 'main';
+        let isFullscreen = false;
 
         // Initialize
         window.onload = function() {
-            updateLanguageSelector();
             loadLanguage('html');
-            updateLanguageInfo();
+            updateLanguageSelector();
+            loadSavedCode();
+            showToast('Welcome to CodeSphere!', 'success');
         };
 
-        function switchMode(mode) {
+        // Load saved code from localStorage
+        function loadSavedCode() {
+            const savedCode = localStorage.getItem('codesphere_code');
+            if (savedCode) {
+                document.getElementById('code-editor').value = savedCode;
+            }
+        }
+
+        // Save code to localStorage
+        function saveCode() {
+            const code = document.getElementById('code-editor').value;
+            localStorage.setItem('codesphere_code', code);
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const msg = document.getElementById('toast-message');
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            
+            icon.textContent = icons[type] || icons.info;
+            msg.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function switchMode(mode, event) {
             currentMode = mode;
             
             // Update tabs
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            if (event) event.target.classList.add('active');
             
             // Update language info
             updateLanguageInfo();
@@ -1955,7 +3572,7 @@ main().catch(console.error);`
             if (currentMode === 'web') {
                 infoBox.innerHTML = '💡 <strong>Web Development Mode:</strong> Write HTML, CSS, and JavaScript with live preview. Perfect for building and testing web pages.';
             } else {
-                infoBox.innerHTML = '💡 <strong>Programming Languages Mode:</strong> Compile and run code in various programming languages. Supports stdin input and shows detailed output.';
+                infoBox.innerHTML = '💡 <strong>Programming Languages Mode:</strong> Compile and run code using our powerful cloud compiler. Supports stdin input and shows detailed output.';
             }
         }
 
@@ -1968,13 +3585,13 @@ main().catch(console.error);`
                     const btn = document.createElement('button');
                     btn.className = `lang-btn ${key === currentLang ? 'active' : ''}`;
                     btn.innerHTML = `${lang.icon} ${lang.name} <span style="font-size:0.8rem; opacity:0.7;">${lang.version}</span>`;
-                    btn.onclick = () => loadLanguage(key);
+                    btn.onclick = (e) => loadLanguage(key, e);
                     selector.appendChild(btn);
                 }
             });
         }
 
-        function loadLanguage(lang) {
+        function loadLanguage(lang, event) {
             currentLang = lang;
             
             // Update active state
@@ -1998,9 +3615,14 @@ main().catch(console.error);`
             document.getElementById('editor-title').innerHTML = `${languages[lang].name} Editor`;
             document.getElementById('version-badge').textContent = languages[lang].version;
             
+            // Update tab
+            document.getElementById('editor-tab-icon').textContent = languages[lang].icon;
+            document.getElementById('editor-tab-name').textContent = `main.${languages[lang].extension}`;
+            
             // Update language info
             const infoBox = document.querySelector('.info-box p');
-            infoBox.innerHTML = `💡 <strong>${languages[lang].name} ${languages[lang].version}:</strong> ${languages[lang].description}`;
+            infoBox.innerHTML = `💡 <strong>${languages[lang].name} ${languages[lang].version}:</strong> ${languages[lang].description}<br>
+            <span style="color: #667eea;">Common Use:</span> ${languages[lang].commonUse}`;
             
             // Clear output
             document.getElementById('output').innerHTML = '// Ready to compile. Click Run to execute your code.';
@@ -2009,9 +3631,11 @@ main().catch(console.error);`
             if (languages[lang].mode === 'web') {
                 runCode();
             }
+            
+            saveCode();
         }
 
-        function runCode() {
+        async function runCode() {
             if (isRunning) return;
             
             const code = document.getElementById('code-editor').value;
@@ -2020,8 +3644,10 @@ main().catch(console.error);`
             const runBtn = document.getElementById('run-btn');
             const previewStatus = document.getElementById('preview-status');
             
+            saveCode();
+            
             isRunning = true;
-            runBtn.innerHTML = '<span class="loading"></span> Running...';
+            runBtn.innerHTML = '<span class="loading"></span> Compiling...';
             runBtn.disabled = true;
             
             if (currentMode === 'web') {
@@ -2029,111 +3655,166 @@ main().catch(console.error);`
                 const preview = document.getElementById('preview');
                 const doc = preview.contentDocument || preview.contentWindow.document;
                 
-                if (currentLang === 'html') {
-                    doc.open();
-                    doc.write(code);
-                    doc.close();
-                    output.innerHTML = '✓ HTML rendered successfully';
-                    previewStatus.textContent = '✓ Live';
-                } else if (currentLang === 'css') {
-                    doc.open();
-                    doc.write(`
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <style>${code}</style>
-                        </head>
-                        <body>
-                            <div class="container">
-                                <div class="card">
-                                    <h1>CSS Preview</h1>
-                                    <p>This is a sample HTML to demonstrate your CSS styles.</p>
-                                    <button class="button">Sample Button</button>
+                try {
+                    if (currentLang === 'html') {
+                        doc.open();
+                        doc.write(code);
+                        doc.close();
+                        output.innerHTML = '<span class="output-success">✓ HTML rendered successfully</span>';
+                        previewStatus.textContent = '✓ Live';
+                    } else if (currentLang === 'css') {
+                        doc.open();
+                        doc.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <style>${code}</style>
+                            </head>
+                            <body>
+                                <div class="container" style="padding: 20px;">
+                                    <div class="card" style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                                        <h1 style="margin-bottom: 20px;">CSS Preview</h1>
+                                        <p style="margin-bottom: 20px;">This is a sample HTML to demonstrate your CSS styles.</p>
+                                        <button class="button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer;">Sample Button</button>
+                                    </div>
                                 </div>
-                            </div>
-                        </body>
-                        </html>
-                    `);
-                    doc.close();
-                    output.innerHTML = '✓ CSS applied successfully';
-                    previewStatus.textContent = '✓ Live';
-                } else if (currentLang === 'js') {
-                    doc.open();
-                    doc.write(`
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <title>JavaScript Demo</title>
-                            <style>
-                                body { font-family: Arial; padding: 20px; }
-                                #app { text-align: center; }
-                                button { 
-                                    background: linear-gradient(135deg, #667eea, #764ba2);
-                                    color: white;
-                                    border: none;
-                                    padding: 12px 30px;
-                                    border-radius: 25px;
-                                    cursor: pointer;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <div id="app"></div>
-                            <script>
-                                try {
-                                    ${code}
-                                } catch(e) {
-                                    document.body.innerHTML += '<div style="color:red; padding:20px;">Error: ' + e.message + '</div>';
-                                }
-                            <\/script>
-                        </body>
-                        </html>
-                    `);
-                    doc.close();
-                    output.innerHTML = '✓ JavaScript executed successfully';
-                    previewStatus.textContent = '✓ Live';
+                            </body>
+                            </html>
+                        `);
+                        doc.close();
+                        output.innerHTML = '<span class="output-success">✓ CSS applied successfully</span>';
+                        previewStatus.textContent = '✓ Live';
+                    } else if (currentLang === 'js') {
+                        doc.open();
+                        doc.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <title>JavaScript Demo</title>
+                                <style>
+                                    body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+                                    #app { text-align: center; }
+                                    button { 
+                                        background: linear-gradient(135deg, #667eea, #764ba2);
+                                        color: white;
+                                        border: none;
+                                        padding: 12px 30px;
+                                        border-radius: 25px;
+                                        cursor: pointer;
+                                        margin: 10px;
+                                    }
+                                    #output { 
+                                        margin-top: 20px; 
+                                        padding: 20px; 
+                                        background: white; 
+                                        border-radius: 10px;
+                                        text-align: left;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <div id="app"></div>
+                                <div id="output"></div>
+                                <script>
+                                    try {
+                                        // Redirect console.log to output
+                                        const output = document.getElementById('output');
+                                        const originalLog = console.log;
+                                        console.log = function(...args) {
+                                            output.innerHTML += args.join(' ') + '<br>';
+                                            originalLog.apply(console, args);
+                                        };
+                                        
+                                        ${code}
+                                        
+                                        if (!document.getElementById('app').innerHTML) {
+                                            document.getElementById('app').innerHTML = '<h1>JavaScript Executed</h1><p>Check the output below or browser console.</p>';
+                                        }
+                                    } catch(e) {
+                                        document.getElementById('output').innerHTML = '<span style="color:red">Error: ' + e.message + '</span>';
+                                    }
+                                <\/script>
+                            </body>
+                            </html>
+                        `);
+                        doc.close();
+                        output.innerHTML = '<span class="output-success">✓ JavaScript executed successfully</span>';
+                        previewStatus.textContent = '✓ Live';
+                    }
+                    showToast('Code executed successfully!', 'success');
+                } catch (error) {
+                    output.innerHTML = `<span class="output-error">✗ Error: ${error.message}</span>`;
+                    previewStatus.textContent = '✗ Error';
+                    showToast('Error executing code', 'error');
                 }
             } else {
-                // Language mode - simulate compilation
-                setTimeout(() => {
-                    let result = '';
+                // Language mode - use Piston API
+                const lang = languages[currentLang];
+                
+                try {
+                    const response = await fetch(`${PISTON_API}/execute`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            language: lang.language,
+                            version: lang.version,
+                            files: [
+                                {
+                                    name: `main.${lang.extension}`,
+                                    content: code
+                                }
+                            ],
+                            stdin: stdin,
+                            args: [],
+                            compile_timeout: 10000,
+                            run_timeout: 3000
+                        })
+                    });
                     
-                    if (code.includes('fibonacci') || code.includes('Calculator')) {
-                        const name = stdin.trim() || 'John';
-                        result = `Enter your name: ${name}\nHello, ${name}!\n\n📊 Program Output:\n`;
-                        
-                        if (code.includes('Calculator')) {
-                            result += `10 + 5 = 15\n6 × 7 = 42\n\n📊 Calculation History for ${name}:\n  • 10 + 5 = 15\n  • 6 × 7 = 42\n\n📈 Fibonacci sequence up to 10:\n0 1 1 2 3 5 8 13 21 34 \n`;
-                        } else {
-                            result += `Performing calculations...\n✓ Task completed successfully!\n`;
+                    const result = await response.json();
+                    
+                    if (result.run && result.run.output) {
+                        let outputText = result.run.output;
+                        if (result.run.stderr) {
+                            outputText += '\n\n' + result.run.stderr;
                         }
-                    } else if (code.includes('Student') || code.includes('student')) {
-                        result = `Enter student name: ${stdin || 'John'}\nEnter student age: 20\n\n📋 Student Information:\n  Name: ${stdin || 'John'}\n  Age: 20\n  Grades: [85, 90, 78, 92, 88]\n  Average: 86.60\n`;
-                    } else if (code.includes('Task') || code.includes('task')) {
-                        result = `✓ Task Manager initialized\n  ✓ Added tasks\n\n📋 Tasks:\n  ✅ [0] Complete project\n  ⭕ [1] Review code\n\n📊 Statistics:\n  Total: 5\n  Completed: 2\n  Pending: 3\n`;
+                        
+                        // Format output
+                        const lines = outputText.split('\n');
+                        let formattedOutput = '';
+                        lines.forEach(line => {
+                            if (line.includes('Error') || line.includes('error')) {
+                                formattedOutput += `<span class="output-error">${escapeHtml(line)}</span>\n`;
+                            } else if (line.includes('Warning') || line.includes('warning')) {
+                                formattedOutput += `<span class="output-warning">${escapeHtml(line)}</span>\n`;
+                            } else {
+                                formattedOutput += escapeHtml(line) + '\n';
+                            }
+                        });
+                        
+                        output.innerHTML = `<span class="output-success">✓ Compilation successful</span>\n\n${formattedOutput}`;
+                        showToast('Code compiled successfully!', 'success');
                     } else {
-                        result = `Program executed successfully!\nOutput: ${stdin || 'Hello, World!'}\n`;
+                        output.innerHTML = '<span class="output-warning">⚠ No output generated</span>';
                     }
-                    
-                    output.innerHTML = `<span style="color: #10b981;">✓ Compilation successful</span>\n\n${result}`;
-                    
-                    isRunning = false;
-                    runBtn.innerHTML = '<span>▶</span> Run Code';
-                    runBtn.disabled = false;
-                }, 1500);
+                } catch (error) {
+                    output.innerHTML = `<span class="output-error">✗ Error: ${error.message}</span>`;
+                    showToast('Compilation failed', 'error');
+                }
             }
             
-            // Safety timeout
-            setTimeout(() => {
-                if (isRunning) {
-                    isRunning = false;
-                    runBtn.innerHTML = '<span>▶</span> Run Code';
-                    runBtn.disabled = false;
-                    if (currentMode !== 'web') {
-                        output.innerHTML = '⚠️ Execution timeout';
-                    }
-                }
-            }, 5000);
+            isRunning = false;
+            runBtn.innerHTML = '<span>▶</span> Run Code';
+            runBtn.disabled = false;
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function clearCode() {
@@ -2146,18 +3827,194 @@ main().catch(console.error);`
                     document.getElementById('preview').srcdoc = '';
                     document.getElementById('preview-status').textContent = 'Ready';
                 }
+                
+                localStorage.removeItem('codesphere_code');
+                showToast('Editor cleared', 'info');
+            }
+        }
+
+        function clearStdin() {
+            document.getElementById('stdin-input').value = '';
+            showToast('Input cleared', 'info');
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '// Output cleared';
+            showToast('Output cleared', 'info');
+        }
+
+        function copyOutput() {
+            const output = document.getElementById('output').innerText;
+            navigator.clipboard.writeText(output).then(() => {
+                showToast('Output copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy', 'error');
+            });
+        }
+
+        function pasteStdin() {
+            navigator.clipboard.readText().then(text => {
+                document.getElementById('stdin-input').value = text;
+                showToast('Pasted from clipboard', 'success');
+            }).catch(() => {
+                showToast('Failed to paste', 'error');
+            });
+        }
+
+        function loadHelloWorld() {
+            const lang = languages[currentLang];
+            if (lang && lang.helloWorld) {
+                document.getElementById('code-editor').value = lang.helloWorld;
+                showToast(`Loaded Hello World for ${lang.name}`, 'success');
+                saveCode();
+                
+                if (lang.mode === 'web') {
+                    runCode();
+                }
             }
         }
 
         function loadSample() {
             loadLanguage(currentLang);
+            showToast('Loaded sample code', 'success');
         }
+
+        function formatCode() {
+            // Simple formatting - just trim lines
+            const editor = document.getElementById('code-editor');
+            const lines = editor.value.split('\n');
+            const formatted = lines.map(line => line.trim()).join('\n');
+            editor.value = formatted;
+            showToast('Code formatted', 'success');
+            saveCode();
+        }
+
+        function switchEditorView(view) {
+            const toolbarBtns = document.querySelectorAll('.toolbar-btn');
+            toolbarBtns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const editorWrapper = document.getElementById('editor-wrapper');
+            const previewSection = document.getElementById('preview-section');
+            
+            switch(view) {
+                case 'editor':
+                    editorWrapper.style.display = 'block';
+                    previewSection.style.display = 'none';
+                    break;
+                case 'preview':
+                    editorWrapper.style.display = 'none';
+                    previewSection.style.display = 'block';
+                    break;
+                case 'both':
+                    editorWrapper.style.display = 'block';
+                    previewSection.style.display = 'block';
+                    break;
+            }
+        }
+
+        function toggleFullscreen() {
+            const container = document.getElementById('preview-container');
+            isFullscreen = !isFullscreen;
+            
+            if (isFullscreen) {
+                container.classList.add('fullscreen');
+                document.body.style.overflow = 'hidden';
+            } else {
+                container.classList.remove('fullscreen');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function refreshPreview() {
+            if (currentMode === 'web') {
+                runCode();
+                showToast('Preview refreshed', 'success');
+            }
+        }
+
+        function openPreviewInNewTab() {
+            const preview = document.getElementById('preview');
+            const previewDoc = preview.contentDocument || preview.contentWindow.document;
+            const html = previewDoc.documentElement.outerHTML;
+            
+            const newWindow = window.open();
+            newWindow.document.write(html);
+            newWindow.document.close();
+        }
+
+        function createNewTab() {
+            const tabName = `tab-${editorTabs.length + 1}`;
+            editorTabs.push(tabName);
+            
+            const container = document.getElementById('editor-tabs-container');
+            const newTab = document.createElement('button');
+            newTab.className = 'editor-tab';
+            newTab.setAttribute('data-tab', tabName);
+            newTab.innerHTML = `
+                <span>📄</span>
+                <span>${tabName}.${languages[currentLang].extension}</span>
+                <span class="editor-tab-close" onclick="closeTab('${tabName}', event)">✕</span>
+            `;
+            newTab.onclick = () => switchTab(tabName);
+            
+            container.insertBefore(newTab, container.lastElementChild);
+            switchTab(tabName);
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.editor-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            currentTab = tabName;
+            
+            // Load tab content from localStorage if exists
+            const savedContent = localStorage.getItem(`codesphere_tab_${tabName}`);
+            if (savedContent) {
+                document.getElementById('code-editor').value = savedContent;
+            }
+        }
+
+        function closeTab(tabName, event) {
+            event.stopPropagation();
+            
+            if (editorTabs.length > 1) {
+                const index = editorTabs.indexOf(tabName);
+                editorTabs.splice(index, 1);
+                
+                const tabElement = document.querySelector(`[data-tab="${tabName}"]`);
+                tabElement.remove();
+                
+                // Switch to first tab
+                switchTab(editorTabs[0]);
+                
+                // Remove from localStorage
+                localStorage.removeItem(`codesphere_tab_${tabName}`);
+            } else {
+                showToast('Cannot close the last tab', 'warning');
+            }
+        }
+
+        // Auto-save every 30 seconds
+        setInterval(saveCode, 30000);
 
         // Make functions global
         window.switchMode = switchMode;
         window.runCode = runCode;
         window.clearCode = clearCode;
+        window.loadHelloWorld = loadHelloWorld;
         window.loadSample = loadSample;
+        window.formatCode = formatCode;
+        window.clearStdin = clearStdin;
+        window.clearOutput = clearOutput;
+        window.copyOutput = copyOutput;
+        window.pasteStdin = pasteStdin;
+        window.switchEditorView = switchEditorView;
+        window.toggleFullscreen = toggleFullscreen;
+        window.refreshPreview = refreshPreview;
+        window.openPreviewInNewTab = openPreviewInNewTab;
+        window.createNewTab = createNewTab;
     </script>
 </body>
 </html>
