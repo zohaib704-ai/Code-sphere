@@ -415,11 +415,25 @@
             border-radius: 8px;
             padding: 1rem;
             min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
             color: #d4d4d4;
             font-family: monospace;
             white-space: pre-wrap;
             font-size: 14px;
             line-height: 1.6;
+        }
+
+        .output-area .success {
+            color: #10b981;
+        }
+
+        .output-area .error {
+            color: #ef4444;
+        }
+
+        .output-area .warning {
+            color: #f59e0b;
         }
 
         /* Controls */
@@ -475,6 +489,11 @@
             padding: 2rem;
             background: #f8fafc;
             border-top: 1px solid #e2e8f0;
+            display: none;
+        }
+
+        .preview-section.active {
+            display: block;
         }
 
         .preview-header {
@@ -632,6 +651,31 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-left: 4px solid #667eea;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .io-section {
@@ -685,14 +729,14 @@
     <!-- Hero Section -->
     <section class="hero">
         <h1>The Ultimate Online Compiler</h1>
-        <p>Write, compile, and run code in 10+ programming languages directly in your browser. No setup, no installations, just pure coding.</p>
+        <p>Write, compile, and run code in 12+ programming languages directly in your browser. No setup, no installations, just pure coding.</p>
         <div class="hero-badges">
-            <span class="badge">🐍 Python 3.11</span>
-            <span class="badge">☕ Java 17</span>
-            <span class="badge">⚡ C++20</span>
-            <span class="badge">🌐 HTML5</span>
-            <span class="badge">🎨 CSS3</span>
-            <span class="badge">⚡ JavaScript ES6</span>
+            <span class="badge">🐍 Python 3.10</span>
+            <span class="badge">☕ Java 15.0.2</span>
+            <span class="badge">⚡ C++ 14</span>
+            <span class="badge">#️⃣ C# 6.12.0</span>
+            <span class="badge">⚡ JavaScript 1.32.3</span>
+            <span class="badge">🔷 TypeScript 5.0.3</span>
         </div>
     </section>
 
@@ -731,8 +775,8 @@
 
             <!-- Tabs -->
             <div class="tabs">
-                <button class="tab-btn active" onclick="switchMode('web')">🌐 Web Development</button>
-                <button class="tab-btn" onclick="switchMode('lang')">⚙️ Programming Languages</button>
+                <button class="tab-btn active" onclick="switchMode('web', event)">🌐 Web Development</button>
+                <button class="tab-btn" onclick="switchMode('lang', event)">⚙️ Programming Languages</button>
             </div>
 
             <!-- Language Info -->
@@ -790,6 +834,9 @@
                 <button class="btn btn-secondary" onclick="loadSample()">
                     <span>📋</span> Load Sample
                 </button>
+                <button class="btn btn-secondary" onclick="loadHelloWorld()">
+                    <span>👋</span> Hello World
+                </button>
             </div>
 
             <!-- Live Preview (Web Mode) -->
@@ -798,7 +845,7 @@
                     <h3><span>🌐</span> Live Preview</h3>
                     <span class="version-badge" id="preview-status">Ready</span>
                 </div>
-                <iframe id="preview" title="Live Preview"></iframe>
+                <iframe id="preview" title="Live Preview" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
             </div>
         </div>
 
@@ -832,7 +879,7 @@
                 </div>
                 <div class="faq-item">
                     <h4><span>❓</span> What languages are supported?</h4>
-                    <p>We support Python, Java, C++, C, PHP, Ruby, Go, Rust, TypeScript, plus HTML, CSS, and JavaScript.</p>
+                    <p>We support Python, Java, C++, C, C#, PHP, Ruby, Go, Rust, TypeScript, plus HTML, CSS, and JavaScript.</p>
                 </div>
                 <div class="faq-item">
                     <h4><span>❓</span> Do I need to install anything?</h4>
@@ -878,7 +925,10 @@
     </footer>
 
     <script>
-        // Language configurations
+        // Piston API Configuration
+        const PISTON_API = 'https://emkc.org/api/v2/piston';
+
+        // Language configurations with Piston runtime support
         const languages = {
             // Web Dev Languages
             html: {
@@ -887,55 +937,8 @@
                 version: 'HTML5',
                 mode: 'web',
                 description: 'HTML (HyperText Markup Language) is the standard markup language for creating web pages.',
-                sample: `<!DOCTYPE html>
-<html>
-<head>
-    <title>My Awesome Page</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-        }
-        .card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-            max-width: 400px;
-        }
-        h1 {
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        button:hover {
-            transform: translateY(-2px);
-        }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>🚀 Welcome to CodeSphere!</h1>
-        <p>This is a live HTML preview with embedded CSS.</p>
-        <button onclick="alert('Hello from CodeSphere!')">Click Me</button>
-    </div>
-</body>
-</html>`
+                sample: getHTMLSample(),
+                helloWorld: getHTMLHelloWorld()
             },
             css: {
                 name: 'CSS',
@@ -943,70 +946,8 @@
                 version: 'CSS3',
                 mode: 'web',
                 description: 'CSS (Cascading Style Sheets) is used to style and layout web pages.',
-                sample: `/* CSS Styling Example */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Arial', sans-serif;
-}
-
-.container {
-    perspective: 1000px;
-}
-
-.card {
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    text-align: center;
-    transform-style: preserve-3d;
-    transition: transform 0.5s;
-    animation: float 3s ease-in-out infinite;
-}
-
-.card:hover {
-    transform: rotateY(10deg) rotateX(5deg);
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-}
-
-h1 {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 2.5em;
-    margin-bottom: 20px;
-}
-
-.button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-top: 20px;
-}
-
-.button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-}`
+                sample: getCSSSample(),
+                helloWorld: getCSSHelloWorld()
             },
             js: {
                 name: 'JavaScript',
@@ -1014,557 +955,2648 @@ h1 {
                 version: 'ES2022',
                 mode: 'web',
                 description: 'JavaScript is a programming language that enables interactive web pages.',
-                sample: `// Interactive JavaScript Demo
-class CodeSphere {
-    constructor(name) {
-        this.name = name;
-        this.users = [];
-    }
-    
-    greet() {
-        return \`✨ Welcome to \${this.name}!\`;
-    }
-    
-    addUser(user) {
-        this.users.push(user);
-        return \`👤 User \${user} added. Total users: \${this.users.length}\`;
-    }
-    
-    getStats() {
-        return {
-            name: this.name,
-            userCount: this.users.length,
-            users: this.users
-        };
-    }
-}
-
-// Create instance
-const app = new CodeSphere('CodeSphere');
-
-// DOM manipulation
-document.addEventListener('DOMContentLoaded', () => {
-    const app = document.getElementById('app');
-    if (!app) {
-        // Create container if it doesn't exist
-        const container = document.createElement('div');
-        container.id = 'app';
-        container.innerHTML = \`
-            <div style="text-align: center; padding: 40px;">
-                <h1 style="color: #667eea;">\${new CodeSphere('CodeSphere').greet()}</h1>
-                <button onclick="demo()" style="
-                    background: linear-gradient(135deg, #667eea, #764ba2);
-                    color: white;
-                    border: none;
-                    padding: 12px 30px;
-                    border-radius: 25px;
-                    cursor: pointer;
-                ">Try Me!</button>
-                <div id="output" style="margin-top: 20px;"></div>
-            </div>
-        \`;
-        document.body.appendChild(container);
-    }
-});
-
-function demo() {
-    const output = document.getElementById('output');
-    const sphere = new CodeSphere('CodeSphere');
-    
-    let html = '<div style="background: #f0f0f0; padding: 20px; border-radius: 10px;">';
-    html += '<h3>📊 JavaScript Demo Output:</h3>';
-    html += '<p>' + sphere.greet() + '</p>';
-    html += '<p>' + sphere.addUser('Alice') + '</p>';
-    html += '<p>' + sphere.addUser('Bob') + '</p>';
-    html += '<p>📈 Stats: ' + JSON.stringify(sphere.getStats(), null, 2) + '</p>';
-    html += '</div>';
-    
-    output.innerHTML = html;
-}`
+                sample: getJSSample(),
+                helloWorld: getJSHelloWorld()
             },
-            // Programming Languages
+            // Programming Languages with Piston support
             python: {
                 name: 'Python',
                 icon: '🐍',
-                version: '3.11',
+                version: '3.10.0',
+                language: 'python',
                 mode: 'lang',
-                description: 'Python is a high-level, interpreted programming language known for its simplicity and readability.',
-                sample: `# Python Program with Classes and Functions
-class Calculator:
-    def __init__(self, name):
-        self.name = name
-        self.history = []
-    
-    def add(self, a, b):
-        result = a + b
-        self.history.append(f"{a} + {b} = {result}")
-        return result
-    
-    def multiply(self, a, b):
-        result = a * b
-        self.history.append(f"{a} × {b} = {result}")
-        return result
-    
-    def show_history(self):
-        print(f"\\n📊 Calculation History for {self.name}:")
-        for entry in self.history:
-            print(f"  • {entry}")
-
-def fibonacci(n):
-    """Generate Fibonacci sequence"""
-    if n <= 1:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)
-
-def main():
-    # Get user input
-    name = input("Enter your name: ")
-    print(f"\\nHello, {name}! Welcome to Python Calculator\\n")
-    
-    # Create calculator instance
-    calc = Calculator(name)
-    
-    # Perform calculations
-    print("Performing calculations...")
-    print(f"10 + 5 = {calc.add(10, 5)}")
-    print(f"6 × 7 = {calc.multiply(6, 7)}")
-    
-    # Show history
-    calc.show_history()
-    
-    # Fibonacci sequence
-    n = 10
-    print(f"\\n📈 Fibonacci sequence up to {n}:")
-    for i in range(n):
-        print(fibonacci(i), end=" ")
-    print()
-
-if __name__ == "__main__":
-    main()`
+                description: 'Python is a high-level, interpreted programming language known for its simplicity and readability. Used in web development, data science, AI, and automation.',
+                sample: getPythonSample(),
+                helloWorld: getPythonHelloWorld()
             },
             java: {
                 name: 'Java',
                 icon: '☕',
-                version: '17',
+                version: '15.0.2',
+                language: 'java',
                 mode: 'lang',
-                description: 'Java is a class-based, object-oriented programming language designed for portability.',
-                sample: `// Java Program with OOP Concepts
-import java.util.*;
-
-class Student {
-    private String name;
-    private int age;
-    private List<Integer> grades;
-    
-    public Student(String name, int age) {
-        this.name = name;
-        this.age = age;
-        this.grades = new ArrayList<>();
-    }
-    
-    public void addGrade(int grade) {
-        grades.add(grade);
-        System.out.println("  ✓ Added grade: " + grade);
-    }
-    
-    public double getAverageGrade() {
-        if (grades.isEmpty()) return 0;
-        return grades.stream().mapToInt(Integer::intValue).average().orElse(0);
-    }
-    
-    public void displayInfo() {
-        System.out.println("\\n📋 Student Information:");
-        System.out.println("  Name: " + name);
-        System.out.println("  Age: " + age);
-        System.out.println("  Grades: " + grades);
-        System.out.printf("  Average: %.2f\\n", getAverageGrade());
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.println("=== Student Management System ===\\n");
-        
-        System.out.print("Enter student name: ");
-        String name = scanner.nextLine();
-        
-        System.out.print("Enter student age: ");
-        int age = scanner.nextInt();
-        
-        // Create student
-        Student student = new Student(name, age);
-        
-        // Add grades
-        System.out.println("\\nEnter 5 grades:");
-        for (int i = 1; i <= 5; i++) {
-            System.out.print("  Grade " + i + ": ");
-            int grade = scanner.nextInt();
-            student.addGrade(grade);
-        }
-        
-        // Display information
-        student.displayInfo();
-        
-        scanner.close();
-    }
-}`
+                description: 'Java is a class-based, object-oriented programming language designed for portability. Used in enterprise applications, Android development, and large systems.',
+                sample: getJavaSample(),
+                helloWorld: getJavaHelloWorld()
             },
             cpp: {
                 name: 'C++',
                 icon: '⚡',
-                version: 'C++20',
+                version: '10.2.0',
+                language: 'cpp',
                 mode: 'lang',
-                description: 'C++ is a powerful general-purpose programming language with object-oriented features.',
-                sample: `// C++ Program with STL
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <string>
-using namespace std;
-
-template<typename T>
-class DataProcessor {
-private:
-    vector<T> data;
-    
-public:
-    void addItem(T item) {
-        data.push_back(item);
-        cout << "  ✓ Added: " << item << endl;
-    }
-    
-    void displaySorted() {
-        vector<T> sorted = data;
-        sort(sorted.begin(), sorted.end());
-        
-        cout << "\\n📊 Sorted Data:" << endl;
-        for (const auto& item : sorted) {
-            cout << "  • " << item << endl;
-        }
-    }
-    
-    T getMax() {
-        if (data.empty()) return T();
-        return *max_element(data.begin(), data.end());
-    }
-    
-    size_t size() const {
-        return data.size();
-    }
-};
-
-int main() {
-    cout << "=== C++ Data Processor ===\\n" << endl;
-    
-    string name;
-    cout << "Enter your name: ";
-    getline(cin, name);
-    cout << "Hello, " << name << "!\\n" << endl;
-    
-    // Create integer processor
-    DataProcessor<int> intProcessor;
-    cout << "Adding integers:" << endl;
-    intProcessor.addItem(42);
-    intProcessor.addItem(17);
-    intProcessor.addItem(89);
-    intProcessor.addItem(5);
-    
-    cout << "\\n📈 Maximum value: " << intProcessor.getMax() << endl;
-    intProcessor.displaySorted();
-    
-    // Create string processor
-    DataProcessor<string> strProcessor;
-    cout << "\\nAdding strings:" << endl;
-    strProcessor.addItem("apple");
-    strProcessor.addItem("zebra");
-    strProcessor.addItem("banana");
-    strProcessor.addItem("cherry");
-    
-    strProcessor.displaySorted();
-    
-    cout << "\\n✅ Total items processed: " 
-         << (intProcessor.size() + strProcessor.size()) << endl;
-    
-    return 0;
-}`
+                description: 'C++ is a powerful general-purpose programming language with object-oriented features. Used in game development, system programming, and performance-critical applications.',
+                sample: getCppSample(),
+                helloWorld: getCppHelloWorld()
             },
             c: {
                 name: 'C',
                 icon: '🔧',
-                version: 'C17',
+                version: '10.2.0',
+                language: 'c',
                 mode: 'lang',
-                description: 'C is a general-purpose, procedural programming language.',
-                sample: `// C Program with Dynamic Memory
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-typedef struct {
-    char name[50];
-    int age;
-    float score;
-} Student;
-
-void printStudent(const Student* s) {
-    printf("  Name: %s\n", s->name);
-    printf("  Age: %d\n", s->age);
-    printf("  Score: %.2f\n", s->score);
-}
-
-float calculateAverage(Student* students, int count) {
-    float sum = 0;
-    for (int i = 0; i < count; i++) {
-        sum += students[i].score;
-    }
-    return count > 0 ? sum / count : 0;
-}
-
-int main() {
-    printf("=== Student Record System ===\n\n");
-    
-    char name[50];
-    printf("Enter your name: ");
-    fgets(name, sizeof(name), stdin);
-    name[strcspn(name, "\n")] = 0;
-    printf("Hello, %s!\n\n", name);
-    
-    // Allocate memory for students
-    int numStudents;
-    printf("Enter number of students: ");
-    scanf("%d", &numStudents);
-    getchar(); // consume newline
-    
-    Student* students = (Student*)malloc(numStudents * sizeof(Student));
-    if (students == NULL) {
-        printf("Memory allocation failed!\n");
-        return 1;
-    }
-    
-    // Input student data
-    for (int i = 0; i < numStudents; i++) {
-        printf("\n📝 Student %d:\n", i + 1);
-        
-        printf("  Name: ");
-        fgets(students[i].name, sizeof(students[i].name), stdin);
-        students[i].name[strcspn(students[i].name, "\n")] = 0;
-        
-        printf("  Age: ");
-        scanf("%d", &students[i].age);
-        
-        printf("  Score: ");
-        scanf("%f", &students[i].score);
-        getchar(); // consume newline
-    }
-    
-    // Display results
-    printf("\n📊 Student Records:\n");
-    for (int i = 0; i < numStudents; i++) {
-        printf("\nStudent %d:\n", i + 1);
-        printStudent(&students[i]);
-    }
-    
-    printf("\n📈 Average Score: %.2f\n", calculateAverage(students, numStudents));
-    
-    // Free memory
-    free(students);
-    
-    return 0;
-}`
+                description: 'C is a general-purpose, procedural programming language. Used in operating systems, embedded systems, and system software.',
+                sample: getCSample(),
+                helloWorld: getCHelloWorld()
+            },
+            csharp: {
+                name: 'C#',
+                icon: '#️⃣',
+                version: '6.12.0',
+                language: 'csharp',
+                mode: 'lang',
+                description: 'C# is a modern, object-oriented programming language developed by Microsoft. Used in Windows applications, game development with Unity, and enterprise software.',
+                sample: getCSharpSample(),
+                helloWorld: getCSharpHelloWorld()
             },
             php: {
                 name: 'PHP',
                 icon: '🐘',
-                version: '8.2',
+                version: '8.2.3',
+                language: 'php',
                 mode: 'lang',
-                description: 'PHP is a server-side scripting language designed for web development.',
-                sample: `<?php
-// PHP Program with OOP
+                description: 'PHP is a server-side scripting language designed for web development. Powers major platforms like WordPress, Laravel, and Facebook.',
+                sample: getPHPSample(),
+                helloWorld: getPHPHelloWorld()
+            },
+            ruby: {
+                name: 'Ruby',
+                icon: '💎',
+                version: '3.0.1',
+                language: 'ruby',
+                mode: 'lang',
+                description: 'Ruby is a dynamic, object-oriented programming language known for its simplicity and productivity. Used in web development with Ruby on Rails.',
+                sample: getRubySample(),
+                helloWorld: getRubyHelloWorld()
+            },
+            go: {
+                name: 'Go',
+                icon: '🔵',
+                version: '1.16.2',
+                language: 'go',
+                mode: 'lang',
+                description: 'Go is a statically typed, compiled programming language designed at Google. Used in cloud services, microservices, and network programming.',
+                sample: Go,
+                helloWorld: getGoHelloWorld()
+            },
+            rust: {
+                name: 'Rust',
+                icon: '🦀',
+                version: '1.68.2',
+                language: 'rust',
+                mode: 'lang',
+                description: 'Rust is a systems programming language focused on safety and performance. Used in system programming, web assembly, and high-performance applications.',
+                sample: getRustSample(),
+                helloWorld: getRustHelloWorld()
+            },
+            typescript: {
+                name: 'TypeScript',
+                icon: '📘',
+                version: '5.0.3',
+                language: 'typescript',
+                mode: 'lang',
+                description: 'TypeScript is a typed superset of JavaScript that compiles to plain JavaScript. Used in large-scale web applications and enterprise frontend development.',
+                sample: getTypeScriptSample(),
+                helloWorld: getTypeScriptHelloWorld()
+            },
+            swift: {
+                name: 'Swift',
+                icon: '🐦',
+                version: '5.3.3',
+                language: 'swift',
+                mode: 'lang',
+                description: 'Swift is a powerful and intuitive programming language for iOS, macOS, and other Apple platforms.',
+                sample: getSwiftSample(),
+                helloWorld: getSwiftHelloWorld()
+            },
+            kotlin: {
+                name: 'Kotlin',
+                icon: '🅺',
+                version: '1.8.20',
+                language: 'kotlin',
+                mode: 'lang',
+                description: 'Kotlin is a modern programming language that runs on the JVM. Used for Android development, server-side applications, and multiplatform projects.',
+                sample: getKotlinSample(),
+                helloWorld: getKotlinHelloWorld()
+            },
+            r: {
+                name: 'R',
+                icon: '📊',
+                version: '4.1.1',
+                language: 'r',
+                mode: 'lang',
+                description: 'R is a programming language for statistical computing and graphics. Used in data analysis, machine learning, and research.',
+                sample: getRSample(),
+                helloWorld: getRHelloWorld()
+            }
+        };
+
+        // Sample code generators for each language
+        function getHTMLSample() {
+            return `<!DOCTYPE html>
+<html>
+<head>
+    <title>Modern Web Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        
+        p {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+        
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .counter {
+            font-size: 3em;
+            color: #764ba2;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🚀 Welcome to CodeSphere</h1>
+        <p>This is a complete HTML5 document with embedded CSS and JavaScript. Click the buttons below to see interactivity in action!</p>
+        
+        <div class="counter" id="counter">0</div>
+        
+        <button class="btn" onclick="increment()">Increment</button>
+        <button class="btn btn-outline" onclick="reset()">Reset</button>
+        
+        <p style="margin-top: 30px; font-size: 0.9em; color: #a0aec0;">
+            Current time: <span id="time"></span>
+        </p>
+    </div>
+
+    <script>
+        let count = 0;
+        const counter = document.getElementById('counter');
+        const timeSpan = document.getElementById('time');
+        
+        function increment() {
+            count++;
+            counter.textContent = count;
+            updateTime();
+        }
+        
+        function reset() {
+            count = 0;
+            counter.textContent = count;
+            updateTime();
+        }
+        
+        function updateTime() {
+            const now = new Date();
+            timeSpan.textContent = now.toLocaleTimeString();
+        }
+        
+        // Update time every second
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+</body>
+</html>`;
+        }
+
+        function getHTMLHelloWorld() {
+            return `<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World</title>
+</head>
+<body>
+    <h1>Hello, World!</h1>
+    <p>Welcome to HTML programming!</p>
+</body>
+</html>`;
+        }
+
+        function getCSSSample() {
+            return `/* Modern CSS Features Showcase */
+:root {
+    --primary: #667eea;
+    --secondary: #764ba2;
+    --text: #2d3748;
+    --light: #f7fafc;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    perspective: 1000px;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    transform-style: preserve-3d;
+    animation: float 6s ease-in-out infinite;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotateX(0deg);
+    }
+    50% {
+        transform: translateY(-20px) rotateX(2deg);
+    }
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.box:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.box:nth-child(1) { background: linear-gradient(135deg, #667eea, #764ba2); }
+.box:nth-child(2) { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.box:nth-child(3) { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+
+.button {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+    
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}`;
+        }
+
+        function getCSSHelloWorld() {
+            return `body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+h1 {
+    color: white;
+    text-align: center;
+    font-size: 3em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}`;
+        }
+
+        function getJSSample() {
+            return `// Modern JavaScript Features Demo
+// Classes, Promises, Async/Await, and more
+
+class TaskManager {
+    constructor() {
+        this.tasks = [];
+        this.listeners = [];
+    }
+
+    addTask(task) {
+        this.tasks.push({
+            id: Date.now(),
+            text: task,
+            completed: false,
+            createdAt: new Date()
+        });
+        this.notifyListeners();
+        return this.tasks[this.tasks.length - 1];
+    }
+
+    completeTask(id) {
+        const task = this.tasks.find(t => t.id === id);
+        if (task) {
+            task.completed = true;
+            this.notifyListeners();
+        }
+    }
+
+    deleteTask(id) {
+        this.tasks = this.tasks.filter(t => t.id !== id);
+        this.notifyListeners();
+    }
+
+    getStats() {
+        return {
+            total: this.tasks.length,
+            completed: this.tasks.filter(t => t.completed).length,
+            pending: this.tasks.filter(t => !t.completed).length
+        };
+    }
+
+    addListener(callback) {
+        this.listeners.push(callback);
+    }
+
+    notifyListeners() {
+        this.listeners.forEach(cb => cb(this.tasks));
+    }
+}
+
+// Async function demo
+async function fetchUserData(userId) {
+    // Simulating API call
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve({
+                id: userId,
+                name: 'John Doe',
+                email: 'john@example.com',
+                role: 'Developer'
+            });
+        }, 1000);
+    });
+}
+
+// Generator function demo
+function* idGenerator() {
+    let id = 1;
+    while (true) {
+        yield id++;
+    }
+}
+
+// Main application
+document.addEventListener('DOMContentLoaded', () => {
+    const app = document.getElementById('app');
+    const gen = idGenerator();
+    const manager = new TaskManager();
+
+    // Create UI
+    app.innerHTML = \`
+        <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #667eea; text-align: center;">📋 Task Manager</h1>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" id="taskInput" placeholder="Enter new task..." 
+                    style="flex: 1; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px;">
+                <button id="addBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Add Task</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;" id="stats"></div>
+            
+            <div id="taskList"></div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #f7fafc; border-radius: 8px;">
+                <h3 style="color: #4a5568;">Async Demo - User Data:</h3>
+                <div id="userData">Loading...</div>
+            </div>
+        </div>
+    \`;
+
+    // Stats update
+    function updateStats() {
+        const stats = manager.getStats();
+        document.getElementById('stats').innerHTML = \`
+            <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <div style="font-size: 24px; font-weight: bold; color: #667eea;">\${stats.total}</div>
+                <div style="color: #718096;">Total Tasks</div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <div style="font-size: 24px; font-weight: bold; color: #48bb78;">\${stats.completed}</div>
+                <div style="color: #718096;">Completed</div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <div style="font-size: 24px; font-weight: bold; color: #f56565;">\${stats.pending}</div>
+                <div style="color: #718096;">Pending</div>
+            </div>
+        \`;
+    }
+
+    // Task list update
+    manager.addListener((tasks) => {
+        const list = document.getElementById('taskList');
+        list.innerHTML = tasks.map(task => \`
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: white; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" \${task.completed ? 'checked' : ''} onchange="window.completeTask(\${task.id})">
+                    <span style="\${task.completed ? 'text-decoration: line-through; color: #a0aec0;' : ''}">\${task.text}</span>
+                </div>
+                <button onclick="window.deleteTask(\${task.id})" style="background: #f56565; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Delete</button>
+            </div>
+        \`).join('');
+        updateStats();
+    });
+
+    // Event listeners
+    document.getElementById('addBtn').addEventListener('click', () => {
+        const input = document.getElementById('taskInput');
+        if (input.value.trim()) {
+            manager.addTask(input.value);
+            input.value = '';
+        }
+    });
+
+    document.getElementById('taskInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('addBtn').click();
+        }
+    });
+
+    // Async demo
+    fetchUserData(gen.next().value).then(user => {
+        document.getElementById('userData').innerHTML = \`
+            <p><strong>ID:</strong> \${user.id}</p>
+            <p><strong>Name:</strong> \${user.name}</p>
+            <p><strong>Email:</strong> \${user.email}</p>
+            <p><strong>Role:</strong> \${user.role}</p>
+        \`;
+    });
+
+    // Add some sample tasks
+    manager.addTask('Learn JavaScript');
+    manager.addTask('Build a project');
+    manager.addTask('Master async/await');
+});
+
+// Make functions global for onclick handlers
+window.completeTask = (id) => {
+    // This will be handled by the manager
+    console.log('Complete task:', id);
+};
+
+window.deleteTask = (id) => {
+    console.log('Delete task:', id);
+};`;
+        }
+
+        function getJSHelloWorld() {
+            return `// Hello World in JavaScript
+console.log("Hello, World!");
+
+// Alert in browser
+alert("Hello, World!");
+
+// DOM manipulation
+document.body.innerHTML = "<h1 style='color: #667eea; text-align: center; margin-top: 50px;'>Hello, World! 🌍</h1>";`;
+        }
+
+        function getPythonSample() {
+            return `# Python - Data Science & Automation Example
+import sys
+import json
+from datetime import datetime
+from collections import Counter
+from typing import List, Dict, Optional
+
+class DataAnalyzer:
+    """A class for analyzing numerical data with various statistical methods"""
+    
+    def __init__(self, name: str):
+        self.name = name
+        self.data: List[float] = []
+        self.metadata: Dict = {
+            'created_at': datetime.now().isoformat(),
+            'analyzer': name
+        }
+    
+    def add_data(self, *values: float) -> None:
+        """Add multiple data points to the analyzer"""
+        self.data.extend(values)
+        print(f"  ✓ Added {len(values)} data points")
+    
+    def add_data_from_string(self, data_string: str) -> None:
+        """Parse and add data from a comma-separated string"""
+        try:
+            values = [float(x.strip()) for x in data_string.split(',') if x.strip()]
+            self.add_data(*values)
+        except ValueError as e:
+            print(f"  ✗ Error parsing data: {e}")
+    
+    @property
+    def mean(self) -> float:
+        """Calculate the mean (average) of the data"""
+        if not self.data:
+            return 0.0
+        return sum(self.data) / len(self.data)
+    
+    @property
+    def median(self) -> float:
+        """Calculate the median of the data"""
+        if not self.data:
+            return 0.0
+        sorted_data = sorted(self.data)
+        n = len(sorted_data)
+        mid = n // 2
+        
+        if n % 2 == 0:
+            return (sorted_data[mid - 1] + sorted_data[mid]) / 2
+        return sorted_data[mid]
+    
+    @property
+    def mode(self) -> List[float]:
+        """Find the mode(s) of the data"""
+        if not self.data:
+            return []
+        counter = Counter(self.data)
+        max_count = max(counter.values())
+        return [val for val, count in counter.items() if count == max_count]
+    
+    @property
+    def standard_deviation(self) -> float:
+        """Calculate the standard deviation"""
+        if len(self.data) < 2:
+            return 0.0
+        mean = self.mean
+        variance = sum((x - mean) ** 2 for x in self.data) / (len(self.data) - 1)
+        return variance ** 0.5
+    
+    def summary(self) -> Dict:
+        """Generate a statistical summary"""
+        return {
+            'count': len(self.data),
+            'mean': round(self.mean, 2),
+            'median': round(self.median, 2),
+            'mode': [round(x, 2) for x in self.mode],
+            'std_dev': round(self.standard_deviation, 2),
+            'min': round(min(self.data), 2) if self.data else None,
+            'max': round(max(self.data), 2) if self.data else None,
+            'range': round(max(self.data) - min(self.data), 2) if self.data else None
+        }
+    
+    def __str__(self) -> str:
+        """String representation"""
+        stats = self.summary()
+        return f"📊 DataAnalyzer '{self.name}': {stats['count']} points, mean={stats['mean']}"
+
+def fibonacci_generator(n: int):
+    """Generator function for Fibonacci sequence"""
+    a, b = 0, 1
+    for _ in range(n):
+        yield a
+        a, b = b, a + b
+
+def process_with_lambda(data: List[int]) -> List[int]:
+    """Demonstrate lambda functions and list comprehensions"""
+    # Double each number using lambda with map
+    doubled = list(map(lambda x: x * 2, data))
+    
+    # Filter even numbers using lambda with filter
+    evens = list(filter(lambda x: x % 2 == 0, data))
+    
+    # Square each number using list comprehension
+    squares = [x ** 2 for x in data]
+    
+    return doubled, evens, squares
+
+def main():
+    print("=" * 50)
+    print("🐍 Python Data Analysis Demo")
+    print("=" * 50)
+    
+    # Get user input
+    name = input("\nEnter your name: ").strip() or "User"
+    print(f"\nHello, {name}! Let's analyze some data.\n")
+    
+    # Create analyzer
+    analyzer = DataAnalyzer(name)
+    
+    # Add sample data
+    sample_data = [12, 45, 67, 23, 45, 89, 34, 23, 67, 90, 12, 45]
+    analyzer.add_data(*sample_data)
+    
+    # Get additional data from user
+    user_data = input("\nEnter additional numbers (comma-separated, or press Enter to skip): ").strip()
+    if user_data:
+        analyzer.add_data_from_string(user_data)
+    
+    # Display results
+    print("\n" + "=" * 50)
+    print("📈 Analysis Results")
+    print("=" * 50)
+    
+    stats = analyzer.summary()
+    for key, value in stats.items():
+        print(f"  {key:12}: {value}")
+    
+    # Fibonacci sequence
+    print("\n" + "=" * 50)
+    print("🔢 Fibonacci Sequence (first 10 numbers)")
+    print("=" * 50)
+    fib_numbers = list(fibonacci_generator(10))
+    print("  " + " → ".join(str(x) for x in fib_numbers))
+    
+    # Lambda function demo
+    print("\n" + "=" * 50)
+    print("🔄 Lambda Functions Demo")
+    print("=" * 50)
+    test_data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    doubled, evens, squares = process_with_lambda(test_data)
+    
+    print(f"  Original : {test_data}")
+    print(f"  Doubled  : {doubled}")
+    print(f"  Evens    : {evens}")
+    print(f"  Squares  : {squares}")
+    
+    # JSON serialization
+    print("\n" + "=" * 50)
+    print("📦 JSON Output")
+    print("=" * 50)
+    print(json.dumps(stats, indent=2))
+    
+    print("\n✅ Analysis complete!")
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n\n👋 Goodbye!")
+    except Exception as e:
+        print(f"\n❌ Error: {e}")
+        sys.exit(1)`;
+        }
+
+        function getPythonHelloWorld() {
+            return `# Hello World in Python
+print("Hello, World!")
+
+# Simple input example
+name = input("What's your name? ")
+print(f"Hello, {name}! Welcome to Python!")
+
+# Multiple prints
+print("Python is awesome!")
+print("Let's learn together! 🐍")`;
+        }
+
+        function getJavaSample() {
+            return `// Java - Enterprise Application Example
+import java.util.*;
+import java.time.*;
+import java.util.stream.*;
+import java.util.function.*;
+
+/**
+ * Employee Management System demonstrating Java OOP features
+ */
+class Employee {
+    private int id;
+    private String name;
+    private String department;
+    private double salary;
+    private LocalDate joinDate;
+    private List<String> skills;
+    
+    public Employee(int id, String name, String department, double salary, LocalDate joinDate) {
+        this.id = id;
+        this.name = name;
+        this.department = department;
+        this.salary = salary;
+        this.joinDate = joinDate;
+        this.skills = new ArrayList<>();
+    }
+    
+    // Getters and setters
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public String getDepartment() { return department; }
+    public double getSalary() { return salary; }
+    public LocalDate getJoinDate() { return joinDate; }
+    public List<String> getSkills() { return new ArrayList<>(skills); }
+    
+    public void addSkill(String skill) {
+        skills.add(skill);
+    }
+    
+    public void addSkills(String... skillArray) {
+        skills.addAll(Arrays.asList(skillArray));
+    }
+    
+    public double getAnnualSalary() {
+        return salary * 12;
+    }
+    
+    public int getYearsOfService(LocalDate currentDate) {
+        return (int) ChronoUnit.YEARS.between(joinDate, currentDate);
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Employee{id=%d, name='%s', dept='%s', salary=₹%.2f, skills=%s}",
+                id, name, department, salary, skills);
+    }
+}
+
+/**
+ * Department class with employee management
+ */
+class Department {
+    private String name;
+    private String manager;
+    private List<Employee> employees;
+    private Map<String, Double> budget;
+    
+    public Department(String name, String manager) {
+        this.name = name;
+        this.manager = manager;
+        this.employees = new ArrayList<>();
+        this.budget = new HashMap<>();
+    }
+    
+    public void addEmployee(Employee emp) {
+        employees.add(emp);
+        System.out.println("  ✓ Added: " + emp.getName() + " to " + name);
+    }
+    
+    public void removeEmployee(int employeeId) {
+        employees.removeIf(emp -> emp.getId() == employeeId);
+    }
+    
+    public double getTotalSalaryExpense() {
+        return employees.stream()
+                .mapToDouble(Employee::getSalary)
+                .sum();
+    }
+    
+    public Optional<Employee> getHighestPaidEmployee() {
+        return employees.stream()
+                .max(Comparator.comparingDouble(Employee::getSalary));
+    }
+    
+    public List<Employee> getEmployeesBySkill(String skill) {
+        return employees.stream()
+                .filter(emp -> emp.getSkills().contains(skill))
+                .collect(Collectors.toList());
+    }
+    
+    public Map<String, Long> getSkillDistribution() {
+        return employees.stream()
+                .flatMap(emp -> emp.getSkills().stream())
+                .collect(Collectors.groupingBy(
+                    skill -> skill,
+                    Collectors.counting()
+                ));
+    }
+    
+    public void displayEmployees() {
+        System.out.println("\n📋 Employees in " + name + ":");
+        employees.stream()
+                .sorted(Comparator.comparing(Employee::getName))
+                .forEach(emp -> System.out.println("  • " + emp));
+    }
+}
+
+/**
+ * Main application class
+ */
+public class Main {
+    
+    @FunctionalInterface
+    interface SalaryCalculator {
+        double calculate(Employee emp, double multiplier);
+    }
+    
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        LocalDate currentDate = LocalDate.now();
+        
+        System.out.println("=" .repeat(60));
+        System.out.println("☕ Java Enterprise Application Demo");
+        System.out.println("=" .repeat(60));
+        
+        // Get user input
+        System.out.print("\nEnter your name: ");
+        String userName = scanner.nextLine();
+        System.out.printf("\nHello, %s! Welcome to Employee Management System\n\n", userName);
+        
+        // Create departments
+        Department engineering = new Department("Engineering", "Alice Johnson");
+        Department marketing = new Department("Marketing", "Bob Smith");
+        Department sales = new Department("Sales", "Carol Davis");
+        
+        // Create employees
+        Employee emp1 = new Employee(1, "John Doe", "Engineering", 75000, 
+                LocalDate.of(2022, 3, 15));
+        emp1.addSkills("Java", "Spring", "SQL", "Git");
+        
+        Employee emp2 = new Employee(2, "Jane Smith", "Engineering", 82000, 
+                LocalDate.of(2021, 6, 1));
+        emp2.addSkills("Python", "Django", "React", "Docker");
+        
+        Employee emp3 = new Employee(3, "Mike Wilson", "Marketing", 65000, 
+                LocalDate.of(2023, 1, 10));
+        emp3.addSkills("SEO", "Content Writing", "Analytics");
+        
+        Employee emp4 = new Employee(4, "Sarah Brown", "Sales", 70000, 
+                LocalDate.of(2022, 9, 20));
+        emp4.addSkills("Negotiation", "CRM", "Communication");
+        
+        // Add employees to departments
+        System.out.println("📦 Adding employees to departments:");
+        engineering.addEmployee(emp1);
+        engineering.addEmployee(emp2);
+        marketing.addEmployee(emp3);
+        sales.addEmployee(emp4);
+        
+        // Display department information
+        System.out.println("\n" + "=" .repeat(60));
+        System.out.println("📊 Department Analysis");
+        System.out.println("=" .repeat(60));
+        
+        // Process each department
+        List<Department> departments = Arrays.asList(engineering, marketing, sales);
+        
+        departments.forEach(dept -> {
+            System.out.printf("\n🏢 Department: %s\n", dept.getClass().getMethod(/* TODO: Get name */).toString());
+            System.out.printf("  Total Salary Expense: ₹%.2f\n", dept.getTotalSalaryExpense());
+            
+            dept.getHighestPaidEmployee().ifPresent(emp ->
+                System.out.printf("  Highest Paid: %s (₹%.2f)\n", emp.getName(), emp.getSalary())
+            );
+            
+            Map<String, Long> skills = dept.getSkillDistribution();
+            if (!skills.isEmpty()) {
+                System.out.println("  Skill Distribution:");
+                skills.entrySet().stream()
+                        .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                        .forEach(entry -> 
+                            System.out.printf("    • %s: %d\n", entry.getKey(), entry.getValue())
+                        );
+            }
+            
+            dept.displayEmployees();
+        });
+        
+        // Lambda expression demo
+        System.out.println("\n" + "=" .repeat(60));
+        System.out.println("🔄 Lambda Expression Demo");
+        System.out.println("=" .repeat(60));
+        
+        SalaryCalculator bonusCalculator = (emp, multiplier) -> emp.getSalary() * multiplier;
+        
+        System.out.println("\nBonus Calculations:");
+        engineering.getHighestPaidEmployee().ifPresent(emp -> {
+            double bonus = bonusCalculator.calculate(emp, 0.15);
+            System.out.printf("  %s's bonus (15%%): ₹%.2f\n", emp.getName(), bonus);
+        });
+        
+        // Stream operations demo
+        System.out.println("\n📈 Stream Operations:");
+        
+        // Find employees with salary > 70000
+        List<Employee> highEarners = departments.stream()
+                .flatMap(dept -> dept.getEmployees().stream())
+                .filter(emp -> emp.getSalary() > 70000)
+                .sorted(Comparator.comparingDouble(Employee::getSalary).reversed())
+                .collect(Collectors.toList());
+        
+        System.out.println("  High Earners (>₹70000):");
+        highEarners.forEach(emp -> 
+            System.out.printf("    • %s: ₹%.2f\n", emp.getName(), emp.getSalary())
+        );
+        
+        // Calculate average salary
+        double avgSalary = departments.stream()
+                .flatMap(dept -> dept.getEmployees().stream())
+                .mapToDouble(Employee::getSalary)
+                .average()
+                .orElse(0);
+        
+        System.out.printf("\n  Average Salary: ₹%.2f\n", avgSalary);
+        
+        // Group employees by first letter of name
+        Map<Character, List<Employee>> byFirstLetter = departments.stream()
+                .flatMap(dept -> dept.getEmployees().stream())
+                .collect(Collectors.groupingBy(
+                    emp -> emp.getName().charAt(0)
+                ));
+        
+        System.out.println("\n  Employees grouped by first letter:");
+        byFirstLetter.forEach((letter, emps) -> 
+            System.out.printf("    %c: %d employees\n", letter, emps.size())
+        );
+        
+        System.out.println("\n✅ Application completed successfully!");
+        scanner.close();
+    }
+}`;
+        }
+
+        function getJavaHelloWorld() {
+            return `// Hello World in Java
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+        
+        // Simple input example
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        System.out.print("Enter your name: ");
+        String name = scanner.nextLine();
+        System.out.println("Hello, " + name + "!");
+        scanner.close();
+    }
+}`;
+        }
+
+        function getCppSample() {
+            return `// C++ - Game Development & Systems Programming Example
+#include <iostream>
+#include <vector>
+#include <map>
+#include <string>
+#include <algorithm>
+#include <memory>
+#include <chrono>
+#include <thread>
+#include <random>
+#include <iomanip>
+
+using namespace std;
+using namespace chrono;
+
+// Forward declarations
+class GameObject;
+class Player;
+class Enemy;
+
+// Interface for drawable objects
+class Drawable {
+public:
+    virtual void draw() const = 0;
+    virtual ~Drawable() = default;
+};
+
+// Interface for updateable objects
+class Updateable {
+public:
+    virtual void update(float deltaTime) = 0;
+    virtual ~Updateable() = default;
+};
+
+// Base game object class
+class GameObject : public Drawable, public Updateable {
+protected:
+    string name;
+    int health;
+    int maxHealth;
+    float x, y;
+    
+public:
+    GameObject(const string& name, int health, float x = 0, float y = 0)
+        : name(name), health(health), maxHealth(health), x(x), y(y) {
+        cout << "  ✓ Created: " << name << " (HP: " << health << ")" << endl;
+    }
+    
+    virtual ~GameObject() {
+        cout << "  ✗ Destroyed: " << name << endl;
+    }
+    
+    // Virtual functions
+    virtual void takeDamage(int damage) {
+        health = max(0, health - damage);
+        cout << "  💥 " << name << " took " << damage << " damage! HP: " << health << "/" << maxHealth << endl;
+    }
+    
+    virtual void heal(int amount) {
+        health = min(maxHealth, health + amount);
+        cout << "  💚 " << name << " healed " << amount << "! HP: " << health << "/" << maxHealth << endl;
+    }
+    
+    bool isAlive() const { return health > 0; }
+    float getX() const { return x; }
+    float getY() const { return y; }
+    string getName() const { return name; }
+    
+    // Override base class methods
+    void draw() const override {
+        cout << "  🎮 Drawing " << name << " at (" << x << ", " << y << ")" << endl;
+    }
+    
+    void update(float deltaTime) override {
+        // Base update - do nothing
+    }
+};
+
+// Player class derived from GameObject
+class Player : public GameObject {
+private:
+    int level;
+    int experience;
+    int experienceToNextLevel;
+    vector<string> inventory;
+    
+public:
+    Player(const string& name) 
+        : GameObject(name, 100), level(1), experience(0), experienceToNextLevel(100) {
+        inventory.push_back("Sword");
+        inventory.push_back("Health Potion");
+    }
+    
+    void gainExperience(int exp) {
+        experience += exp;
+        cout << "  ✨ " << name << " gained " << exp << " XP!" << endl;
+        
+        while (experience >= experienceToNextLevel) {
+            levelUp();
+        }
+    }
+    
+    void levelUp() {
+        level++;
+        experience -= experienceToNextLevel;
+        maxHealth += 20;
+        health = maxHealth;
+        experienceToNextLevel = static_cast<int>(experienceToNextLevel * 1.5);
+        
+        cout << "  ⭐ " << name << " reached level " << level << "!" << endl;
+        cout << "     Max HP increased to " << maxHealth << endl;
+    }
+    
+    void addItem(const string& item) {
+        inventory.push_back(item);
+        cout << "  📦 " << name << " acquired: " << item << endl;
+    }
+    
+    void showInventory() const {
+        cout << "  🎒 " << name << "'s Inventory:" << endl;
+        for (const auto& item : inventory) {
+            cout << "    • " << item << endl;
+        }
+    }
+    
+    void update(float deltaTime) override {
+        // Player-specific updates
+        x += deltaTime * 5; // Move right slowly
+    }
+};
+
+// Enemy class derived from GameObject
+class Enemy : public GameObject {
+private:
+    int damage;
+    float detectionRange;
+    
+public:
+    Enemy(const string& type, int health, int damage, float range)
+        : GameObject(type, health), damage(damage), detectionRange(range) {}
+    
+    void attack(Player& player) {
+        if (isAlive()) {
+            cout << "  ⚔️ " << name << " attacks " << player.getName() << " for " << damage << " damage!" << endl;
+            player.takeDamage(damage);
+        }
+    }
+    
+    void update(float deltaTime) override {
+        // Enemy AI - move randomly
+        static random_device rd;
+        static mt19937 gen(rd());
+        static uniform_real_distribution<float> dis(-1.0f, 1.0f);
+        
+        x += dis(gen) * deltaTime * 2;
+        y += dis(gen) * deltaTime * 2;
+    }
+};
+
+// Template class for a generic container
+template<typename T>
+class GameContainer {
+private:
+    vector<T> items;
+    string name;
+    
+public:
+    GameContainer(const string& name) : name(name) {}
+    
+    void add(const T& item) {
+        items.push_back(item);
+        cout << "  📦 Added to " << name << ": " << item << endl;
+    }
+    
+    void remove(const T& item) {
+        auto it = find(items.begin(), items.end(), item);
+        if (it != items.end()) {
+            items.erase(it);
+            cout << "  🗑️ Removed from " << name << ": " << item << endl;
+        }
+    }
+    
+    bool contains(const T& item) const {
+        return find(items.begin(), items.end(), item) != items.end();
+    }
+    
+    size_t size() const { return items.size(); }
+    
+    void display() const {
+        cout << "  📋 " << name << " contents:" << endl;
+        for (const auto& item : items) {
+            cout << "    • " << item << endl;
+        }
+    }
+};
+
+// Main function
+int main() {
+    cout << "=" << string(60, '=') << endl;
+    cout << "⚡ C++ Game Development Demo" << endl;
+    cout << "=" << string(60, '=') << endl;
+    
+    // Get player name
+    string playerName;
+    cout << "\nEnter your name: ";
+    getline(cin, playerName);
+    cout << "\nWelcome, " << playerName << "! Starting game...\n" << endl;
+    
+    // Create game objects using smart pointers
+    auto player = make_unique<Player>(playerName);
+    vector<unique_ptr<Enemy>> enemies;
+    
+    // Create enemies
+    enemies.push_back(make_unique<Enemy>("Goblin", 30, 5, 10.0f));
+    enemies.push_back(make_unique<Enemy>("Orc", 50, 12, 8.0f));
+    enemies.push_back(make_unique<Enemy>("Dragon", 100, 25, 15.0f));
+    
+    // Template container demo
+    GameContainer<string> treasure("Treasure Chest");
+    treasure.add("Gold Coins");
+    treasure.add("Magic Sword");
+    treasure.add("Health Potion");
+    treasure.add("Dragon Scale");
+    
+    cout << "\n" << string(60, '-') << endl;
+    cout << "🎮 Game Loop Simulation" << endl;
+    cout << string(60, '-') << endl;
+    
+    // Simulate game loop for a few iterations
+    const int iterations = 5;
+    float deltaTime = 0.16f; // Simulate ~60 FPS
+    
+    for (int i = 1; i <= iterations; i++) {
+        cout << "\n🔄 Frame " << i << " (Delta: " << fixed << setprecision(2) << deltaTime << "s)" << endl;
+        cout << string(40, '-') << endl;
+        
+        // Update all game objects
+        player->update(deltaTime);
+        
+        for (auto& enemy : enemies) {
+            if (enemy->isAlive()) {
+                enemy->update(deltaTime);
+                
+                // Check if enemy is close enough to attack
+                float dx = enemy->getX() - player->getX();
+                if (abs(dx) < 5.0f) {
+                    enemy->attack(*player);
+                }
+            }
+        }
+        
+        // Check player status
+        if (!player->isAlive()) {
+            cout << "\n💀 Game Over! " << player->getName() << " has fallen!" << endl;
+            break;
+        }
+        
+        // Random events
+        if (i == 3) {
+            cout << "\n✨ Random Event: Treasure Found!" << endl;
+            treasure.display();
+            player->addItem("Magic Scroll");
+            player->gainExperience(50);
+        }
+        
+        if (i == 4) {
+            cout << "\n💚 Random Event: Healing Fountain!" << endl;
+            player->heal(30);
+        }
+        
+        // Draw everything
+        cout << "\n🎨 Rendering:" << endl;
+        player->draw();
+        for (const auto& enemy : enemies) {
+            if (enemy->isAlive()) {
+                enemy->draw();
+            }
+        }
+    }
+    
+    // Final statistics
+    cout << "\n" << string(60, '=') << endl;
+    cout << "📊 Final Statistics" << endl;
+    cout << string(60, '=') << endl;
+    
+    player->showInventory();
+    
+    cout << "\n🏆 Game completed successfully!" << endl;
+    
+    return 0;
+}`;
+        }
+
+        function getCppHelloWorld() {
+            return `// Hello World in C++
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello, World!" << endl;
+    
+    // Simple input example
+    string name;
+    cout << "Enter your name: ";
+    getline(cin, name);
+    cout << "Hello, " << name << "!" << endl;
+    
+    return 0;
+}`;
+        }
+
+        function getCSample() {
+            return `// C - System Programming Example
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+// Structure definitions
+typedef struct {
+    int id;
+    char name[50];
+    float balance;
+    char accountType[20];
+    time_t creationDate;
+} BankAccount;
+
+typedef struct {
+    int fromAccount;
+    int toAccount;
+    float amount;
+    time_t timestamp;
+    char description[100];
+} Transaction;
+
+// Function prototypes
+BankAccount* createAccount(int id, const char* name, float initialDeposit, const char* type);
+void deposit(BankAccount* account, float amount);
+int withdraw(BankAccount* account, float amount);
+void transfer(BankAccount* from, BankAccount* to, float amount);
+void displayAccount(const BankAccount* account);
+void displayTransaction(const Transaction* trans);
+void saveToFile(const BankAccount* accounts, int count, const char* filename);
+float calculateInterest(const BankAccount* account, float rate);
+
+// Dynamic array implementation
+typedef struct {
+    Transaction* data;
+    int size;
+    int capacity;
+} TransactionArray;
+
+TransactionArray* createTransactionArray(int initialCapacity) {
+    TransactionArray* arr = (TransactionArray*)malloc(sizeof(TransactionArray));
+    if (!arr) return NULL;
+    
+    arr->data = (Transaction*)malloc(initialCapacity * sizeof(Transaction));
+    arr->size = 0;
+    arr->capacity = initialCapacity;
+    
+    return arr;
+}
+
+void addTransaction(TransactionArray* arr, Transaction trans) {
+    if (arr->size >= arr->capacity) {
+        arr->capacity *= 2;
+        arr->data = (Transaction*)realloc(arr->data, arr->capacity * sizeof(Transaction));
+    }
+    arr->data[arr->size++] = trans;
+}
+
+void freeTransactionArray(TransactionArray* arr) {
+    if (arr) {
+        free(arr->data);
+        free(arr);
+    }
+}
+
+// Account functions
+BankAccount* createAccount(int id, const char* name, float initialDeposit, const char* type) {
+    BankAccount* account = (BankAccount*)malloc(sizeof(BankAccount));
+    if (!account) {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
+    
+    account->id = id;
+    strncpy(account->name, name, 49);
+    account->name[49] = '\\0';
+    account->balance = initialDeposit;
+    strncpy(account->accountType, type, 19);
+    account->accountType[19] = '\\0';
+    account->creationDate = time(NULL);
+    
+    printf("  ✓ Account created for %s (ID: %d, Type: %s)\n", name, id, type);
+    return account;
+}
+
+void deposit(BankAccount* account, float amount) {
+    if (amount > 0) {
+        account->balance += amount;
+        printf("  ✓ Deposited $%.2f to %s's account. New balance: $%.2f\n", 
+               amount, account->name, account->balance);
+    }
+}
+
+int withdraw(BankAccount* account, float amount) {
+    if (amount <= 0) {
+        printf("  ✗ Invalid amount\n");
+        return 0;
+    }
+    
+    if (account->balance >= amount) {
+        account->balance -= amount;
+        printf("  ✓ Withdrawn $%.2f from %s's account. New balance: $%.2f\n", 
+               amount, account->name, account->balance);
+        return 1;
+    } else {
+        printf("  ✗ Insufficient funds! Available: $%.2f, Requested: $%.2f\n", 
+               account->balance, amount);
+        return 0;
+    }
+}
+
+void transfer(BankAccount* from, BankAccount* to, float amount) {
+    if (amount <= 0) {
+        printf("  ✗ Invalid transfer amount\n");
+        return;
+    }
+    
+    if (from->balance >= amount) {
+        from->balance -= amount;
+        to->balance += amount;
+        printf("  ✓ Transferred $%.2f from %s to %s\n", 
+               amount, from->name, to->name);
+    } else {
+        printf("  ✗ Transfer failed! Insufficient funds in %s's account\n", from->name);
+    }
+}
+
+void displayAccount(const BankAccount* account) {
+    if (!account) return;
+    
+    char timeStr[30];
+    struct tm* timeinfo = localtime(&account->creationDate);
+    strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", timeinfo);
+    
+    printf("\n  📋 Account Details:\n");
+    printf("     ID: %d\n", account->id);
+    printf("     Name: %s\n", account->name);
+    printf("     Type: %s\n", account->accountType);
+    printf("     Balance: $%.2f\n", account->balance);
+    printf("     Created: %s\n", timeStr);
+}
+
+float calculateInterest(const BankAccount* account, float rate) {
+    float interest = account->balance * rate / 100.0;
+    printf("  💰 Interest earned at %.1f%%: $%.2f\n", rate, interest);
+    return interest;
+}
+
+// File I/O demonstration
+void saveToFile(const BankAccount* accounts, int count, const char* filename) {
+    FILE* file = fopen(filename, "w");
+    if (!file) {
+        printf("  ✗ Failed to open file for writing\n");
+        return;
+    }
+    
+    fprintf(file, "=== Bank Accounts Report ===\n");
+    fprintf(file, "Generated: %s", ctime(&(time_t){time(NULL)}));
+    fprintf(file, "%-5s %-20s %-15s %10s\n", "ID", "Name", "Type", "Balance");
+    fprintf(file, "----------------------------------------\n");
+    
+    float totalBalance = 0;
+    for (int i = 0; i < count; i++) {
+        fprintf(file, "%-5d %-20s %-15s $%9.2f\n", 
+                accounts[i].id, 
+                accounts[i].name, 
+                accounts[i].accountType, 
+                accounts[i].balance);
+        totalBalance += accounts[i].balance;
+    }
+    
+    fprintf(file, "----------------------------------------\n");
+    fprintf(file, "Total Balance: $%.2f\n", totalBalance);
+    fprintf(file, "Average Balance: $%.2f\n", totalBalance / count);
+    
+    fclose(file);
+    printf("  ✓ Data saved to %s\n", filename);
+}
+
+// Main function
+int main() {
+    printf("=", 50);
+    printf("🔧 C System Programming Demo\n");
+    printf("=", 50);
+    
+    // Get user input
+    char userName[50];
+    printf("\nEnter your name: ");
+    fgets(userName, sizeof(userName), stdin);
+    userName[strcspn(userName, "\n")] = 0;
+    printf("Hello, %s! Welcome to Banking System\n\n", userName);
+    
+    // Create transaction array
+    TransactionArray* transactions = createTransactionArray(10);
+    
+    // Create bank accounts
+    BankAccount* accounts[5];
+    int accountCount = 0;
+    
+    accounts[accountCount++] = createAccount(1001, "John Doe", 5000.0, "Checking");
+    accounts[accountCount++] = createAccount(1002, "Jane Smith", 10000.0, "Savings");
+    accounts[accountCount++] = createAccount(1003, userName, 2500.0, "Checking");
+    
+    printf("\n", 50);
+    printf("💰 Account Operations\n");
+    printf("", 50);
+    
+    // Perform operations
+    deposit(accounts[0], 1000.0);
+    withdraw(accounts[1], 500.0);
+    transfer(accounts[0], accounts[2], 200.0);
+    
+    // Calculate interest
+    printf("\n", 50);
+    printf("📈 Interest Calculations\n");
+    printf("", 50);
+    
+    for (int i = 0; i < accountCount; i++) {
+        float rate = (strcmp(accounts[i]->accountType, "Savings") == 0) ? 3.5 : 1.0;
+        calculateInterest(accounts[i], rate);
+    }
+    
+    // Display all accounts
+    printf("\n", 50);
+    printf("📊 Account Summary\n");
+    printf("", 50);
+    
+    for (int i = 0; i < accountCount; i++) {
+        displayAccount(accounts[i]);
+    }
+    
+    // Save to file
+    printf("\n", 50);
+    printf("💾 File Operations\n");
+    printf("", 50);
+    saveToFile((const BankAccount**)accounts, accountCount, "accounts.txt");
+    
+    // Memory management demonstration
+    printf("\n", 50);
+    printf("🧹 Memory Management\n");
+    printf("", 50);
+    
+    // Free allocated memory
+    for (int i = 0; i < accountCount; i++) {
+        free(accounts[i]);
+    }
+    freeTransactionArray(transactions);
+    
+    printf("  ✓ All resources cleaned up\n");
+    printf("\n✅ Program completed successfully!\n");
+    
+    return 0;
+}`;
+        }
+
+        function getCHelloWorld() {
+            return `// Hello World in C
+#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\\n");
+    
+    // Simple input example
+    char name[50];
+    printf("Enter your name: ");
+    fgets(name, sizeof(name), stdin);
+    printf("Hello, %s", name);
+    
+    return 0;
+}`;
+        }
+
+        function getCSharpSample() {
+            return `// C# - Enterprise Application Example
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Text.Json;
+
+namespace CodeSphereDemo
+{
+    // Interface for reportable entities
+    public interface IReportable
+    {
+        string GenerateReport();
+    }
+
+    // Abstract base class
+    public abstract class Person
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        
+        public Person(int id, string name, string email)
+        {
+            Id = id;
+            Name = name;
+            Email = email;
+        }
+        
+        public abstract string GetRole();
+        
+        public override string ToString()
+        {
+            return $\"{GetRole()}: {Name} ({Email})\";
+        }
+    }
+
+    // Derived class: Student
+    public class Student : Person, IReportable
+    {
+        public List<string> Courses { get; set; }
+        public Dictionary<string, double> Grades { get; set; }
+        
+        public Student(int id, string name, string email) 
+            : base(id, name, email)
+        {
+            Courses = new List<string>();
+            Grades = new Dictionary<string, double>();
+        }
+        
+        public void EnrollCourse(string course)
+        {
+            if (!Courses.Contains(course))
+            {
+                Courses.Add(course);
+                Console.WriteLine($"  ✓ {Name} enrolled in {course}");
+            }
+        }
+        
+        public void AddGrade(string course, double grade)
+        {
+            if (Courses.Contains(course))
+            {
+                Grades[course] = grade;
+                Console.WriteLine($"  ✓ Grade added: {course} = {grade}");
+            }
+        }
+        
+        public double GetGPA()
+        {
+            if (Grades.Count == 0) return 0;
+            return Grades.Values.Average();
+        }
+        
+        public override string GetRole() => "Student";
+        
+        public string GenerateReport()
+        {
+            return $@"
+    📚 Student Report - {Name}
+    ID: {Id}
+    Email: {Email}
+    Courses: {Courses.Count}
+    GPA: {GetGPA():F2}
+    Courses: {string.Join(", ", Courses)}";
+        }
+    }
+
+    // Derived class: Teacher
+    public class Teacher : Person, IReportable
+    {
+        public string Department { get; set; }
+        public List<string> Subjects { get; set; }
+        public decimal Salary { get; set; }
+        
+        public Teacher(int id, string name, string email, string department, decimal salary) 
+            : base(id, name, email)
+        {
+            Department = department;
+            Salary = salary;
+            Subjects = new List<string>();
+        }
+        
+        public void AssignSubject(string subject)
+        {
+            Subjects.Add(subject);
+            Console.WriteLine($"  ✓ {Name} assigned to teach {subject}");
+        }
+        
+        public override string GetRole() => "Teacher";
+        
+        public string GenerateReport()
+        {
+            return $@"
+    👨‍🏫 Teacher Report - {Name}
+    ID: {Id}
+    Email: {Email}
+    Department: {Department}
+    Subjects: {Subjects.Count}
+    Annual Salary: ${Salary * 12:N2}";
+        }
+    }
+
+    // Generic repository class
+    public class Repository<T> where T : Person
+    {
+        private List<T> items = new List<T>();
+        
+        public void Add(T item)
+        {
+            items.Add(item);
+            Console.WriteLine($"  ✓ Added {item.Name} to repository");
+        }
+        
+        public bool Remove(int id)
+        {
+            var item = GetById(id);
+            if (item != null)
+            {
+                items.Remove(item);
+                Console.WriteLine($"  ✓ Removed {item.Name} from repository");
+                return true;
+            }
+            return false;
+        }
+        
+        public T GetById(int id)
+        {
+            return items.FirstOrDefault(i => i.Id == id);
+        }
+        
+        public IEnumerable<T> GetAll()
+        {
+            return items;
+        }
+        
+        public IEnumerable<T> Find(Func<T, bool> predicate)
+        {
+            return items.Where(predicate);
+        }
+        
+        public int Count => items.Count;
+    }
+
+    // Extension methods
+    public static class StringExtensions
+    {
+        public static string ToTitleCase(this string str)
+        {
+            if (string.IsNullOrEmpty(str)) return str;
+            return char.ToUpper(str[0]) + str.Substring(1).ToLower();
+        }
+    }
+
+    // Main program
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            Console.WriteLine(new string('=', 60));
+            Console.WriteLine("C# Enterprise Application Demo");
+            Console.WriteLine(new string('=', 60));
+            
+            // Get user input
+            Console.Write("\nEnter your name: ");
+            string userName = Console.ReadLine();
+            Console.WriteLine($"\nHello, {userName}! Welcome to School Management System\n");
+            
+            // Create repositories
+            var studentRepo = new Repository<Student>();
+            var teacherRepo = new Repository<Teacher>();
+            
+            // Create students
+            Console.WriteLine("📚 Adding Students:");
+            var student1 = new Student(1, "Alice Johnson", "alice@school.edu");
+            student1.EnrollCourse("Mathematics");
+            student1.EnrollCourse("Physics");
+            student1.EnrollCourse("Computer Science");
+            student1.AddGrade("Mathematics", 95.5);
+            student1.AddGrade("Physics", 88.0);
+            student1.AddGrade("Computer Science", 92.5);
+            studentRepo.Add(student1);
+            
+            var student2 = new Student(2, "Bob Smith", "bob@school.edu");
+            student2.EnrollCourse("Mathematics");
+            student2.EnrollCourse("Chemistry");
+            student2.AddGrade("Mathematics", 82.0);
+            student2.AddGrade("Chemistry", 78.5);
+            studentRepo.Add(student2);
+            
+            // Create teachers
+            Console.WriteLine("\n👨‍🏫 Adding Teachers:");
+            var teacher1 = new Teacher(101, "Dr. Sarah Wilson", "swilson@school.edu", "Mathematics", 65000m);
+            teacher1.AssignSubject("Calculus");
+            teacher1.AssignSubject("Linear Algebra");
+            teacherRepo.Add(teacher1);
+            
+            var teacher2 = new Teacher(102, "Prof. James Brown", "jbrown@school.edu", "Computer Science", 72000m);
+            teacher2.AssignSubject("Programming");
+            teacher2.AssignSubject("Data Structures");
+            teacherRepo.Add(teacher2);
+            
+            // LINQ queries
+            Console.WriteLine("\n" + new string('-', 60));
+            Console.WriteLine("🔍 LINQ Queries");
+            Console.WriteLine(new string('-', 60));
+            
+            // Find students with GPA > 85
+            var topStudents = studentRepo.Find(s => s.GetGPA() > 85);
+            Console.WriteLine("\nTop Students (GPA > 85):");
+            foreach (var student in topStudents)
+            {
+                Console.WriteLine($"  • {student.Name}: GPA {student.GetGPA():F2}");
+            }
+            
+            // Group teachers by department
+            var teachersByDept = teacherRepo.GetAll()
+                .GroupBy(t => t.Department)
+                .Select(g => new { Department = g.Key, Count = g.Count() });
+            
+            Console.WriteLine("\nTeachers by Department:");
+            foreach (var dept in teachersByDept)
+            {
+                Console.WriteLine($"  • {dept.Department}: {dept.Count} teacher(s)");
+            }
+            
+            // Extension method demo
+            Console.WriteLine("\n" + new string('-', 60));
+            Console.WriteLine("🔧 Extension Methods");
+            Console.WriteLine(new string('-', 60));
+            
+            string testString = "hello world from c#";
+            Console.WriteLine($"Original: {testString}");
+            Console.WriteLine($"Title Case: {testString.ToTitleCase()}");
+            
+            // Generate reports
+            Console.WriteLine("\n" + new string('-', 60));
+            Console.WriteLine("📊 Reports");
+            Console.WriteLine(new string('-', 60));
+            
+            foreach (var student in studentRepo.GetAll())
+            {
+                Console.WriteLine(student.GenerateReport());
+            }
+            
+            foreach (var teacher in teacherRepo.GetAll())
+            {
+                Console.WriteLine(teacher.GenerateReport());
+            }
+            
+            // JSON serialization demo
+            Console.WriteLine("\n" + new string('-', 60));
+            Console.WriteLine("📦 JSON Serialization");
+            Console.WriteLine(new string('-', 60));
+            
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            string json = JsonSerializer.Serialize(studentRepo.GetAll(), options);
+            Console.WriteLine(json);
+            
+            // Async operation demo
+            Console.WriteLine("\n" + new string('-', 60));
+            Console.WriteLine("⏱️ Async Operations");
+            Console.WriteLine(new string('-', 60));
+            
+            Console.WriteLine("Processing data asynchronously...");
+            await Task.Delay(1000); // Simulate async work
+            Console.WriteLine("✓ Data processing complete!");
+            
+            // Statistics
+            Console.WriteLine("\n" + new string('=', 60));
+            Console.WriteLine("📈 System Statistics");
+            Console.WriteLine(new string('=', 60));
+            Console.WriteLine($"  Total Students: {studentRepo.Count}");
+            Console.WriteLine($"  Total Teachers: {teacherRepo.Count}");
+            Console.WriteLine($"  Average Student GPA: {studentRepo.GetAll().Average(s => s.GetGPA()):F2}");
+            Console.WriteLine($"  Average Teacher Salary: ${teacherRepo.GetAll().Average(t => t.Salary):N2}");
+            
+            Console.WriteLine("\n✅ Application completed successfully!");
+        }
+    }
+}`;
+        }
+
+        function getCSharpHelloWorld() {
+            return `// Hello World in C#
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Hello, World!");
+        
+        // Simple input example
+        Console.Write("Enter your name: ");
+        string name = Console.ReadLine();
+        Console.WriteLine($"Hello, {name}!");
+    }
+}`;
+        }
+
+        function getPHPSample() {
+            return `<?php
+// PHP - Web Development Example
+
+// Class definition with properties and methods
 class TaskManager {
     private $tasks = [];
     private $userName;
+    private $createdAt;
     
+    // Constructor
     public function __construct($userName) {
         $this->userName = $userName;
-        echo "✓ Task Manager initialized for $userName\n";
+        $this->createdAt = date('Y-m-d H:i:s');
+        echo "✓ Task Manager initialized for $userName at {$this->createdAt}\n";
     }
     
+    // Magic methods
+    public function __toString() {
+        return "TaskManager(user: {$this->userName}, tasks: " . count($this->tasks) . ")";
+    }
+    
+    public function __get($name) {
+        if ($name === 'taskCount') {
+            return count($this->tasks);
+        }
+        return null;
+    }
+    
+    // Add a task
     public function addTask($task, $priority = 'medium') {
-        $this->tasks[] = [
+        $id = uniqid();
+        $this->tasks[$id] = [
+            'id' => $id,
             'task' => $task,
             'priority' => $priority,
             'completed' => false,
-            'created' => date('Y-m-d H:i:s')
+            'created_at' => date('Y-m-d H:i:s')
         ];
         echo "  ✓ Added task: $task (Priority: $priority)\n";
+        return $id;
     }
     
-    public function completeTask($index) {
-        if (isset($this->tasks[$index])) {
-            $this->tasks[$index]['completed'] = true;
-            echo "  ✓ Completed: " . $this->tasks[$index]['task'] . "\n";
+    // Complete a task
+    public function completeTask($id) {
+        if (isset($this->tasks[$id])) {
+            $this->tasks[$id]['completed'] = true;
+            echo "  ✓ Completed: " . $this->tasks[$id]['task'] . "\n";
+            return true;
         }
+        return false;
     }
     
-    public function displayTasks() {
-        echo "\n📋 Tasks for " . $this->userName . ":\n";
-        if (empty($this->tasks)) {
-            echo "  No tasks found.\n";
-            return;
+    // Delete a task
+    public function deleteTask($id) {
+        if (isset($this->tasks[$id])) {
+            $task = $this->tasks[$id]['task'];
+            unset($this->tasks[$id]);
+            echo "  ✓ Deleted: $task\n";
+            return true;
         }
-        
-        foreach ($this->tasks as $index => $task) {
-            $status = $task['completed'] ? '✅' : '⭕';
-            echo "  $status [$index] " . $task['task'];
-            echo " (Priority: " . $task['priority'] . ")\n";
-        }
+        return false;
     }
     
+    // Get tasks by priority
+    public function getTasksByPriority($priority) {
+        return array_filter($this->tasks, function($task) use ($priority) {
+            return $task['priority'] === $priority;
+        });
+    }
+    
+    // Get statistics
     public function getStats() {
         $total = count($this->tasks);
         $completed = count(array_filter($this->tasks, fn($t) => $t['completed']));
         $pending = $total - $completed;
         
+        $priorityCounts = [];
+        foreach (['high', 'medium', 'low'] as $priority) {
+            $priorityCounts[$priority] = count($this->getTasksByPriority($priority));
+        }
+        
         return [
             'total' => $total,
             'completed' => $completed,
             'pending' => $pending,
-            'completion_rate' => $total > 0 ? round(($completed/$total)*100, 2) : 0
+            'completion_rate' => $total > 0 ? round(($completed / $total) * 100, 2) : 0,
+            'by_priority' => $priorityCounts
         ];
+    }
+    
+    // Display all tasks
+    public function displayTasks() {
+        if (empty($this->tasks)) {
+            echo "  No tasks found.\n";
+            return;
+        }
+        
+        echo "\n📋 Tasks for {$this->userName}:\n";
+        foreach ($this->tasks as $task) {
+            $status = $task['completed'] ? '✅' : '⭕';
+            $priority_icon = match($task['priority']) {
+                'high' => '🔴',
+                'medium' => '🟡',
+                'low' => '🟢',
+                default => '⚪'
+            };
+            
+            echo "  $status $priority_icon [{$task['id']}] " . $task['task'];
+            echo " (Created: {$task['created_at']})\n";
+        }
+    }
+    
+    // Array iteration with array_map
+    public function getTaskSummaries() {
+        return array_map(function($task) {
+            return [
+                'summary' => substr($task['task'], 0, 20) . (strlen($task['task']) > 20 ? '...' : ''),
+                'status' => $task['completed'] ? 'Done' : 'Pending',
+                'priority' => $task['priority']
+            ];
+        }, $this->tasks);
+    }
+    
+    // Array filtering with array_filter
+    public function getHighPriorityTasks() {
+        return array_filter($this->tasks, fn($t) => $t['priority'] === 'high' && !$t['completed']);
+    }
+    
+    // Array reduction with array_reduce
+    public function getTotalTaskLength() {
+        return array_reduce($this->tasks, function($carry, $task) {
+            return $carry + strlen($task['task']);
+        }, 0);
+    }
+}
+
+// Trait for logging
+trait Loggable {
+    public function log($message) {
+        echo "[LOG: " . date('H:i:s') . "] $message\n";
+    }
+}
+
+// Abstract class for notifications
+abstract class Notification {
+    protected $recipient;
+    
+    public function __construct($recipient) {
+        $this->recipient = $recipient;
+    }
+    
+    abstract public function send($message);
+}
+
+// Email notification class
+class EmailNotification extends Notification {
+    use Loggable;
+    
+    public function send($message) {
+        $this->log("Sending email to {$this->recipient}");
+        echo "  📧 Email sent to {$this->recipient}: $message\n";
     }
 }
 
 // Main program
-echo "=== Task Manager ===\n\n";
+echo str_repeat("=", 60) . "\n";
+echo "🐘 PHP Web Development Demo\n";
+echo str_repeat("=", 60) . "\n";
 
-$name = readline("Enter your name: ");
-echo "Hello, $name!\n\n";
+// Get user input
+echo "\nEnter your name: ";
+$userName = trim(fgets(STDIN));
+echo "Hello, $userName! Welcome to Task Manager\n\n";
 
 // Create task manager
-$manager = new TaskManager($name);
+$manager = new TaskManager($userName);
 
-// Add some tasks
-$manager->addTask("Complete project report", "high");
-$manager->addTask("Review pull requests", "high");
-$manager->addTask("Update documentation", "medium");
-$manager->addTask("Team meeting", "low");
+// Add tasks
+echo "\n📦 Adding tasks:\n";
+$task1 = $manager->addTask("Complete project documentation", "high");
+$task2 = $manager->addTask("Review pull requests", "high");
+$task3 = $manager->addTask("Update dependencies", "medium");
+$task4 = $manager->addTask("Schedule team meeting", "low");
+$task5 = $manager->addTask("Prepare presentation", "high");
 
-// Display tasks
+// Display all tasks
 $manager->displayTasks();
 
-// Complete a task
-echo "\nCompleting task 0...\n";
-$manager->completeTask(0);
+// Complete some tasks
+echo "\n✅ Completing tasks:\n";
+$manager->completeTask($task1);
+$manager->completeTask($task3);
 
 // Show updated tasks
 $manager->displayTasks();
 
-// Show statistics
+// Get statistics
+echo "\n" . str_repeat("-", 60);
+echo "\n📊 Statistics\n";
+echo str_repeat("-", 60) . "\n";
+
 $stats = $manager->getStats();
-echo "\n📊 Statistics:\n";
-echo "  Total tasks: " . $stats['total'] . "\n";
-echo "  Completed: " . $stats['completed'] . "\n";
-echo "  Pending: " . $stats['pending'] . "\n";
-echo "  Completion rate: " . $stats['completion_rate'] . "%\n";
-?>`
-            },
-            ruby: {
-                name: 'Ruby',
-                icon: '💎',
-                version: '3.2',
-                mode: 'lang',
-                description: 'Ruby is a dynamic, object-oriented programming language known for its simplicity.',
-                sample: `# Ruby Program with Blocks and Modules
+foreach ($stats as $key => $value) {
+    if (is_array($value)) {
+        echo "  $key:\n";
+        foreach ($value as $k => $v) {
+            echo "    $k: $v\n";
+        }
+    } else {
+        echo "  $key: $value\n";
+    }
+}
+
+// Array function demos
+echo "\n" . str_repeat("-", 60);
+echo "\n🔄 Array Function Demos\n";
+echo str_repeat("-", 60) . "\n";
+
+echo "\nTask Summaries:\n";
+$summaries = $manager->getTaskSummaries();
+print_r($summaries);
+
+echo "\nHigh Priority Tasks:\n";
+$highPriority = $manager->getHighPriorityTasks();
+foreach ($highPriority as $task) {
+    echo "  • " . $task['task'] . "\n";
+}
+
+echo "\nTotal characters in all tasks: " . $manager->getTotalTaskLength() . "\n";
+
+// String manipulation
+echo "\n" . str_repeat("-", 60);
+echo "\n🔧 String Operations\n";
+echo str_repeat("-", 60) . "\n";
+
+$sampleText = "  hello world from PHP  ";
+echo "Original: '$sampleText'\n";
+echo "Trimmed: '" . trim($sampleText) . "'\n";
+echo "Uppercase: " . strtoupper(trim($sampleText)) . "\n";
+echo "Replaced: " . str_replace("world", "PHP", trim($sampleText)) . "\n";
+
+// Date operations
+echo "\n" . str_repeat("-", 60);
+echo "\n📅 Date Operations\n";
+echo str_repeat("-", 60) . "\n";
+
+echo "Current time: " . date('Y-m-d H:i:s') . "\n";
+echo "Timestamp: " . time() . "\n";
+echo "Next week: " . date('Y-m-d', strtotime('+1 week')) . "\n";
+
+// Send notification
+echo "\n" . str_repeat("-", 60);
+echo "\n📧 Notification Demo\n";
+echo str_repeat("-", 60) . "\n";
+
+$email = new EmailNotification($userName . "@example.com");
+$email->send("Your tasks have been processed!");
+
+// Magic method demo
+echo "\n" . str_repeat("-", 60);
+echo "\n🎩 Magic Methods\n";
+echo str_repeat("-", 60) . "\n";
+
+echo $manager . "\n";
+echo "Task count via __get: " . $manager->taskCount . "\n";
+
+echo "\n✅ Program completed successfully!\n";
+?>`;
+        }
+
+        function getPHPHelloWorld() {
+            return `<?php
+// Hello World in PHP
+echo "Hello, World!\\n";
+
+// Simple input example
+echo "Enter your name: ";
+$name = trim(fgets(STDIN));
+echo "Hello, $name!\\n";
+
+// Array example
+$greetings = ["Hello", "Hi", "Hey"];
+echo $greetings[0] . " from PHP!\\n";
+?>`;
+        }
+
+        function getRubySample() {
+            return `# Ruby - Web Development Example
+# Demonstrating Ruby's elegant syntax and metaprogramming
+
+# Module for mixin
 module Formattable
   def format_as_table(data)
     puts "+" + "-" * 50 + "+"
     data.each { |row| puts "| #{row}" }
     puts "+" + "-" * 50 + "+"
   end
+  
+  def format_as_json(data)
+    require 'json' unless defined?(JSON)
+    JSON.pretty_generate(data)
+  end
 end
 
-class Analytics
-  include Formattable
+# Class with attr_accessor
+class Task
+  attr_accessor :title, :priority, :completed
+  attr_reader :created_at
   
-  attr_reader :name, :data
+  def initialize(title, priority = :medium)
+    @title = title
+    @priority = priority
+    @completed = false
+    @created_at = Time.now
+  end
+  
+  def complete!
+    @completed = true
+    puts "  ✓ Task completed: #{@title}"
+  end
+  
+  def to_s
+    status = @completed ? "✅" : "⭕"
+    "#{status} [#{@priority}] #{@title} (created: #{@created_at.strftime('%H:%M:%S')})"
+  end
+  
+  # Custom comparison
+  def <=>(other)
+    priority_order = { high: 0, medium: 1, low: 2 }
+    priority_order[@priority] <=> priority_order[other.priority]
+  end
+end
+
+# Main class with yield and blocks
+class TaskManager
+  include Formattable
+  include Enumerable
+  
+  attr_reader :name, :tasks
   
   def initialize(name)
     @name = name
-    @data = []
-    puts "✓ Analytics initialized for #{name}"
+    @tasks = []
+    @observers = []
+    puts "✓ TaskManager initialized for #{name}"
   end
   
-  def add_record(value)
-    @data << value
-    puts "  ✓ Added: #{value}"
-  end
-  
-  def analyze
-    return "No data" if @data.empty?
+  # Block usage
+  def add_task(title, priority = :medium)
+    task = Task.new(title, priority)
+    @tasks << task
     
+    # Yield to block if given
+    yield(task) if block_given?
+    
+    puts "  ✓ Added task: #{title} (#{priority})"
+    task
+  end
+  
+  # Multiple tasks at once
+  def add_tasks(*task_data)
+    task_data.each do |data|
+      if data.is_a?(Hash)
+        add_task(data[:title], data[:priority])
+      else
+        add_task(data)
+      end
+    end
+  end
+  
+  # Finders
+  def find_by_title(title)
+    @tasks.find { |t| t.title.include?(title) }
+  end
+  
+  def find_all_by_priority(priority)
+    @tasks.select { |t| t.priority == priority }
+  end
+  
+  def completed_tasks
+    @tasks.select(&:completed)
+  end
+  
+  def pending_tasks
+    @tasks.reject(&:completed)
+  end
+  
+  # Enumerable implementation
+  def each(&block)
+    @tasks.each(&block)
+  end
+  
+  # Statistics
+  def stats
     {
-      count: @data.length,
-      sum: @data.sum,
-      average: @data.sum.to_f / @data.length,
-      min: @data.min,
-      max: @data.max,
-      sorted: @data.sort
+      total: @tasks.size,
+      completed: completed_tasks.size,
+      pending: pending_tasks.size,
+      completion_rate: @tasks.size > 0 ? (completed_tasks.size.to_f / @tasks.size * 100).round(2) : 0,
+      by_priority: {
+        high: find_all_by_priority(:high).size,
+        medium: find_all_by_priority(:medium).size,
+        low: find_all_by_priority(:low).size
+      }
     }
   end
   
-  def process_with_block
-    puts "\n🔄 Processing each item:"
-    @data.each_with_index do |item, index|
-      yield(item, index) if block_given?
+  # Display all tasks
+  def display_tasks
+    puts "\n📋 Tasks for #{@name}:"
+    if @tasks.empty?
+      puts "  No tasks found."
+    else
+      @tasks.sort.each_with_index do |task, i|
+        puts "  #{i+1}. #{task}"
+      end
     end
+  end
+  
+  # Method missing for dynamic finders
+  def method_missing(method_name, *args)
+    if method_name.to_s =~ /^find_by_(.+)$/
+      attribute = $1
+      find_by(attribute, args.first)
+    else
+      super
+    end
+  end
+  
+  def respond_to_missing?(method_name, include_private = false)
+    method_name.to_s.start_with?('find_by_') || super
+  end
+  
+  private
+  
+  def find_by(attribute, value)
+    @tasks.find { |t| t.send(attribute) == value if t.respond_to?(attribute) }
+  end
+end
+
+# Observer pattern
+class TaskObserver
+  def update(task)
+    puts "  👀 Observer notified: #{task.title} changed"
   end
 end
 
 # Main program
-puts "=== Ruby Analytics Dashboard ===\n\n"
+puts "=" * 60
+puts "💎 Ruby Web Development Demo"
+puts "=" * 60
 
+# Get user input
+print "\nEnter your name: "
+user_name = gets.chomp
+puts "Hello, #{user_name}! Welcome to Task Manager\n\n"
+
+# Create task manager
+manager = TaskManager.new(user_name)
+
+# Add tasks using different methods
+puts "\n📦 Adding tasks:"
+manager.add_task("Learn Ruby basics", :high)
+manager.add_task("Build a web app", :high)
+manager.add_task("Write documentation", :medium)
+manager.add_task("Fix bugs", :low)
+
+# Add multiple tasks at once
+manager.add_tasks(
+  "Review pull requests",
+  { title: "Update dependencies", priority: :high },
+  { title: "Plan sprint", priority: :medium }
+)
+
+# Display all tasks
+manager.display_tasks
+
+# Complete some tasks
+puts "\n✅ Completing tasks:"
+task = manager.find_by_title("Learn Ruby basics")
+task.complete! if task
+
+task = manager.find_by_title("Write documentation")
+task.complete! if task
+
+# Display updated tasks
+manager.display_tasks
+
+# Statistics
+puts "\n" + "-" * 60
+puts "📊 Statistics"
+puts "-" * 60
+
+stats = manager.stats
+stats.each do |key, value|
+  if value.is_a?(Hash)
+    puts "  #{key}:"
+    value.each { |k, v| puts "    #{k}: #{v}" }
+  else
+    puts "  #{key}: #{value}"
+  end
+end
+
+# Enumerable methods
+puts "\n" + "-" * 60
+puts "🔄 Enumerable Methods"
+puts "-" * 60
+
+puts "\nHigh priority tasks:"
+high_tasks = manager.find_all_by_priority(:high)
+high_tasks.each { |t| puts "  • #{t.title}" }
+
+puts "\nTask titles:"
+titles = manager.map(&:title)
+puts "  " + titles.join(", ")
+
+puts "\nGroup by priority:"
+by_priority = manager.group_by(&:priority)
+by_priority.each do |priority, tasks|
+  puts "  #{priority}: #{tasks.size} tasks"
+end
+
+# Formatting with module
+puts "\n" + "-" * 60
+puts "📋 Formatted Output"
+puts "-" * 60
+
+puts "\nTable format:"
+manager.format_as_table(manager.map(&:to_s))
+
+puts "\nJSON format:"
+puts manager.format_as_json(stats)
+
+# Metaprogramming demo
+puts "\n" + "-" * 60
+puts "🎩 Metaprogramming"
+puts "-" * 60
+
+# Dynamic method call
+if manager.respond_to?(:find_by_title)
+  task = manager.find_by_title("Build")
+  puts "Found task via dynamic finder: #{task.title if task}"
+end
+
+# String manipulation
+puts "\n" + "-" * 60
+puts "🔧 String Operations"
+puts "-" * 60
+
+sample_text = "  hello world from ruby  "
+puts "Original: '#{sample_text}'"
+puts "Strip: '#{sample_text.strip}'"
+puts "Upcase: '#{sample_text.strip.upcase}'"
+puts "Reverse: '#{sample_text.strip.reverse}'"
+puts "Split: #{sample_text.strip.split.inspect}"
+
+# Time operations
+puts "\n" + "-" * 60
+puts "⏰ Time Operations"
+puts "-" * 60
+
+now = Time.now
+puts "Current time: #{now}"
+puts "Formatted: #{now.strftime("%Y-%m-%d %H:%M:%S")}"
+puts "Tomorrow: #{now + 24*60*60}"
+
+puts "\n✅ Program completed successfully!"`;
+        }
+
+        function getRubyHelloWorld() {
+            return `# Hello World in Ruby
+puts "Hello, World!"
+
+# Simple input example
 print "Enter your name: "
 name = gets.chomp
-puts "Hello, #{name}!\n\n"
+puts "Hello, #{name}!"
 
-# Create analytics instance
-analytics = Analytics.new(name)
+# Array example
+greetings = ["Hello", "Hi", "Hey"]
+puts greetings[0] + " from Ruby!"`;
+        }
 
-# Add some data
-[42, 17, 89, 5, 63, 28].each { |n| analytics.add_record(n) }
-
-# Analyze data
-results = analytics.analyze
-puts "\n📊 Analysis Results:"
-results.each do |key, value|
-  puts "  #{key}: #{value}"
-end
-
-# Use block for processing
-analytics.process_with_block do |item, index|
-  puts "  Item #{index}: #{item} (squared: #{item * item})"
-end
-
-# Use the module method
-puts "\n📋 Formatted Output:"
-analytics.format_as_table(results.map { |k,v| "#{k}: #{v}" })
-
-puts "\n✅ Analysis complete!"`
-            },
-            go: {
-                name: 'Go',
-                icon: '🔵',
-                version: '1.21',
-                mode: 'lang',
-                description: 'Go is a statically typed, compiled programming language designed at Google.',
-                sample: `// Go Program with Concurrency
+        function getGoSample() {
+            return `// Go - Concurrent Programming Example
 package main
 
 import (
+    "bufio"
     "fmt"
-    "sync"
+    "os"
+    "strings"
     "time"
+    "sync"
+    "math/rand"
 )
 
 // Task represents a unit of work
@@ -1572,347 +3604,1852 @@ type Task struct {
     ID       int
     Name     string
     Duration time.Duration
+    Priority int
 }
 
-// Worker processes tasks
-func worker(id int, tasks <-chan Task, results chan<- string, wg *sync.WaitGroup) {
-    defer wg.Done()
-    
-    for task := range tasks {
-        fmt.Printf("Worker %d starting task: %s\n", id, task.Name)
-        time.Sleep(task.Duration * time.Millisecond)
-        result := fmt.Sprintf("Worker %d completed: %s (took %dms)", 
-            id, task.Name, task.Duration)
-        results <- result
+// Result represents the output of a task
+type Result struct {
+    TaskID     int
+    WorkerID   int
+    Output     string
+    CompletedAt time.Time
+}
+
+// Worker pool implementation
+type WorkerPool struct {
+    tasks    chan Task
+    results  chan Result
+    workers  int
+    wg       sync.WaitGroup
+    quit     chan bool
+}
+
+// Create a new worker pool
+func NewWorkerPool(workers int) *WorkerPool {
+    return &WorkerPool{
+        tasks:   make(chan Task, 100),
+        results: make(chan Result, 100),
+        workers: workers,
+        quit:    make(chan bool),
     }
 }
 
+// Start the worker pool
+func (wp *WorkerPool) Start() {
+    for i := 1; i <= wp.workers; i++ {
+        wp.wg.Add(1)
+        go wp.worker(i)
+    }
+}
+
+// Stop the worker pool
+func (wp *WorkerPool) Stop() {
+    close(wp.quit)
+    wp.wg.Wait()
+    close(wp.results)
+}
+
+// Worker function
+func (wp *WorkerPool) worker(id int) {
+    defer wp.wg.Done()
+    
+    for {
+        select {
+        case task, ok := <-wp.tasks:
+            if !ok {
+                return
+            }
+            
+            // Process the task
+            fmt.Printf("  Worker %d starting task: %s (priority %d)\n", 
+                id, task.Name, task.Priority)
+            
+            // Simulate work
+            time.Sleep(task.Duration * time.Millisecond)
+            
+            // Send result
+            result := Result{
+                TaskID:     task.ID,
+                WorkerID:   id,
+                Output:     fmt.Sprintf("Completed %s", task.Name),
+                CompletedAt: time.Now(),
+            }
+            
+            select {
+            case wp.results <- result:
+            case <-wp.quit:
+                return
+            }
+            
+        case <-wp.quit:
+            return
+        }
+    }
+}
+
+// Add a task to the pool
+func (wp *WorkerPool) AddTask(task Task) {
+    select {
+    case wp.tasks <- task:
+    case <-wp.quit:
+    }
+}
+
+// Get results channel
+func (wp *WorkerPool) Results() <-chan Result {
+    return wp.results
+}
+
+// Interface for reportable entities
+type Reportable interface {
+    GenerateReport() string
+}
+
+// Project structure
+type Project struct {
+    Name        string
+    Description string
+    Tasks       []Task
+    CreatedAt   time.Time
+}
+
+func (p Project) GenerateReport() string {
+    var sb strings.Builder
+    sb.WriteString(fmt.Sprintf("\n📁 Project: %s\n", p.Name))
+    sb.WriteString(fmt.Sprintf("   Description: %s\n", p.Description))
+    sb.WriteString(fmt.Sprintf("   Created: %s\n", p.CreatedAt.Format("2006-01-02 15:04:05")))
+    sb.WriteString(fmt.Sprintf("   Tasks: %d\n", len(p.Tasks)))
+    
+    totalDuration := 0
+    for _, task := range p.Tasks {
+        totalDuration += int(task.Duration)
+    }
+    sb.WriteString(fmt.Sprintf("   Total Duration: %dms\n", totalDuration))
+    
+    return sb.String()
+}
+
+// Function with multiple return values
+func processTask(task Task) (Result, error) {
+    if task.Name == "" {
+        return Result{}, fmt.Errorf("task name cannot be empty")
+    }
+    
+    result := Result{
+        TaskID:     task.ID,
+        Output:     fmt.Sprintf("Processed: %s", task.Name),
+        CompletedAt: time.Now(),
+    }
+    
+    return result, nil
+}
+
+// Generic function with type parameter (Go 1.18+)
+func Filter[T any](items []T, predicate func(T) bool) []T {
+    result := make([]T, 0)
+    for _, item := range items {
+        if predicate(item) {
+            result = append(result, item)
+        }
+    }
+    return result
+}
+
+// Map function
+func Map[T, U any](items []T, mapper func(T) U) []U {
+    result := make([]U, len(items))
+    for i, item := range items {
+        result[i] = mapper(item)
+    }
+    return result
+}
+
+// Main function
 func main() {
-    fmt.Println("=== Go Concurrent Task Processor ===\n")
+    fmt.Println("=" + strings.Repeat("=", 59))
+    fmt.Println("🔵 Go Concurrent Programming Demo")
+    fmt.Println("=" + strings.Repeat("=", 59))
     
-    var name string
-    fmt.Print("Enter your name: ")
-    fmt.Scanln(&name)
-    fmt.Printf("Hello, %s!\n\n", name)
+    // Get user input
+    reader := bufio.NewReader(os.Stdin)
+    fmt.Print("\nEnter your name: ")
+    userName, _ := reader.ReadString('\n')
+    userName = strings.TrimSpace(userName)
+    fmt.Printf("\nHello, %s! Welcome to Concurrent Task Processor\n", userName)
     
-    // Create tasks
-    tasks := []Task{
-        {ID: 1, Name: "Process data", Duration: 100},
-        {ID: 2, Name: "Generate report", Duration: 150},
-        {ID: 3, Name: "Send email", Duration: 50},
-        {ID: 4, Name: "Backup database", Duration: 200},
-        {ID: 5, Name: "Clean cache", Duration: 75},
+    // Create a worker pool with 3 workers
+    fmt.Println("\n🚀 Starting worker pool with 3 workers...")
+    pool := NewWorkerPool(3)
+    pool.Start()
+    
+    // Create a project
+    project := Project{
+        Name:        "CodeSphere Development",
+        Description: "Building the ultimate online compiler",
+        CreatedAt:   time.Now(),
     }
     
-    // Create channels
-    taskChannel := make(chan Task, len(tasks))
-    resultChannel := make(chan string, len(tasks))
-    
-    // Start workers
-    var wg sync.WaitGroup
-    numWorkers := 3
-    
-    fmt.Printf("Starting %d workers...\n\n", numWorkers)
-    
-    for w := 1; w <= numWorkers; w++ {
-        wg.Add(1)
-        go worker(w, taskChannel, resultChannel, &wg)
+    // Generate tasks
+    taskNames := []string{
+        "Design database schema",
+        "Implement authentication",
+        "Create API endpoints",
+        "Build frontend components",
+        "Write unit tests",
+        "Deploy to production",
+        "Monitor performance",
+        "Fix bugs",
+        "Update documentation",
+        "Review pull requests",
     }
     
-    // Send tasks
-    for _, task := range tasks {
-        taskChannel <- task
+    fmt.Println("\n📦 Adding tasks to queue:")
+    for i, name := range taskNames {
+        task := Task{
+            ID:       i + 1,
+            Name:     name,
+            Duration: time.Duration(rand.Intn(500) + 100),
+            Priority: rand.Intn(5) + 1,
+        }
+        project.Tasks = append(project.Tasks, task)
+        pool.AddTask(task)
+        fmt.Printf("  ✓ Added task %d: %s\n", task.ID, task.Name)
+        time.Sleep(10 * time.Millisecond) // Small delay for demonstration
     }
-    close(taskChannel)
-    
-    // Wait for workers and close results
-    go func() {
-        wg.Wait()
-        close(resultChannel)
-    }()
     
     // Collect results
-    fmt.Println("📊 Processing Results:")
-    for result := range resultChannel {
-        fmt.Println("  " + result)
-    }
+    fmt.Println("\n📊 Processing results:")
+    results := make([]Result, 0)
     
-    fmt.Printf("\n✅ All %d tasks processed successfully!\n", len(tasks))
-}`
-            },
-            rust: {
-                name: 'Rust',
-                icon: '🦀',
-                version: '1.72',
-                mode: 'lang',
-                description: 'Rust is a systems programming language focused on safety and performance.',
-                sample: `// Rust Program with Ownership and Traits
-use std::fmt;
-
-#[derive(Debug)]
-struct Project {
-    name: String,
-    lines_of_code: u32,
-    language: String,
-}
-
-trait Summary {
-    fn summarize(&self) -> String;
-}
-
-impl Summary for Project {
-    fn summarize(&self) -> String {
-        format!("{} ({}): {} lines of {}",
-            self.name, self.language, self.lines_of_code, self.language)
-    }
-}
-
-impl fmt::Display for Project {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "📁 {} [{}] - {} lines", self.name, self.language, self.lines_of_code)
-    }
-}
-
-struct Repository {
-    name: String,
-    projects: Vec<Project>,
-}
-
-impl Repository {
-    fn new(name: &str) -> Self {
-        Repository {
-            name: String::from(name),
-            projects: Vec::new(),
+    // Use select with timeout
+    timeout := time.After(5 * time.Second)
+    
+    for i := 0; i < len(taskNames); i++ {
+        select {
+        case result := <-pool.Results():
+            results = append(results, result)
+            fmt.Printf("  Result from worker %d: %s (completed at %s)\n",
+                result.WorkerID,
+                result.Output,
+                result.CompletedAt.Format("15:04:05"))
+            
+        case <-timeout:
+            fmt.Println("  ⚠️ Timeout reached!")
+            break
         }
     }
     
-    fn add_project(&mut self, project: Project) {
-        println!("  ✓ Added: {}", project.summarize());
-        self.projects.push(project);
+    // Stop the pool
+    pool.Stop()
+    
+    // Generate project report
+    fmt.Println("\n" + strings.Repeat("-", 60))
+    fmt.Println("📋 Project Report")
+    fmt.Println(strings.Repeat("-", 60))
+    
+    if reportable, ok := interface{}(project).(Reportable); ok {
+        fmt.Print(reportable.GenerateReport())
     }
     
-    fn total_lines(&self) -> u32 {
-        self.projects.iter().map(|p| p.lines_of_code).sum()
+    // Use generic functions
+    fmt.Println("\n" + strings.Repeat("-", 60))
+    fmt.Println("🔄 Generic Functions Demo")
+    fmt.Println(strings.Repeat("-", 60))
+    
+    // Filter high priority tasks
+    highPriorityTasks := Filter(project.Tasks, func(t Task) bool {
+        return t.Priority >= 4
+    })
+    
+    fmt.Printf("\nHigh priority tasks (%d):\n", len(highPriorityTasks))
+    for _, task := range highPriorityTasks {
+        fmt.Printf("  • Task %d: %s (priority %d)\n", task.ID, task.Name, task.Priority)
     }
     
-    fn find_by_language(&self, language: &str) -> Vec<&Project> {
-        self.projects
-            .iter()
-            .filter(|p| p.language == language)
-            .collect()
+    // Map task names
+    taskNames_only := Map(project.Tasks, func(t Task) string {
+        return t.Name
+    })
+    
+    fmt.Printf("\nAll task names:\n  %v\n", taskNames_only)
+    
+    // Error handling demo
+    fmt.Println("\n" + strings.Repeat("-", 60))
+    fmt.Println("⚠️ Error Handling Demo")
+    fmt.Println(strings.Repeat("-", 60))
+    
+    invalidTask := Task{ID: 99, Name: ""}
+    result, err := processTask(invalidTask)
+    if err != nil {
+        fmt.Printf("  Error: %v\n", err)
+    } else {
+        fmt.Printf("  Result: %v\n", result)
+    }
+    
+    // Channel direction demo
+    fmt.Println("\n" + strings.Repeat("-", 60))
+    fmt.Println("📨 Channel Direction Demo")
+    fmt.Println(strings.Repeat("-", 60))
+    
+    ch := make(chan string)
+    
+    // Send-only channel
+    go func(ch chan<- string) {
+        ch <- "Hello from goroutine!"
+    }(ch)
+    
+    // Receive-only channel in main
+    msg := <-ch
+    fmt.Printf("  Received: %s\n", msg)
+    
+    // Statistics
+    fmt.Println("\n" + strings.Repeat("=", 60))
+    fmt.Println("📈 Processing Statistics")
+    fmt.Println(strings.Repeat("=", 60))
+    fmt.Printf("  Total tasks: %d\n", len(project.Tasks))
+    fmt.Printf("  Successful: %d\n", len(results))
+    fmt.Printf("  Workers used: %d\n", 3)
+    
+    // Calculate average processing time
+    if len(results) > 0 {
+        first := results[0].CompletedAt
+        last := results[len(results)-1].CompletedAt
+        totalTime := last.Sub(first)
+        avgTime := totalTime / time.Duration(len(results))
+        fmt.Printf("  Average time per task: %v\n", avgTime)
+    }
+    
+    fmt.Println("\n✅ Program completed successfully!")
+}`;
+        }
+
+        function getGoHelloWorld() {
+            return `// Hello World in Go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, World!")
+    
+    // Simple input example
+    var name string
+    fmt.Print("Enter your name: ")
+    fmt.Scanln(&name)
+    fmt.Printf("Hello, %s!\n", name)
+}`;
+        }
+
+        function getRustSample() {
+            return `// Rust - Systems Programming Example
+use std::collections::{HashMap, HashSet};
+use std::fmt;
+use std::thread;
+use std::time::Duration;
+use std::sync::{Arc, Mutex};
+use rand::Rng;
+
+// Custom error type
+#[derive(Debug)]
+enum TaskError {
+    InvalidTask(String),
+    DuplicateTask(String),
+    TaskNotFound(String),
+}
+
+impl fmt::Display for TaskError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            TaskError::InvalidTask(msg) => write!(f, "Invalid task: {}", msg),
+            TaskError::DuplicateTask(msg) => write!(f, "Duplicate task: {}", msg),
+            TaskError::TaskNotFound(msg) => write!(f, "Task not found: {}", msg),
+        }
     }
 }
 
-fn main() {
-    println!("=== Rust Repository Manager ===\n");
+// Trait definition
+trait Describable {
+    fn description(&self) -> String;
+}
+
+// Enum for task priority
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+enum Priority {
+    High,
+    Medium,
+    Low,
+}
+
+impl fmt::Display for Priority {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Priority::High => write!(f, "🔴 High"),
+            Priority::Medium => write!(f, "🟡 Medium"),
+            Priority::Low => write!(f, "🟢 Low"),
+        }
+    }
+}
+
+// Struct with generics
+struct Task<T> {
+    id: u32,
+    title: String,
+    priority: Priority,
+    data: T,
+    completed: bool,
+    tags: HashSet<String>,
+}
+
+impl<T> Task<T> {
+    fn new(id: u32, title: String, priority: Priority, data: T) -> Self {
+        Task {
+            id,
+            title,
+            priority,
+            data,
+            completed: false,
+            tags: HashSet::new(),
+        }
+    }
+    
+    fn complete(&mut self) {
+        self.completed = true;
+    }
+    
+    fn add_tag(&mut self, tag: String) {
+        self.tags.insert(tag);
+    }
+    
+    fn has_tag(&self, tag: &str) -> bool {
+        self.tags.contains(tag)
+    }
+}
+
+impl<T: fmt::Debug> Describable for Task<T> {
+    fn description(&self) -> String {
+        format!("Task[{}]: {} ({}) - Data: {:?} - Tags: {:?}",
+            self.id, self.title, self.priority, self.data, self.tags)
+    }
+}
+
+// Task manager with ownership and borrowing
+struct TaskManager<T> {
+    tasks: HashMap<u32, Task<T>>,
+    next_id: u32,
+    categories: HashSet<String>,
+}
+
+impl<T> TaskManager<T> {
+    fn new() -> Self {
+        TaskManager {
+            tasks: HashMap::new(),
+            next_id: 1,
+            categories: HashSet::new(),
+        }
+    }
+    
+    fn add_task(&mut self, title: String, priority: Priority, data: T) -> Result<u32, TaskError> {
+        if title.is_empty() {
+            return Err(TaskError::InvalidTask("Title cannot be empty".to_string()));
+        }
+        
+        let id = self.next_id;
+        self.next_id += 1;
+        
+        let task = Task::new(id, title, priority, data);
+        self.tasks.insert(id, task);
+        
+        Ok(id)
+    }
+    
+    fn get_task(&self, id: u32) -> Option<&Task<T>> {
+        self.tasks.get(&id)
+    }
+    
+    fn get_task_mut(&mut self, id: u32) -> Option<&mut Task<T>> {
+        self.tasks.get_mut(&id)
+    }
+    
+    fn complete_task(&mut self, id: u32) -> Result<(), TaskError> {
+        match self.tasks.get_mut(&id) {
+            Some(task) => {
+                task.complete();
+                Ok(())
+            },
+            None => Err(TaskError::TaskNotFound(format!("Task {} not found", id))),
+        }
+    }
+    
+    fn remove_task(&mut self, id: u32) -> Result<Task<T>, TaskError> {
+        match self.tasks.remove(&id) {
+            Some(task) => Ok(task),
+            None => Err(TaskError::TaskNotFound(format!("Task {} not found", id))),
+        }
+    }
+    
+    fn tasks_by_priority(&self, priority: &Priority) -> Vec<&Task<T>> {
+        self.tasks
+            .values()
+            .filter(|task| task.priority == *priority)
+            .collect()
+    }
+    
+    fn pending_tasks(&self) -> Vec<&Task<T>> {
+        self.tasks.values().filter(|task| !task.completed).collect()
+    }
+    
+    fn add_category(&mut self, category: String) {
+        self.categories.insert(category);
+    }
+}
+
+// Function with result type
+fn parse_priority(input: &str) -> Result<Priority, TaskError> {
+    match input.to_lowercase().as_str() {
+        "high" => Ok(Priority::High),
+        "medium" => Ok(Priority::Medium),
+        "low" => Ok(Priority::Low),
+        _ => Err(TaskError::InvalidTask(format!("Invalid priority: {}", input))),
+    }
+}
+
+// Thread-safe counter using Arc and Mutex
+struct Counter {
+    count: Arc<Mutex<i32>>,
+}
+
+impl Counter {
+    fn new() -> Self {
+        Counter {
+            count: Arc::new(Mutex::new(0)),
+        }
+    }
+    
+    fn increment(&self) {
+        let mut count = self.count.lock().unwrap();
+        *count += 1;
+    }
+    
+    fn value(&self) -> i32 {
+        *self.count.lock().unwrap()
+    }
+}
+
+// Main function
+fn main() -> Result<(), TaskError> {
+    println!("{}", "=".repeat(60));
+    println!("🦀 Rust Systems Programming Demo");
+    println!("{}", "=".repeat(60));
     
     // Get user input
+    println!("\nEnter your name:");
     let mut input = String::new();
-    println!("Enter your name:");
     std::io::stdin().read_line(&mut input).expect("Failed to read line");
     let name = input.trim();
-    println!("Hello, {}!\n", name);
+    println!("Hello, {}! Welcome to Task Manager\n", name);
     
-    // Create repository
-    let mut repo = Repository::new("CodeSphere Projects");
+    // Create task manager
+    let mut manager = TaskManager::<String>::new();
     
-    // Add projects
-    let projects = vec![
-        Project {
-            name: String::from("Web App"),
-            lines_of_code: 1500,
-            language: String::from("Rust"),
-        },
-        Project {
-            name: String::from("API Service"),
-            lines_of_code: 850,
-            language: String::from("Rust"),
-        },
-        Project {
-            name: String::from("CLI Tool"),
-            lines_of_code: 420,
-            language: String::from("Python"),
-        },
-        Project {
-            name: String::from("Database Driver"),
-            lines_of_code: 2100,
-            language: String::from("Rust"),
-        },
-    ];
+    // Add tasks
+    println!("📦 Adding tasks:");
+    let task1 = manager.add_task(
+        "Learn Rust ownership".to_string(),
+        Priority::High,
+        "Chapter 1-3".to_string()
+    )?;
+    println!("  ✓ Added task 1");
     
-    println!("Adding projects to repository:");
-    for project in projects {
-        repo.add_project(project);
+    let task2 = manager.add_task(
+        "Build concurrent server".to_string(),
+        Priority::High,
+        "Use tokio".to_string()
+    )?;
+    println!("  ✓ Added task 2");
+    
+    let task3 = manager.add_task(
+        "Write documentation".to_string(),
+        Priority::Medium,
+        "API docs".to_string()
+    )?;
+    println!("  ✓ Added task 3");
+    
+    let task4 = manager.add_task(
+        "Fix bugs".to_string(),
+        Priority::Low,
+        "Issue #123".to_string()
+    )?;
+    println!("  ✓ Added task 4");
+    
+    // Add tags to tasks
+    if let Some(task) = manager.get_task_mut(task1) {
+        task.add_tag("learning".to_string());
+        task.add_tag("rust".to_string());
     }
     
-    // Display statistics
-    println!("\n📊 Repository Statistics:");
-    println!("  Repository: {}", repo.name);
-    println!("  Total projects: {}", repo.projects.len());
-    println!("  Total lines of code: {}", repo.total_lines());
-    
-    // Find Rust projects
-    let rust_projects = repo.find_by_language("Rust");
-    println!("\n🦀 Rust Projects ({}):", rust_projects.len());
-    for project in rust_projects {
-        println!("  • {}", project);
+    if let Some(task) = manager.get_task_mut(task2) {
+        task.add_tag("concurrency".to_string());
+        task.add_tag("server".to_string());
     }
     
-    println!("\n✅ Analysis complete!");
-}`
-            },
-            typescript: {
-                name: 'TypeScript',
-                icon: '📘',
-                version: '5.2',
-                mode: 'lang',
-                description: 'TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.',
-                sample: `// TypeScript Program with Types and Interfaces
+    // Display tasks
+    println!("\n{}", "-".repeat(60));
+    println!("📋 Task List");
+    println!("{}", "-".repeat(60));
+    
+    for (id, task) in &manager.tasks {
+        println!("  Task {}: {} [{}] - Completed: {}",
+            id,
+            task.title,
+            task.priority,
+            if task.completed { "✅" } else { "⭕" }
+        );
+        
+        if !task.tags.is_empty() {
+            println!("    Tags: {:?}", task.tags);
+        }
+    }
+    
+    // Complete a task
+    println!("\n✅ Completing task 1...");
+    manager.complete_task(task1)?;
+    
+    // Show pending tasks
+    println!("\n{}", "-".repeat(60));
+    println!("⏳ Pending Tasks");
+    println!("{}", "-".repeat(60));
+    
+    let pending = manager.pending_tasks();
+    for task in pending {
+        println!("  • {} [{}]", task.title, task.priority);
+    }
+    
+    // Group by priority
+    println!("\n{}", "-".repeat(60));
+    println!("📊 Tasks by Priority");
+    println!("{}", "-".repeat(60));
+    
+    let priorities = [Priority::High, Priority::Medium, Priority::Low];
+    for priority in &priorities {
+        let tasks = manager.tasks_by_priority(priority);
+        println!("  {}: {} tasks", priority, tasks.len());
+        for task in tasks {
+            println!("    • {} ({})", task.title, task.data);
+        }
+    }
+    
+    // Pattern matching demo
+    println!("\n{}", "-".repeat(60));
+    println!("🎯 Pattern Matching Demo");
+    println!("{}", "-".repeat(60));
+    
+    let test_priority = "high";
+    match parse_priority(test_priority) {
+        Ok(priority) => println!("  Parsed priority: {}", priority),
+        Err(e) => println!("  Error: {}", e),
+    }
+    
+    // Option type demo
+    println!("\n{}", "-".repeat(60));
+    println!("❓ Option Type Demo");
+    println!("{}", "-".repeat(60));
+    
+    let task = manager.get_task(99);
+    match task {
+        Some(t) => println!("  Found task: {}", t.title),
+        None => println!("  Task not found (as expected)"),
+    }
+    
+    // Concurrency demo with Arc and Mutex
+    println!("\n{}", "-".repeat(60));
+    println!("🔄 Concurrency Demo");
+    println!("{}", "-".repeat(60));
+    
+    let counter = Arc::new(Counter::new());
+    let mut handles = vec![];
+    
+    for i in 0..5 {
+        let counter = Arc::clone(&counter);
+        let handle = thread::spawn(move || {
+            for _ in 0..10 {
+                counter.increment();
+                thread::sleep(Duration::from_millis(10));
+            }
+            println!("  Thread {} completed", i);
+        });
+        handles.push(handle);
+    }
+    
+    for handle in handles {
+        handle.join().unwrap();
+    }
+    
+    println!("  Final counter value: {}", counter.value());
+    
+    // Iterator and closure demo
+    println!("\n{}", "-".repeat(60));
+    println!("🔄 Iterator Demo");
+    println!("{}", "-".repeat(60));
+    
+    let numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let squares: Vec<i32> = numbers.iter()
+        .map(|x| x * x)
+        .filter(|x| *x > 20)
+        .collect();
+    
+    println!("  Original: {:?}", numbers);
+    println!("  Squares > 20: {:?}", squares);
+    
+    // Result type demo
+    println!("\n{}", "-".repeat(60));
+    println!("📈 Statistics");
+    println!("{}", "-".repeat(60));
+    println!("  Total tasks: {}", manager.tasks.len());
+    println!("  Completed: {}", manager.tasks.values().filter(|t| t.completed).count());
+    println!("  Pending: {}", manager.pending_tasks().len());
+    
+    println!("\n✅ Program completed successfully!");
+    
+    Ok(())
+}`;
+        }
+
+        function getRustHelloWorld() {
+            return `// Hello World in Rust
+fn main() {
+    println!("Hello, World!");
+    
+    // Simple input example
+    let mut name = String::new();
+    println!("Enter your name:");
+    std::io::stdin().read_line(&mut name).expect("Failed to read line");
+    println!("Hello, {}!", name.trim());
+}`;
+        }
+
+        function getTypeScriptSample() {
+            return `// TypeScript - Type-Safe JavaScript Example
+
+// Interface definitions
 interface User {
     id: number;
     name: string;
     email: string;
     role: 'admin' | 'developer' | 'viewer';
+    skills: string[];
+    createdAt: Date;
 }
 
 interface Project {
     id: number;
     name: string;
+    description: string;
     techStack: string[];
     ownerId: number;
+    contributors: number[];
     stars: number;
+    createdAt: Date;
 }
 
-class CodeSpherePlatform {
-    private users: Map<number, User> = new Map();
-    private projects: Project[] = [];
-    private currentUser?: User;
+// Type alias
+type ProjectStats = {
+    totalProjects: number;
+    totalContributors: number;
+    averageStars: number;
+    topTechnologies: string[];
+    projectsByOwner: Map<number, number>;
+};
+
+// Enum
+enum TaskStatus {
+    Pending = 'PENDING',
+    InProgress = 'IN_PROGRESS',
+    Completed = 'COMPLETED',
+    Blocked = 'BLOCKED'
+}
+
+// Generic class
+class Repository<T extends { id: number }> {
+    private items: Map<number, T> = new Map();
     
-    constructor(public name: string) {
-        console.log(\`🚀 Platform '\${name}' initialized\`);
+    add(item: T): void {
+        this.items.set(item.id, item);
+        console.log(\`  ✓ Added item with id: \${item.id}\`);
     }
     
-    registerUser(user: User): void {
-        this.users.set(user.id, user);
-        console.log(\`  ✓ User registered: \${user.name} (\${user.role})\`);
+    get(id: number): T | undefined {
+        return this.items.get(id);
     }
     
-    login(userId: number): boolean {
-        const user = this.users.get(userId);
-        if (user) {
-            this.currentUser = user;
-            console.log(\`  ✓ Logged in as: \${user.name}\`);
+    getAll(): T[] {
+        return Array.from(this.items.values());
+    }
+    
+    find(predicate: (item: T) => boolean): T[] {
+        return this.getAll().filter(predicate);
+    }
+    
+    update(id: number, updates: Partial<T>): boolean {
+        const item = this.items.get(id);
+        if (item) {
+            this.items.set(id, { ...item, ...updates });
             return true;
         }
         return false;
     }
     
-    createProject(project: Omit<Project, 'id'>): Project {
+    delete(id: number): boolean {
+        return this.items.delete(id);
+    }
+    
+    get size(): number {
+        return this.items.size;
+    }
+}
+
+// Class with access modifiers
+class CodeSpherePlatform {
+    private users: Repository<User> = new Repository();
+    private projects: Repository<Project> = new Repository();
+    private tasks: Map<number, { status: TaskStatus; description: string }> = new Map();
+    
+    constructor(public readonly name: string, private version: string) {
+        console.log(\`🚀 Platform '\${name}' v\${version} initialized\`);
+    }
+    
+    // Public method
+    registerUser(user: Omit<User, 'id' | 'createdAt'>): User {
+        const newUser: User = {
+            ...user,
+            id: this.users.size + 1,
+            createdAt: new Date()
+        };
+        this.users.add(newUser);
+        return newUser;
+    }
+    
+    // Method with union types
+    getUser(id: number): User | undefined {
+        return this.users.get(id);
+    }
+    
+    // Method with intersection types
+    createProject(project: Omit<Project, 'id' | 'createdAt'>, owner: User): Project {
+        if (owner.role !== 'admin' && owner.role !== 'developer') {
+            throw new Error(\`User \${owner.name} doesn't have permission to create projects\`);
+        }
+        
         const newProject: Project = {
             ...project,
-            id: this.projects.length + 1
+            id: this.projects.size + 1,
+            createdAt: new Date()
         };
-        this.projects.push(newProject);
-        console.log(\`  ✓ Project created: \${newProject.name}\`);
+        this.projects.add(newProject);
         return newProject;
     }
     
-    getTopProjects(limit: number = 3): Project[] {
-        return [...this.projects]
-            .sort((a, b) => b.stars - a.stars)
+    // Async method with Promise
+    async getProjectStats(): Promise<ProjectStats> {
+        // Simulate async operation
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const projects = this.projects.getAll();
+                
+                // Count projects by owner
+                const projectsByOwner = new Map<number, number>();
+                projects.forEach(p => {
+                    projectsByOwner.set(p.ownerId, (projectsByOwner.get(p.ownerId) || 0) + 1);
+                });
+                
+                // Get top technologies
+                const techCount = new Map<string, number>();
+                projects.forEach(p => {
+                    p.techStack.forEach(tech => {
+                        techCount.set(tech, (techCount.get(tech) || 0) + 1);
+                    });
+                });
+                
+                const topTechnologies = Array.from(techCount.entries())
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3)
+                    .map(([tech]) => tech);
+                
+                resolve({
+                    totalProjects: projects.length,
+                    totalContributors: new Set(projects.flatMap(p => p.contributors)).size,
+                    averageStars: projects.reduce((acc, p) => acc + p.stars, 0) / projects.length,
+                    topTechnologies,
+                    projectsByOwner
+                });
+            }, 100);
+        });
+    }
+    
+    // Generic method with constraints
+    getItemsByOwner<T extends { ownerId: number }>(items: T[], ownerId: number): T[] {
+        return items.filter(item => item.ownerId === ownerId);
+    }
+    
+    // Method with type guards
+    isProject(item: any): item is Project {
+        return item && typeof item === 'object' && 'techStack' in item;
+    }
+    
+    // Method with rest parameters
+    addTagsToProject(projectId: number, ...tags: string[]): boolean {
+        const project = this.projects.get(projectId);
+        if (project) {
+            project.techStack.push(...tags);
+            return true;
+        }
+        return false;
+    }
+    
+    // Method with default parameters
+    searchProjects(query: string, limit: number = 10): Project[] {
+        return this.projects
+            .getAll()
+            .filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
             .slice(0, limit);
     }
-    
-    getUserProjects(userId: number): Project[] {
-        return this.projects.filter(p => p.ownerId === userId);
+}
+
+// Function overloads
+function formatDate(date: Date): string;
+function formatDate(date: Date, format: 'short' | 'long'): string;
+function formatDate(date: Date, format?: 'short' | 'long'): string {
+    if (format === 'short') {
+        return date.toLocaleDateString();
+    } else if (format === 'long') {
+        return date.toLocaleString();
     }
-    
-    getStats(): Record<string, any> {
-        return {
-            totalUsers: this.users.size,
-            totalProjects: this.projects.length,
-            averageStars: this.projects.reduce((acc, p) => acc + p.stars, 0) / this.projects.length,
-            topTech: this.getTopTechnologies(),
-            currentUser: this.currentUser?.name
-        };
-    }
-    
-    private getTopTechnologies(): string[] {
-        const techCount = new Map<string, number>();
-        this.projects.forEach(p => {
-            p.techStack.forEach(tech => {
-                techCount.set(tech, (techCount.get(tech) || 0) + 1);
-            });
-        });
-        
-        return Array.from(techCount.entries())
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 3)
-            .map(([tech]) => tech);
-    }
+    return date.toISOString();
+}
+
+// Utility type demo
+type ProjectPreview = Pick<Project, 'id' | 'name' | 'stars'>;
+type ProjectWithoutSensitive = Omit<Project, 'ownerId' | 'contributors'>;
+type ReadonlyProject = Readonly<Project>;
+
+// Decorator function (experimental)
+function log(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    descriptor.value = function(...args: any[]) {
+        console.log(\`  📝 Calling \${propertyKey} with:\`, args);
+        const result = originalMethod.apply(this, args);
+        console.log(\`  ✅ \${propertyKey} returned:\`, result);
+        return result;
+    };
+    return descriptor;
 }
 
 // Main execution
 async function main() {
-    console.log("=== TypeScript Platform Demo ===\\n");
+    console.log('='.repeat(60));
+    console.log('📘 TypeScript Type-Safe Demo');
+    console.log('='.repeat(60));
     
     // Create platform
-    const platform = new CodeSpherePlatform("CodeSphere");
+    const platform = new CodeSpherePlatform('CodeSphere', '2.0.0');
     
     // Register users
-    const users: User[] = [
-        { id: 1, name: "Alice", email: "alice@example.com", role: "admin" },
-        { id: 2, name: "Bob", email: "bob@example.com", role: "developer" },
-        { id: 3, name: "Charlie", email: "charlie@example.com", role: "viewer" }
-    ];
+    console.log('\n👥 Registering users:');
+    const alice = platform.registerUser({
+        name: 'Alice Johnson',
+        email: 'alice@example.com',
+        role: 'admin',
+        skills: ['TypeScript', 'React', 'Node.js']
+    });
     
-    users.forEach(u => platform.registerUser(u));
+    const bob = platform.registerUser({
+        name: 'Bob Smith',
+        email: 'bob@example.com',
+        role: 'developer',
+        skills: ['Python', 'Django', 'PostgreSQL']
+    });
     
-    // Login
-    console.log("\\n🔐 Login attempt:");
-    platform.login(1);
+    const charlie = platform.registerUser({
+        name: 'Charlie Brown',
+        email: 'charlie@example.com',
+        role: 'viewer',
+        skills: ['UI/UX', 'Figma']
+    });
     
     // Create projects
-    console.log("\\n📦 Creating projects:");
-    platform.createProject({
-        name: "TypeScript Compiler",
-        techStack: ["TypeScript", "Node.js"],
-        ownerId: 1,
+    console.log('\n📦 Creating projects:');
+    const project1 = platform.createProject({
+        name: 'TypeScript Compiler',
+        description: 'A modern TypeScript compiler',
+        techStack: ['TypeScript', 'Node.js', 'WASM'],
+        contributors: [alice.id],
         stars: 1500
-    });
+    }, alice);
     
-    platform.createProject({
-        name: "React Dashboard",
-        techStack: ["TypeScript", "React", "Redux"],
-        ownerId: 2,
+    const project2 = platform.createProject({
+        name: 'React Dashboard',
+        description: 'Analytics dashboard with React',
+        techStack: ['TypeScript', 'React', 'Redux', 'Material-UI'],
+        contributors: [alice.id, bob.id],
         stars: 890
-    });
+    }, alice);
     
-    platform.createProject({
-        name: "API Gateway",
-        techStack: ["TypeScript", "Node.js", "GraphQL"],
-        ownerId: 1,
+    const project3 = platform.createProject({
+        name: 'API Gateway',
+        description: 'GraphQL API gateway',
+        techStack: ['TypeScript', 'Node.js', 'GraphQL', 'Apollo'],
+        contributors: [bob.id],
         stars: 2300
+    }, bob);
+    
+    // Add tags using rest parameters
+    console.log('\n🏷️ Adding tags:');
+    platform.addTagsToProject(project1.id, 'compiler', 'wasm', 'performance');
+    
+    // Search projects
+    console.log('\n🔍 Searching projects:');
+    const searchResults = platform.searchProjects('TypeScript', 2);
+    searchResults.forEach(p => {
+        console.log(\`  • \${p.name} (\${p.stars} stars)\`);
     });
     
     // Get statistics
-    console.log("\\n📊 Platform Statistics:");
-    const stats = platform.getStats();
-    Object.entries(stats).forEach(([key, value]) => {
-        console.log(\`  \${key}: \${JSON.stringify(value)}\`);
-    });
+    console.log('\n📊 Platform Statistics:');
+    const stats = await platform.getProjectStats();
+    console.log(\`  Total Projects: \${stats.totalProjects}\`);
+    console.log(\`  Total Contributors: \${stats.totalContributors}\`);
+    console.log(\`  Average Stars: \${stats.averageStars.toFixed(2)}\`);
+    console.log(\`  Top Technologies: \${stats.topTechnologies.join(', ')}\`);
     
-    // Top projects
-    console.log("\\n🏆 Top Projects:");
-    platform.getTopProjects().forEach((p, i) => {
-        console.log(\`  \${i + 1}. \${p.name} (\${p.stars} stars)\`);
-    });
+    // Type guard demo
+    console.log('\n🛡️ Type Guard Demo:');
+    const item = platform.getUser(alice.id);
+    if (platform.isProject(item)) {
+        console.log('  Item is a project');
+    } else {
+        console.log('  Item is a user');
+    }
+    
+    // Function overload demo
+    console.log('\n📅 Date Formatting:');
+    const now = new Date();
+    console.log(\`  ISO: \${formatDate(now)}\`);
+    console.log(\`  Short: \${formatDate(now, 'short')}\`);
+    console.log(\`  Long: \${formatDate(now, 'long')}\`);
+    
+    // Utility types demo
+    console.log('\n🔧 Utility Types:');
+    const preview: ProjectPreview = {
+        id: project1.id,
+        name: project1.name,
+        stars: project1.stars
+    };
+    console.log('  Project Preview:', preview);
+    
+    // Optional chaining and nullish coalescing
+    console.log('\n🔗 Optional Chaining:');
+    const user = platform.getUser(999);
+    const userName = user?.name ?? 'Anonymous';
+    console.log(\`  User name: \${userName}\`);
+    
+    // Template literal types (simulated)
+    type EventType = \`\${'user' | 'project'}_\${'created' | 'updated' | 'deleted'}\`;
+    const event: EventType = 'user_created';
+    console.log(\`  Event type: \${event}\`);
+    
+    console.log('\n✅ Application completed successfully!');
 }
 
 // Run the program
-main().catch(console.error);`
+main().catch(console.error);`;
+        }
+
+        function getTypeScriptHelloWorld() {
+            return `// Hello World in TypeScript
+function greet(name: string): string {
+    return \`Hello, \${name}!\`;
+}
+
+console.log("Hello, World!");
+
+// Simple input example (Node.js)
+const readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+readline.question('Enter your name: ', (name: string) => {
+    console.log(greet(name));
+    readline.close();
+});`;
+        }
+
+        function getSwiftSample() {
+            return `// Swift - iOS Development Example
+import Foundation
+
+// Protocol definition
+protocol Describable {
+    func describe() -> String
+}
+
+// Enum with associated values
+enum TaskPriority {
+    case low
+    case medium
+    case high
+    case custom(Int)
+    
+    var description: String {
+        switch self {
+        case .low: return "Low"
+        case .medium: return "Medium"
+        case .high: return "High"
+        case .custom(let value): return "Custom (\\(value))"
+        }
+    }
+}
+
+// Struct with properties and methods
+struct Task: Describable {
+    let id: UUID
+    var title: String
+    var priority: TaskPriority
+    var completed: Bool
+    let createdAt: Date
+    var tags: [String]
+    
+    init(title: String, priority: TaskPriority) {
+        self.id = UUID()
+        self.title = title
+        self.priority = priority
+        self.completed = false
+        self.createdAt = Date()
+        self.tags = []
+    }
+    
+    mutating func complete() {
+        completed = true
+    }
+    
+    mutating func addTag(_ tag: String) {
+        tags.append(tag)
+    }
+    
+    func describe() -> String {
+        let status = completed ? "✅" : "⭕"
+        return "\\(status) [\\(priority.description)] \\(title) - Tags: \\(tags.joined(separator: ", "))"
+    }
+}
+
+// Class with inheritance
+class Project {
+    let name: String
+    var tasks: [Task]
+    var deadline: Date?
+    
+    init(name: String) {
+        self.name = name
+        self.tasks = []
+    }
+    
+    func addTask(_ task: Task) {
+        tasks.append(task)
+        print("  ✓ Added task: \\(task.title)")
+    }
+    
+    func pendingTasks() -> [Task] {
+        return tasks.filter { !$0.completed }
+    }
+    
+    func completedTasks() -> [Task] {
+        return tasks.filter { $0.completed }
+    }
+    
+    func tasksByPriority(_ priority: TaskPriority) -> [Task] {
+        return tasks.filter { task in
+            switch (task.priority, priority) {
+            case (.low, .low): return true
+            case (.medium, .medium): return true
+            case (.high, .high): return true
+            case (.custom, .custom): return true
+            default: return false
             }
-        };
+        }
+    }
+    
+    var completionRate: Double {
+        guard !tasks.isEmpty else { return 0 }
+        return Double(completedTasks().count) / Double(tasks.count) * 100
+    }
+    
+    func describe() -> String {
+        return """
+        📁 Project: \\(name)
+           Tasks: \\(tasks.count)
+           Completed: \\(completedTasks().count)
+           Pending: \\(pendingTasks().count)
+           Progress: \\(String(format: "%.1f", completionRate))%
+        """
+    }
+}
+
+// Extension with computed properties
+extension Task {
+    var age: TimeInterval {
+        return Date().timeIntervalSince(createdAt)
+    }
+    
+    var isOverdue: Bool {
+        return age > 86400 // 24 hours in seconds
+    }
+}
+
+// Generic function
+func filterByType<T>(_ items: [Any], type: T.Type) -> [T] {
+    return items.compactMap { $0 as? T }
+}
+
+// Error handling
+enum TaskError: Error {
+    case invalidTask
+    case duplicateTask
+    case taskNotFound
+    
+    var localizedDescription: String {
+        switch self {
+        case .invalidTask: return "Invalid task data"
+        case .duplicateTask: return "Task already exists"
+        case .taskNotFound: return "Task not found"
+        }
+    }
+}
+
+// Async function with completion handler
+func fetchTasks(completion: @escaping (Result<[Task], Error>) -> Void) {
+    DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+        let tasks = [
+            Task(title: "Learn Swift", priority: .high),
+            Task(title: "Build iOS app", priority: .high),
+            Task(title: "Write documentation", priority: .medium)
+        ]
+        completion(.success(tasks))
+    }
+}
+
+// Main program
+print(String(repeating: "=", count: 60))
+print("🐦 Swift iOS Development Demo")
+print(String(repeating: "=", count: 60))
+
+// Get user input
+print("\nEnter your name: ", terminator: "")
+guard let userName = readLine(), !userName.isEmpty else {
+    print("Invalid input")
+    exit(1)
+}
+print("Hello, \\(userName)! Welcome to Task Manager\n")
+
+// Create project
+let project = Project(name: "CodeSphere iOS App")
+
+// Add tasks
+print("📦 Adding tasks:")
+project.addTask(Task(title: "Design UI in SwiftUI", priority: .high))
+project.addTask(Task(title: "Implement networking", priority: .high))
+project.addTask(Task(title: "Add Core Data persistence", priority: .medium))
+project.addTask(Task(title: "Write unit tests", priority: .low))
+
+// Complete some tasks
+print("\n✅ Completing tasks:")
+if var firstTask = project.tasks.first {
+    firstTask.complete()
+    project.tasks[0] = firstTask
+    print("  ✓ Completed: \\(firstTask.title)")
+}
+
+// Display project info
+print("\n" + String(repeating: "-", count: 60))
+print("📊 Project Status")
+print(String(repeating: "-", count: 60))
+print(project.describe())
+
+// Display tasks by priority
+print("\n" + String(repeating: "-", count: 60))
+print("📋 Tasks by Priority")
+print(String(repeating: "-", count: 60))
+
+let priorities: [TaskPriority] = [.high, .medium, .low]
+for priority in priorities {
+    let tasks = project.tasksByPriority(priority)
+    if !tasks.isEmpty {
+        print("\\n\\(priority.description) Priority (\\(tasks.count)):")
+        tasks.forEach { print("  • \\($0.title)") }
+    }
+}
+
+// Closure examples
+print("\n" + String(repeating: "-", count: 60))
+print("🔄 Closure Examples")
+print(String(repeating: "-", count: 60))
+
+// Map example
+let taskTitles = project.tasks.map { $0.title }
+print("Task titles: \\(taskTitles)")
+
+// Filter example
+let highPriorityTasks = project.tasks.filter { task in
+    if case .high = task.priority { return true }
+    return false
+}
+print("High priority count: \\(highPriorityTasks.count)")
+
+// Reduce example
+let totalCharacters = project.tasks.reduce(0) { $0 + $1.title.count }
+print("Total characters in titles: \\(totalCharacters)")
+
+// Async operation demo
+print("\n" + String(repeating: "-", count: 60))
+print("⏱️ Async Operations")
+print(String(repeating: "-", count: 60))
+
+let semaphore = DispatchSemaphore(value: 0)
+fetchTasks { result in
+    switch result {
+    case .success(let tasks):
+        print("Fetched \\(tasks.count) tasks:")
+        tasks.forEach { print("  • \\($0.title)") }
+    case .failure(let error):
+        print("Error: \\(error.localizedDescription)")
+    }
+    semaphore.signal()
+}
+_ = semaphore.wait(timeout: .now() + 2)
+
+// Optional handling
+print("\n" + String(repeating: "-", count: 60))
+print("❓ Optional Handling")
+print(String(repeating: "-", count: 60))
+
+let optionalTask: Task? = project.tasks.first
+if let task = optionalTask {
+    print("Found task: \\(task.title)")
+}
+
+let taskAge = optionalTask?.age ?? 0
+print("Task age: \\(Int(taskAge)) seconds")
+
+// Error handling
+print("\n" + String(repeating: "-", count: 60))
+print("⚠️ Error Handling")
+print(String(repeating: "-", count: 60))
+
+do {
+    throw TaskError.taskNotFound
+} catch {
+    print("Caught error: \\(error.localizedDescription)")
+}
+
+// Statistics
+print("\n" + String(repeating: "=", count: 60))
+print("📈 Final Statistics")
+print(String(repeating: "=", count: 60))
+print("  Project: \\(project.name)")
+print("  Total Tasks: \\(project.tasks.count)")
+print("  Completion Rate: \\(String(format: "%.1f", project.completionRate))%")
+print("  Pending: \\(project.pendingTasks().count)")
+print("  Completed: \\(project.completedTasks().count)")
+
+print("\n✅ Program completed successfully!")`;
+        }
+
+        function getSwiftHelloWorld() {
+            return `// Hello World in Swift
+print("Hello, World!")
+
+// Simple input example
+print("Enter your name: ", terminator: "")
+if let name = readLine() {
+    print("Hello, \\(name)!")
+}`;
+        }
+
+        function getKotlinSample() {
+            return `// Kotlin - Android Development Example
+
+// Data class (automatically generates equals, hashCode, toString)
+data class Task(
+    val id: Int,
+    val title: String,
+    val priority: Priority,
+    var completed: Boolean = false,
+    val tags: MutableList<String> = mutableListOf()
+)
+
+// Enum class
+enum class Priority {
+    LOW, MEDIUM, HIGH;
+    
+    val icon: String
+        get() = when(this) {
+            LOW -> "🟢"
+            MEDIUM -> "🟡"
+            HIGH -> "🔴"
+        }
+}
+
+// Sealed class (restricted class hierarchy)
+sealed class Result<out T> {
+    data class Success<T>(val data: T) : Result<T>()
+    data class Error(val message: String) : Result<Nothing>()
+    object Loading : Result<Nothing>()
+}
+
+// Interface
+interface TaskRepository {
+    fun getTasks(): List<Task>
+    fun addTask(task: Task)
+    fun removeTask(id: Int)
+    fun findById(id: Int): Task?
+}
+
+// Class with primary constructor
+class TaskManager(private val name: String) : TaskRepository {
+    private val tasks = mutableListOf<Task>()
+    private var nextId = 1
+    
+    init {
+        println("✓ TaskManager initialized for $name")
+    }
+    
+    // Companion object (like static in Java)
+    companion object {
+        const val VERSION = "1.0.0"
+        fun createDefault(): TaskManager = TaskManager("Default")
+    }
+    
+    // Properties with custom getter
+    val pendingTasks: List<Task>
+        get() = tasks.filter { !it.completed }
+    
+    val completedTasks: List<Task>
+        get() = tasks.filter { it.completed }
+    
+    val completionRate: Double
+        get() = if (tasks.isNotEmpty()) {
+            (completedTasks.size.toDouble() / tasks.size) * 100
+        } else 0.0
+    
+    // Implementation of TaskRepository
+    override fun getTasks(): List<Task> = tasks.toList()
+    
+    override fun addTask(task: Task) {
+        val newTask = task.copy(id = nextId++) // Using copy from data class
+        tasks.add(newTask)
+        println("  ✓ Added task: ${newTask.title} (${newTask.priority})")
+    }
+    
+    override fun removeTask(id: Int) {
+        tasks.removeAll { it.id == id }
+    }
+    
+    override fun findById(id: Int): Task? {
+        return tasks.find { it.id == id }
+    }
+    
+    // Extension function inside class
+    fun Task.markComplete() {
+        val index = tasks.indexOfFirst { it.id == this.id }
+        if (index != -1) {
+            tasks[index] = this.copy(completed = true)
+            println("  ✓ Completed: ${this.title}")
+        }
+    }
+    
+    // Higher-order function
+    fun processTasks(processor: (Task) -> Unit) {
+        tasks.forEach(processor)
+    }
+    
+    // Generic function
+    fun <T> mapTasks(transform: (Task) -> T): List<T> {
+        return tasks.map(transform)
+    }
+    
+    // Infix function
+    infix fun addTagsToTask(taskId: Int) {
+        val task = findById(taskId)
+        task?.tags?.addAll(listOf("kotlin", "android"))
+        println("  ✓ Added tags to task $taskId")
+    }
+}
+
+// Extension function
+fun String.toPriority(): Priority? {
+    return when (this.uppercase()) {
+        "LOW" -> Priority.LOW
+        "MEDIUM" -> Priority.MEDIUM
+        "HIGH" -> Priority.HIGH
+        else -> null
+    }
+}
+
+// Function with default parameters
+fun createTask(
+    title: String,
+    priority: Priority = Priority.MEDIUM,
+    tags: List<String> = emptyList()
+): Task {
+    return Task(
+        id = 0, // Will be set by manager
+        title = title,
+        priority = priority,
+        tags = tags.toMutableList()
+    )
+}
+
+// Sealed class usage
+fun <T> handleResult(result: Result<T>): String {
+    return when (result) {
+        is Result.Success -> "Success: ${result.data}"
+        is Result.Error -> "Error: ${result.message}"
+        Result.Loading -> "Loading..."
+    }
+}
+
+// Suspend function (coroutine)
+suspend fun fetchTasksFromServer(): List<Task> {
+    // Simulate network delay
+    kotlinx.coroutines.delay(1000)
+    return listOf(
+        Task(1, "Server Task 1", Priority.HIGH),
+        Task(2, "Server Task 2", Priority.MEDIUM)
+    )
+}
+
+// Main function
+fun main() {
+    println("=".repeat(60))
+    println("🅺 Kotlin Android Development Demo")
+    println("=".repeat(60))
+    
+    // Get user input
+    print("\nEnter your name: ")
+    val userName = readLine() ?: "User"
+    println("Hello, $userName! Welcome to Task Manager\n")
+    
+    // Create task manager
+    val manager = TaskManager(userName)
+    println("Version: ${TaskManager.VERSION}")
+    
+    // Add tasks
+    println("\n📦 Adding tasks:")
+    manager.addTask(createTask("Learn Kotlin basics", Priority.HIGH))
+    manager.addTask(createTask("Build Android app", Priority.HIGH, listOf("android", "ui")))
+    manager.addTask(createTask("Write documentation", Priority.MEDIUM))
+    manager.addTask(createTask("Fix bugs", Priority.LOW))
+    
+    // Complete a task
+    println("\n✅ Completing tasks:")
+    val firstTask = manager.findById(1)
+    firstTask?.let { manager.markComplete(it) }
+    
+    // Display tasks
+    println("\n" + "-".repeat(60))
+    println("📋 Task List")
+    println("-".repeat(60))
+    
+    manager.getTasks().forEach { task ->
+        val status = if (task.completed) "✅" else "⭕"
+        println("  $status ${task.priority.icon} [${task.id}] ${task.title}")
+        if (task.tags.isNotEmpty()) {
+            println("     Tags: ${task.tags.joinToString()}")
+        }
+    }
+    
+    // Statistics
+    println("\n" + "-".repeat(60))
+    println("📊 Statistics")
+    println("-".repeat(60))
+    println("  Total tasks: ${manager.getTasks().size}")
+    println("  Pending: ${manager.pendingTasks.size}")
+    println("  Completed: ${manager.completedTasks.size}")
+    println("  Completion rate: ${"%.1f".format(manager.completionRate)}%")
+    
+    // Group by priority
+    println("\n" + "-".repeat(60))
+    println("📊 Tasks by Priority")
+    println("-".repeat(60))
+    
+    Priority.values().forEach { priority ->
+        val count = manager.getTasks().count { it.priority == priority }
+        println("  ${priority.icon} $priority: $count tasks")
+    }
+    
+    // Higher-order function demo
+    println("\n" + "-".repeat(60))
+    println("🔄 Higher-Order Functions")
+    println("-".repeat(60))
+    
+    println("\nProcessing each task:")
+    manager.processTasks { task ->
+        println("  • Processing: ${task.title}")
+    }
+    
+    // Map transformation
+    val titles = manager.mapTasks { it.title }
+    println("\nTask titles: $titles")
+    
+    // Infix function
+    println("\n" + "-".repeat(60))
+    println("🔧 Infix Function Demo")
+    println("-".repeat(60))
+    manager addTagsToTask 1
+    
+    // String extension
+    println("\n" + "-".repeat(60))
+    println("🔧 Extension Function Demo")
+    println("-".repeat(60))
+    val priorityStr = "HIGH"
+    val priority = priorityStr.toPriority()
+    println("  '$priorityStr' converts to: $priority")
+    
+    // Sealed class demo
+    println("\n" + "-".repeat(60))
+    println("📦 Sealed Class Demo")
+    println("-".repeat(60))
+    
+    val result1: Result<String> = Result.Success("Operation completed")
+    val result2: Result<String> = Result.Error("Something went wrong")
+    val result3: Result<String> = Result.Loading
+    
+    println("  ${handleResult(result1)}")
+    println("  ${handleResult(result2)}")
+    println("  ${handleResult(result3)}")
+    
+    // Null safety demo
+    println("\n" + "-".repeat(60))
+    println("🛡️ Null Safety Demo")
+    println("-".repeat(60))
+    
+    val nullableTask: Task? = manager.findById(999)
+    val taskName = nullableTask?.title ?: "Task not found"
+    println("  $taskName")
+    
+    // Run coroutine demo (simplified)
+    println("\n" + "-".repeat(60))
+    println("⏱️ Coroutine Demo (Simulated)")
+    println("-".repeat(60))
+    println("  Fetching tasks from server...")
+    // In real Kotlin, you'd use runBlocking { ... }
+    Thread.sleep(1000) // Simulate delay
+    println("  ✓ Tasks fetched!")
+    
+    // Destructuring declaration
+    println("\n" + "-".repeat(60))
+    println("📦 Destructuring Demo")
+    println("-".repeat(60))
+    
+    val task = manager.findById(1)
+    if (task != null) {
+        val (id, title, priority, completed) = task
+        println("  Task $id: $title ($priority) - Completed: $completed")
+    }
+    
+    println("\n✅ Program completed successfully!")
+}
+
+// Suspend function simulation (would need kotlinx.coroutines)
+suspend fun delay(millis: Long) {
+    Thread.sleep(millis)
+}`;
+        }
+
+        function getKotlinHelloWorld() {
+            return `// Hello World in Kotlin
+fun main() {
+    println("Hello, World!")
+    
+    // Simple input example
+    print("Enter your name: ")
+    val name = readLine()
+    println("Hello, $name!")
+}`;
+        }
+
+        function getRSample() {
+            return `# R - Statistical Computing Example
+
+# Load required libraries (simulated)
+# library(ggplot2)
+# library(dplyr)
+
+# Create a data frame
+students <- data.frame(
+    id = 1:10,
+    name = c("Alice", "Bob", "Charlie", "David", "Eva", 
+             "Frank", "Grace", "Henry", "Ivy", "Jack"),
+    age = c(20, 22, 21, 23, 20, 24, 22, 21, 20, 23),
+    grade = c(85, 92, 78, 88, 95, 82, 90, 87, 91, 84),
+    study_hours = c(15, 20, 12, 18, 25, 14, 22, 16, 24, 17),
+    passed = c(TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE)
+)
+
+cat("=", 60, "\n")
+cat("📊 R Statistical Computing Demo\n")
+cat("=", 60, "\n\n")
+
+# Get user input
+cat("Enter your name: ")
+user_name <- readline()
+cat("Hello,", user_name, "! Welcome to Data Analysis\n\n")
+
+# Display the data frame
+cat("📋 Student Data:\n")
+print(students)
+cat("\n")
+
+# Basic statistics
+cat("📈 Basic Statistics:\n")
+cat("  Number of students:", nrow(students), "\n")
+cat("  Average age:", mean(students$age), "\n")
+cat("  Average grade:", mean(students$grade), "\n")
+cat("  Average study hours:", mean(students$study_hours), "\n")
+cat("  Grade range:", range(students$grade), "\n")
+cat("  Grade standard deviation:", sd(students$grade), "\n\n")
+
+# Summary statistics
+cat("📊 Summary Statistics:\n")
+print(summary(students[, c("age", "grade", "study_hours")]))
+cat("\n")
+
+# Correlation analysis
+cat("🔗 Correlation Matrix:\n")
+cor_matrix <- cor(students[, c("age", "grade", "study_hours")])
+print(round(cor_matrix, 2))
+cat("\n")
+
+# Linear regression
+cat("📈 Linear Regression (Grade ~ Study Hours):\n")
+model <- lm(grade ~ study_hours, data = students)
+print(summary(model))
+cat("\n")
+
+# Filtering data
+cat("🔍 Students who passed:\n")
+passed_students <- subset(students, passed == TRUE)
+print(passed_students[, c("name", "grade")])
+cat("\n")
+
+cat("🎓 Top performers (grade > 90):\n")
+top_students <- subset(students, grade > 90)
+print(top_students[, c("name", "grade")])
+cat("\n")
+
+# Aggregate statistics
+cat("📊 Aggregate by Pass/Fail:\n")
+aggregate(cbind(grade, study_hours) ~ passed, data = students, FUN = mean)
+cat("\n")
+
+# Custom function
+calculate_grade_category <- function(grade) {
+    if (grade >= 90) {
+        return("A")
+    } else if (grade >= 80) {
+        return("B")
+    } else if (grade >= 70) {
+        return("C")
+    } else {
+        return("F")
+    }
+}
+
+students$grade_category <- sapply(students$grade, calculate_grade_category)
+cat("📋 Grade Categories:\n")
+print(table(students$grade_category))
+cat("\n")
+
+# Statistical tests
+cat("🔬 T-test (comparing grades of high vs low study hours):\n")
+high_study <- subset(students, study_hours > median(study_hours))$grade
+low_study <- subset(students, study_hours <= median(study_hours))$grade
+t_test <- t.test(high_study, low_study)
+print(t_test)
+cat("\n")
+
+# ANOVA
+cat("📊 ANOVA (Grade by Age Group):\n")
+students$age_group <- cut(students$age, breaks = 3, labels = c("Young", "Middle", "Old"))
+anova_result <- aov(grade ~ age_group, data = students)
+print(summary(anova_result))
+cat("\n")
+
+# Probability distributions
+cat("🎲 Normal Distribution Example:\n")
+x <- seq(60, 100, length.out = 100)
+y <- dnorm(x, mean = mean(students$grade), sd = sd(students$grade))
+cat("  Generated normal distribution with mean =", mean(students$grade), 
+    "and sd =", sd(students$grade), "\n\n")
+
+# Data visualization (text-based)
+cat("📊 Grade Distribution (Text-based Histogram):\n")
+hist(students$grade, breaks = 5, plot = FALSE)$counts
+breaks <- seq(70, 100, by = 5)
+counts <- hist(students$grade, breaks = breaks, plot = FALSE)$counts
+for (i in 1:length(breaks)-1) {
+    bar <- paste(rep("█", counts[i]), collapse = "")
+    cat(sprintf("  %d-%d: %s %d\n", breaks[i], breaks[i+1], bar, counts[i]))
+}
+cat("\n")
+
+# Time series example
+cat("⏱️ Time Series Simulation:\n")
+set.seed(123)
+time_series <- ts(cumsum(rnorm(50, mean = 0.5, sd = 1)), 
+                  start = 1, frequency = 1)
+cat("  Generated time series with 50 points\n")
+cat("  Mean:", mean(time_series), "\n")
+cat("  Trend:", time_series[50] - time_series[1], "\n\n")
+
+# Factor analysis
+cat("📊 Factor Analysis (Age Groups):\n")
+age_factor <- factor(students$age_group)
+print(table(age_factor))
+cat("\n")
+
+# Apply family functions
+cat("🔄 Apply Family Examples:\n")
+cat("  sapply - column means:\n")
+print(sapply(students[, c("age", "grade", "study_hours")], mean))
+cat("\n")
+
+cat("  lapply - class of each column:\n")
+print(lapply(students, class))
+cat("\n")
+
+# Save results to file
+cat("💾 Saving results to 'analysis_results.txt'\n")
+sink("analysis_results.txt")
+cat("Statistical Analysis Results\n")
+cat("=", 40, "\n\n")
+cat("Generated on:", date(), "\n\n")
+print(summary(students))
+sink()
+
+cat("\n✅ Program completed successfully!\n")`;
+        }
+
+        function getRHelloWorld() {
+            return `# Hello World in R
+print("Hello, World!")
+
+# Simple input example
+name <- readline(prompt = "Enter your name: ")
+print(paste("Hello,", name, "!"))
+
+# Vector example
+greetings <- c("Hello", "Hi", "Hey")
+print(paste(greetings[1], "from R!"))`;
+        }
 
         let currentMode = 'web';
         let currentLang = 'html';
@@ -1920,12 +5457,21 @@ main().catch(console.error);`
 
         // Initialize
         window.onload = function() {
+            loadFromLocalStorage();
             updateLanguageSelector();
             loadLanguage('html');
             updateLanguageInfo();
+            
+            // Add keyboard shortcut
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    runCode();
+                }
+            });
         };
 
-        function switchMode(mode) {
+        function switchMode(mode, event) {
             currentMode = mode;
             
             // Update tabs
@@ -1947,7 +5493,12 @@ main().catch(console.error);`
             }
             
             // Show/hide preview
-            document.getElementById('preview-section').style.display = mode === 'web' ? 'block' : 'none';
+            const previewSection = document.getElementById('preview-section');
+            if (mode === 'web') {
+                previewSection.classList.add('active');
+            } else {
+                previewSection.classList.remove('active');
+            }
         }
 
         function updateLanguageInfo() {
@@ -1981,16 +5532,13 @@ main().catch(console.error);`
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            if (event && event.target) {
-                event.target.classList.add('active');
-            } else {
-                // Find and activate the correct button
-                document.querySelectorAll('.lang-btn').forEach(btn => {
-                    if (btn.innerHTML.includes(languages[lang].name)) {
-                        btn.classList.add('active');
-                    }
-                });
-            }
+            
+            // Find and activate the correct button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                if (btn.innerHTML.includes(languages[lang].name)) {
+                    btn.classList.add('active');
+                }
+            });
             
             // Update editor
             document.getElementById('code-editor').value = languages[lang].sample;
@@ -2009,9 +5557,30 @@ main().catch(console.error);`
             if (languages[lang].mode === 'web') {
                 runCode();
             }
+            
+            // Save to localStorage
+            saveToLocalStorage();
         }
 
-        function runCode() {
+        function loadHelloWorld() {
+            if (languages[currentLang].helloWorld) {
+                document.getElementById('code-editor').value = languages[currentLang].helloWorld;
+                showToast('👋 Hello World example loaded!');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        async function runCode() {
             if (isRunning) return;
             
             const code = document.getElementById('code-editor').value;
@@ -2029,111 +5598,152 @@ main().catch(console.error);`
                 const preview = document.getElementById('preview');
                 const doc = preview.contentDocument || preview.contentWindow.document;
                 
-                if (currentLang === 'html') {
-                    doc.open();
-                    doc.write(code);
-                    doc.close();
-                    output.innerHTML = '✓ HTML rendered successfully';
-                    previewStatus.textContent = '✓ Live';
-                } else if (currentLang === 'css') {
-                    doc.open();
-                    doc.write(`
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <style>${code}</style>
-                        </head>
-                        <body>
-                            <div class="container">
-                                <div class="card">
-                                    <h1>CSS Preview</h1>
-                                    <p>This is a sample HTML to demonstrate your CSS styles.</p>
-                                    <button class="button">Sample Button</button>
+                try {
+                    if (currentLang === 'html') {
+                        doc.open();
+                        doc.write(code);
+                        doc.close();
+                        output.innerHTML = '<span class="success">✓ HTML rendered successfully</span>';
+                        previewStatus.textContent = '✓ Live';
+                    } else if (currentLang === 'css') {
+                        doc.open();
+                        doc.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <style>${code}</style>
+                            </head>
+                            <body>
+                                <div class="container" style="padding: 20px;">
+                                    <div class="card" style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                        <h1 style="color: #333;">CSS Preview</h1>
+                                        <p style="color: #666;">This is a sample HTML to demonstrate your CSS styles.</p>
+                                        <button class="button" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Sample Button</button>
+                                    </div>
                                 </div>
-                            </div>
-                        </body>
-                        </html>
-                    `);
-                    doc.close();
-                    output.innerHTML = '✓ CSS applied successfully';
-                    previewStatus.textContent = '✓ Live';
-                } else if (currentLang === 'js') {
-                    doc.open();
-                    doc.write(`
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <title>JavaScript Demo</title>
-                            <style>
-                                body { font-family: Arial; padding: 20px; }
-                                #app { text-align: center; }
-                                button { 
-                                    background: linear-gradient(135deg, #667eea, #764ba2);
-                                    color: white;
-                                    border: none;
-                                    padding: 12px 30px;
-                                    border-radius: 25px;
-                                    cursor: pointer;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <div id="app"></div>
-                            <script>
-                                try {
-                                    ${code}
-                                } catch(e) {
-                                    document.body.innerHTML += '<div style="color:red; padding:20px;">Error: ' + e.message + '</div>';
-                                }
-                            <\/script>
-                        </body>
-                        </html>
-                    `);
-                    doc.close();
-                    output.innerHTML = '✓ JavaScript executed successfully';
-                    previewStatus.textContent = '✓ Live';
+                            </body>
+                            </html>
+                        `);
+                        doc.close();
+                        output.innerHTML = '<span class="success">✓ CSS applied successfully</span>';
+                        previewStatus.textContent = '✓ Live';
+                    } else if (currentLang === 'js') {
+                        doc.open();
+                        doc.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <title>JavaScript Demo</title>
+                                <style>
+                                    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+                                    #app { max-width: 600px; margin: 0 auto; }
+                                    button { 
+                                        background: linear-gradient(135deg, #667eea, #764ba2);
+                                        color: white;
+                                        border: none;
+                                        padding: 12px 30px;
+                                        border-radius: 25px;
+                                        cursor: pointer;
+                                        font-size: 16px;
+                                    }
+                                    .output { margin-top: 20px; padding: 15px; background: white; border-radius: 8px; }
+                                </style>
+                            </head>
+                            <body>
+                                <div id="app"></div>
+                                <script>
+                                    try {
+                                        ${code}
+                                    } catch(e) {
+                                        document.body.innerHTML += '<div style="color:red; padding:20px;">Error: ' + e.message + '</div>';
+                                    }
+                                <\/script>
+                            </body>
+                            </html>
+                        `);
+                        doc.close();
+                        output.innerHTML = '<span class="success">✓ JavaScript executed successfully</span>';
+                        previewStatus.textContent = '✓ Live';
+                    }
+                } catch (error) {
+                    output.innerHTML = `<span class="error">✗ Error: ${error.message}</span>`;
+                    previewStatus.textContent = '✗ Error';
                 }
             } else {
-                // Language mode - simulate compilation
-                setTimeout(() => {
-                    let result = '';
+                // Language mode - use Piston API
+                try {
+                    const language = languages[currentLang].language;
+                    const version = languages[currentLang].version;
                     
-                    if (code.includes('fibonacci') || code.includes('Calculator')) {
-                        const name = stdin.trim() || 'John';
-                        result = `Enter your name: ${name}\nHello, ${name}!\n\n📊 Program Output:\n`;
-                        
-                        if (code.includes('Calculator')) {
-                            result += `10 + 5 = 15\n6 × 7 = 42\n\n📊 Calculation History for ${name}:\n  • 10 + 5 = 15\n  • 6 × 7 = 42\n\n📈 Fibonacci sequence up to 10:\n0 1 1 2 3 5 8 13 21 34 \n`;
+                    const response = await fetch(`${PISTON_API}/execute`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            language: language,
+                            version: version,
+                            files: [
+                                {
+                                    name: getFileName(currentLang),
+                                    content: code
+                                }
+                            ],
+                            stdin: stdin,
+                            args: [],
+                            compile_timeout: 10000,
+                            run_timeout: 3000,
+                            compile_memory_limit: -1,
+                            run_memory_limit: -1
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.run && result.run.output) {
+                        if (result.run.stderr) {
+                            output.innerHTML = `<span class="error">✗ Error:</span>\n${result.run.stderr}`;
                         } else {
-                            result += `Performing calculations...\n✓ Task completed successfully!\n`;
+                            output.innerHTML = `<span class="success">✓ Compilation successful</span>\n\n${result.run.output}`;
                         }
-                    } else if (code.includes('Student') || code.includes('student')) {
-                        result = `Enter student name: ${stdin || 'John'}\nEnter student age: 20\n\n📋 Student Information:\n  Name: ${stdin || 'John'}\n  Age: 20\n  Grades: [85, 90, 78, 92, 88]\n  Average: 86.60\n`;
-                    } else if (code.includes('Task') || code.includes('task')) {
-                        result = `✓ Task Manager initialized\n  ✓ Added tasks\n\n📋 Tasks:\n  ✅ [0] Complete project\n  ⭕ [1] Review code\n\n📊 Statistics:\n  Total: 5\n  Completed: 2\n  Pending: 3\n`;
+                    } else if (result.compile && result.compile.stderr) {
+                        output.innerHTML = `<span class="error">✗ Compilation Error:</span>\n${result.compile.stderr}`;
                     } else {
-                        result = `Program executed successfully!\nOutput: ${stdin || 'Hello, World!'}\n`;
+                        output.innerHTML = '<span class="warning">⚠️ No output generated</span>';
                     }
-                    
-                    output.innerHTML = `<span style="color: #10b981;">✓ Compilation successful</span>\n\n${result}`;
-                    
-                    isRunning = false;
-                    runBtn.innerHTML = '<span>▶</span> Run Code';
-                    runBtn.disabled = false;
-                }, 1500);
+                } catch (error) {
+                    output.innerHTML = `<span class="error">✗ Error: ${error.message}</span>`;
+                }
             }
             
-            // Safety timeout
-            setTimeout(() => {
-                if (isRunning) {
-                    isRunning = false;
-                    runBtn.innerHTML = '<span>▶</span> Run Code';
-                    runBtn.disabled = false;
-                    if (currentMode !== 'web') {
-                        output.innerHTML = '⚠️ Execution timeout';
-                    }
-                }
-            }, 5000);
+            isRunning = false;
+            runBtn.innerHTML = '<span>▶</span> Run Code';
+            runBtn.disabled = false;
+            
+            // Save to localStorage
+            saveToLocalStorage();
+        }
+
+        function getFileName(lang) {
+            const extensions = {
+                'python': 'main.py',
+                'java': 'Main.java',
+                'cpp': 'main.cpp',
+                'c': 'main.c',
+                'csharp': 'main.cs',
+                'php': 'main.php',
+                'ruby': 'main.rb',
+                'go': 'main.go',
+                'rust': 'main.rs',
+                'typescript': 'main.ts',
+                'swift': 'main.swift',
+                'kotlin': 'main.kt',
+                'r': 'main.r',
+                'html': 'index.html',
+                'css': 'styles.css',
+                'js': 'script.js'
+            };
+            return extensions[lang] || 'main.txt';
         }
 
         function clearCode() {
@@ -2143,14 +5753,55 @@ main().catch(console.error);`
                 document.getElementById('output').innerHTML = '// Ready to compile. Click Run to execute your code.';
                 
                 if (currentMode === 'web') {
-                    document.getElementById('preview').srcdoc = '';
+                    const preview = document.getElementById('preview');
+                    preview.srcdoc = '';
                     document.getElementById('preview-status').textContent = 'Ready';
                 }
+                
+                saveToLocalStorage();
             }
         }
 
         function loadSample() {
             loadLanguage(currentLang);
+            showToast(`📋 Sample code loaded for ${languages[currentLang].name}`);
+        }
+
+        function saveToLocalStorage() {
+            const state = {
+                language: currentLang,
+                code: document.getElementById('code-editor').value,
+                stdin: document.getElementById('stdin-input').value,
+                mode: currentMode
+            };
+            localStorage.setItem('codesphere-state', JSON.stringify(state));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('codesphere-state');
+            if (saved) {
+                try {
+                    const state = JSON.parse(saved);
+                    if (state.language && languages[state.language]) {
+                        currentLang = state.language;
+                        currentMode = state.mode || 'web';
+                        
+                        // Update UI based on loaded state
+                        setTimeout(() => {
+                            document.getElementById('code-editor').value = state.code || '';
+                            document.getElementById('stdin-input').value = state.stdin || '';
+                            
+                            // Switch to correct mode
+                            const modeBtn = document.querySelector(`.tab-btn:nth-child(${currentMode === 'web' ? 1 : 2})`);
+                            if (modeBtn) {
+                                switchMode(currentMode, { target: modeBtn });
+                            }
+                        }, 100);
+                    }
+                } catch (e) {
+                    console.error('Failed to load from localStorage', e);
+                }
+            }
         }
 
         // Make functions global
@@ -2158,6 +5809,7 @@ main().catch(console.error);`
         window.runCode = runCode;
         window.clearCode = clearCode;
         window.loadSample = loadSample;
+        window.loadHelloWorld = loadHelloWorld;
     </script>
 </body>
 </html>
