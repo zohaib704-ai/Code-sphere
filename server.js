@@ -1,11 +1,20 @@
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const path = require('path');
-require('dotenv').config();
+// server.js - Compatible with Node.js 20.x, 22.x, and 24.x
+import express from 'express';
+import cors from 'cors';
+import axios from 'axios';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+// Configure dotenv
+dotenv.config();
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,7 +43,7 @@ app.use('/api/', limiter);
 app.use(express.static(path.join(__dirname)));
 
 // Cache for language versions
-let languageCache = {
+const languageCache = {
     data: null,
     timestamp: null,
     ttl: 24 * 60 * 60 * 1000 // 24 hours
@@ -90,7 +99,8 @@ app.get('/api/health', (req, res) => {
         status: 'healthy',
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
-        memory: process.memoryUsage()
+        memory: process.memoryUsage(),
+        nodeVersion: process.version
     });
 });
 
@@ -253,7 +263,7 @@ app.post('/api/execute/batch', async (req, res) => {
                     ? result.value 
                     : { 
                         success: false, 
-                        error: result.reason.message 
+                        error: result.reason?.message || 'Unknown error' 
                     }
                 )
             }))
@@ -278,7 +288,7 @@ app.get('/api/language/:name', async (req, res) => {
         const languages = response.data;
         const language = languages.find(lang => 
             lang.language.toLowerCase() === name.toLowerCase() ||
-            lang.aliases?.some(alias => alias.toLowerCase() === name.toLowerCase())
+            (lang.aliases && lang.aliases.some(alias => alias.toLowerCase() === name.toLowerCase()))
         );
 
         if (!language) {
@@ -317,9 +327,10 @@ app.use((req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`✅ CodeSphere server running on http://localhost:${PORT}`);
     console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🟢 Node.js version: ${process.version}`);
     console.log(`🔗 Piston API URL: ${PISTON_API_URL}`);
     
     // Pre-fetch languages on startup
@@ -350,3 +361,5 @@ process.on('SIGINT', () => {
         process.exit(0);
     });
 });
+
+export default app;
