@@ -884,6 +884,166 @@
     </footer>
 
     <script>
+        async function runCode() {
+    if (isRunning) return;
+    
+    const code = document.getElementById('code-editor').value;
+    const stdin = document.getElementById('stdin-input').value;
+    const output = document.getElementById('output');
+    const runBtn = document.getElementById('run-btn');
+    const lang = languages[currentLang];
+    
+    if (currentMode === 'web') {
+        // Web mode - live preview (no API needed)
+        const preview = document.getElementById('preview');
+        const doc = preview.contentDocument || preview.contentWindow.document;
+        
+        if (currentLang === 'html') {
+            doc.open();
+            doc.write(code);
+            doc.close();
+            output.innerHTML = '✓ HTML rendered successfully';
+        } else if (currentLang === 'css') {
+            doc.open();
+            doc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head><style>${code}</style></head>
+                <body>
+                    <div class="container">
+                        <div class="card">
+                            <h1>CSS Preview</h1>
+                            <p>Sample text to demonstrate your CSS</p>
+                            <button>Sample Button</button>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+            doc.close();
+            output.innerHTML = '✓ CSS applied successfully';
+        } else if (currentLang === 'js') {
+            doc.open();
+            doc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head><title>JavaScript Demo</title></head>
+                <body>
+                    <div id="app"></div>
+                    <script>
+                        try {
+                            ${code}
+                        } catch(e) {
+                            document.body.innerHTML += '<div style="color:red">Error: ' + e.message + '</div>';
+                        }
+                    <\/script>
+                </body>
+                </html>
+            `);
+            doc.close();
+            output.innerHTML = '✓ JavaScript executed successfully';
+        }
+        
+        saveToLocalStorage();
+        return;
+    }
+    
+    // Language mode - use OUR backend server, NOT direct Piston API
+    isRunning = true;
+    runBtn.innerHTML = '<span class="loading"></span> Compiling...';
+    runBtn.disabled = true;
+    output.innerHTML = '⏳ Sending to server...';
+    
+    try {
+        // Prepare the file based on language
+        let fileName = 'main';
+        if (currentLang === 'java') fileName = 'Main.java';
+        else if (currentLang === 'python') fileName = 'main.py';
+        else if (currentLang === 'javascript') fileName = 'main.js';
+        else if (currentLang === 'cpp') fileName = 'main.cpp';
+        else if (currentLang === 'c') fileName = 'main.c';
+        else if (currentLang === 'ruby') fileName = 'main.rb';
+        else if (currentLang === 'php') fileName = 'main.php';
+        else if (currentLang === 'go') fileName = 'main.go';
+        else if (currentLang === 'rust') fileName = 'main.rs';
+        else fileName = `main.${lang.extension || lang.pistonLang}`;
+        
+        // Make request to OUR backend API, not directly to Piston
+        const response = await fetch('/api/execute', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                language: lang.pistonLang,
+                version: lang.pistonVersion,
+                files: [
+                    {
+                        name: fileName,
+                        content: code
+                    }
+                ],
+                stdin: stdin,
+                args: [],
+                compile_timeout: 10000,
+                run_timeout: 5000
+            })
+        });
+        
+        // Parse the response
+        const data = await response.json();
+        
+        // Check if the request was successful
+        if (!response.ok) {
+            throw new Error(data.message || `Server error: ${response.status}`);
+        }
+        
+        // Handle the response from our server
+        if (data.error) {
+            output.innerHTML = `<span class="error-output">❌ Server Error: ${data.message}</span>`;
+        } else if (data.run) {
+            let result = '';
+            
+            // Add stdout if present
+            if (data.run.stdout) {
+                result += data.run.stdout;
+            }
+            
+            // Add stderr if present
+            if (data.run.stderr) {
+                result += '\n\n⚠️ Errors/Warnings:\n' + data.run.stderr;
+            }
+            
+            // Add compilation output if present (for compiled languages)
+            if (data.compile && data.compile.stderr) {
+                result = '📦 Compilation Output:\n' + data.compile.stderr + '\n\n📤 Program Output:\n' + result;
+            }
+            
+            // Show exit code if non-zero
+            if (data.run.code && data.run.code !== 0) {
+                result += `\n\n❌ Process exited with code: ${data.run.code}`;
+            }
+            
+            // If there's no output at all
+            if (!result.trim()) {
+                result = '✓ Program executed successfully (no output)';
+            }
+            
+            output.innerHTML = result.replace(/\n/g, '<br>');
+        } else {
+            output.innerHTML = '⚠️ No output received from server';
+        }
+        
+    } catch (error) {
+        console.error('Execution error:', error);
+        output.innerHTML = `<span class="error-output">❌ Error: ${error.message}</span>`;
+    } finally {
+        isRunning = false;
+        runBtn.innerHTML = '<span>▶</span> Run Code';
+        runBtn.disabled = false;
+        saveToLocalStorage();
+    }
+}
         // Language configurations with Piston API versions
         const languages = {
             // Web Dev Languages
@@ -2239,6 +2399,184 @@ main().catch(console.error);`
         window.runCode = runCode;
         window.clearCode = clearCode;
         window.loadSample = loadSample;
+        async function runCode() {
+    if (isRunning) return;
+    
+    const code = document.getElementById('code-editor').value;
+    const stdin = document.getElementById('stdin-input').value;
+    const output = document.getElementById('output');
+    const runBtn = document.getElementById('run-btn');
+    const lang = languages[currentLang];
+    
+    if (currentMode === 'web') {
+        // Web mode - live preview (no API needed)
+        const preview = document.getElementById('preview');
+        const doc = preview.contentDocument || preview.contentWindow.document;
+        
+        if (currentLang === 'html') {
+            doc.open();
+            doc.write(code);
+            doc.close();
+            output.innerHTML = '✓ HTML rendered successfully';
+        } else if (currentLang === 'css') {
+            doc.open();
+            doc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head><style>${code}</style></head>
+                <body>
+                    <div class="container">
+                        <div class="card">
+                            <h1>CSS Preview</h1>
+                            <p>Sample text to demonstrate your CSS</p>
+                            <button>Sample Button</button>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+            doc.close();
+            output.innerHTML = '✓ CSS applied successfully';
+        } else if (currentLang === 'js') {
+            doc.open();
+            doc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head><title>JavaScript Demo</title></head>
+                <body>
+                    <div id="app"></div>
+                    <script>
+                        try {
+                            ${code}
+                        } catch(e) {
+                            document.body.innerHTML += '<div style="color:red">Error: ' + e.message + '</div>';
+                        }
+                    <\/script>
+                </body>
+                </html>
+            `);
+            doc.close();
+            output.innerHTML = '✓ JavaScript executed successfully';
+        }
+        
+        saveToLocalStorage();
+        return;
+    }
+    
+    // Language mode - use OUR backend server, NOT direct Piston API
+    isRunning = true;
+    runBtn.innerHTML = '<span class="loading"></span> Compiling...';
+    runBtn.disabled = true;
+    output.innerHTML = '⏳ Sending to server...';
+    
+    try {
+        // Prepare the file based on language
+        let fileName = 'main';
+        if (currentLang === 'java') fileName = 'Main.java';
+        else if (currentLang === 'python') fileName = 'main.py';
+        else if (currentLang === 'javascript') fileName = 'main.js';
+        else if (currentLang === 'cpp') fileName = 'main.cpp';
+        else if (currentLang === 'c') fileName = 'main.c';
+        else if (currentLang === 'ruby') fileName = 'main.rb';
+        else if (currentLang === 'php') fileName = 'main.php';
+        else if (currentLang === 'go') fileName = 'main.go';
+        else if (currentLang === 'rust') fileName = 'main.rs';
+        else fileName = `main.${lang.extension || lang.pistonLang}`;
+        
+        // Make request to OUR backend API, not directly to Piston
+        const response = await fetch('/api/execute', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                language: lang.pistonLang,
+                version: lang.pistonVersion,
+                files: [
+                    {
+                        name: fileName,
+                        content: code
+                    }
+                ],
+                stdin: stdin,
+                args: [],
+                compile_timeout: 10000,
+                run_timeout: 5000
+            })
+        });
+        
+        // Parse the response
+        const data = await response.json();
+        
+        // Check if the request was successful
+        if (!response.ok) {
+            throw new Error(data.message || `Server error: ${response.status}`);
+        }
+        
+        // Handle the response from our server
+        if (data.error) {
+            output.innerHTML = `<span class="error-output">❌ Server Error: ${data.message}</span>`;
+        } else if (data.run) {
+            let result = '';
+            
+            // Add stdout if present
+            if (data.run.stdout) {
+                result += data.run.stdout;
+            }
+            
+            // Add stderr if present
+            if (data.run.stderr) {
+                result += '\n\n⚠️ Errors/Warnings:\n' + data.run.stderr;
+            }
+            
+            // Add compilation output if present (for compiled languages)
+            if (data.compile && data.compile.stderr) {
+                result = '📦 Compilation Output:\n' + data.compile.stderr + '\n\n📤 Program Output:\n' + result;
+            }
+            
+            // Show exit code if non-zero
+            if (data.run.code && data.run.code !== 0) {
+                result += `\n\n❌ Process exited with code: ${data.run.code}`;
+            }
+            
+            // If there's no output at all
+            if (!result.trim()) {
+                result = '✓ Program executed successfully (no output)';
+            }
+            
+            output.innerHTML = result.replace(/\n/g, '<br>');
+        } else {
+            output.innerHTML = '⚠️ No output received from server';
+        }
+        
+    } catch (error) {
+        console.error('Execution error:', error);
+        output.innerHTML = `<span class="error-output">❌ Error: ${error.message}</span>`;
+    } finally {
+        isRunning = false;
+        runBtn.innerHTML = '<span>▶</span> Run Code';
+        runBtn.disabled = false;
+        saveToLocalStorage();
+    }
+}
+        // Add this function to test the connection to your backend
+async function testBackendConnection() {
+    try {
+        const response = await fetch('/api/health');
+        const data = await response.json();
+        console.log('Backend connection successful:', data);
+        alert(`✅ Backend connected!\nStatus: ${data.status}\nNode: ${data.nodeVersion}`);
+        return true;
+    } catch (error) {
+        console.error('Backend connection failed:', error);
+        alert(`❌ Cannot connect to backend!\nMake sure your server is running at http://localhost:3000`);
+        return false;
+    }
+}
+
+// Add a test button to your HTML (optional)
+// Add this somewhere in your controls section:
+// <button class="btn btn-secondary" onclick="testBackendConnection()">🔌 Test Connection</button>
     </script>
 </body>
 </html>
